@@ -1,0 +1,16 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@master
+      - run:  npm install
+      - name: Publish
+        uses: menduz/oddish-action@master
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

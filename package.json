@@ -19,7 +19,7 @@
     "@types/sinon": "^9.0.9",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "dcl-tslint-config-standard": "^1.0.1",
+    "dcl-tslint-config-standard": "^3.0.0",
     "husky": "^0.14.3",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
@@ -29,7 +29,6 @@
     "sinon": "^9.2.2",
     "ts-node": "^7.0.0",
     "tslint-config-prettier": "^1.10.0",
-    "tslint-language-service": "^0.9.9",
     "tslint-plugin-prettier": "^1.3.0",
     "typescript": "^4.1.3",
     "validate-commit-message": "^3.0.1"
