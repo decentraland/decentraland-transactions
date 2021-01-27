@@ -55,5 +55,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/decentraland/decentraland-transactions.git"
+  },
+  "dependencies": {
+    "ethers": "^5.0.26"
   }
 }
