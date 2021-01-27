@@ -5,10 +5,9 @@
     "module": "commonjs",
     "target": "es6",
     "lib": ["es2017", "dom"],
+    "strict": true,
     "sourceMap": true,
-    "jsx": "react",
     "moduleResolution": "node",
-    "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -20,14 +19,15 @@
     "plugins": [{ "name": "tslint-language-service" }],
     "declaration": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",
+    "dist",
     "build",
+    "test",
     "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest"
+    "webpack"
   ]
 }

@@ -94,7 +94,7 @@ export class Ethers implements Client {
       domain: domainData,
       primaryType: 'MetaTransaction',
       message: {
-        nonce: parseInt(nonce),
+        nonce: parseInt(nonce, 10),
         from: this.signer,
         functionSignature: functionSignature
       }
