@@ -24,6 +24,13 @@ export type MethodData = {
   functionSignature: FunctionSignature
 }
 
+export type ContractData = {
+  abi: object[]
+  address: string
+  name: string
+  version: string
+}
+
 export type DataToSign = {
   types: {
     EIP712Domain: DomainType[]
@@ -38,12 +45,6 @@ export type DataToSign = {
   }
 }
 
-export type ContractData = {
-  abi: object[]
-  address: string
-  name: string
-}
-
 export type Configuration = {
   serverURL: string
   websocketProvider: string
@@ -53,5 +54,21 @@ export enum ChainId {
   MAINNET = 1,
   ROPSTEN = 3,
   RINKEBY = 4,
-  KOVAN = 42
+  KOVAN = 42,
+  GOERLI = 420,
+  MATIC_TESTNET = 80001,
+  MATIC_MAINNET = 137
 }
+
+export const DOMAIN_TYPE: DomainType[] = [
+  { name: 'name', type: 'string' },
+  { name: 'version', type: 'string' },
+  { name: 'verifyingContract', type: 'address' },
+  { name: 'salt', type: 'bytes32' }
+]
+
+export const META_TRANSACTION_TYPE: MetaTransactionType[] = [
+  { name: 'nonce', type: 'uint256' },
+  { name: 'from', type: 'address' },
+  { name: 'functionSignature', type: 'bytes' }
+]
