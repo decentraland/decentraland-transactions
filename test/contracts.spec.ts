@@ -8,7 +8,8 @@ describe('#getManaContract', () => {
       abi: MANA_ABI,
       address: '0xe7fDae84ACaba2A5Ba817B6E6D8A2d415DBFEdbe',
       name: 'MANAToken',
-      version: '1'
+      version: '1',
+      chainId: ChainId.GOERLI
     })
   })
 
@@ -17,7 +18,8 @@ describe('#getManaContract', () => {
       abi: MANA_ABI,
       address: '0x882Da5967c435eA5cC6b09150d55E8304B838f45',
       name: 'Decentraland MANA (PoS)',
-      version: '1'
+      version: '1',
+      chainId: ChainId.MATIC_TESTNET
     })
   })
 
@@ -26,7 +28,8 @@ describe('#getManaContract', () => {
       abi: MANA_ABI,
       address: '0xA1c57f48F0Deb89f569dFbE6E2B7f46D33606fD4',
       name: '(PoS) Decentraland MANA (MANA)',
-      version: '1'
+      version: '1',
+      chainId: ChainId.MATIC_MAINNET
     })
   })
 

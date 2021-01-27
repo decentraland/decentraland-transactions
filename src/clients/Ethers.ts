@@ -1,4 +1,4 @@
-import { ethers, providers, Contract } from 'ethers'
+import { ethers, providers, Contract, BigNumber } from 'ethers'
 import { getConfiguration } from '../configuration'
 import {
   ChainId,
@@ -13,25 +13,33 @@ import { Client, MethodData, GetSignature } from './Client'
 export class Ethers implements Client {
   signer: string
   provider: providers.Provider
+  configuration: Configuration
 
-  constructor(signer: string, provider?: providers.Provider) {
+  constructor(
+    signer: string,
+    configuration: Partial<Configuration> = {},
+    provider?: providers.Provider
+  ) {
     this.signer = signer
+    this.configuration = {
+      ...getConfiguration(),
+      ...configuration
+    }
     this.provider =
       provider ||
       new ethers.providers.WebSocketProvider(
-        getConfiguration().websocketProvider
+        this.configuration.websocketProvider
       )
   }
 
   async sendMetaTransaction(
     methodData: MethodData,
-    getSignature: GetSignature,
-    configuration: Configuration
+    getSignature: GetSignature
   ) {
     try {
       const { functionSignature, contractData } = methodData
       const dataToSign = await this.getDataToSign(methodData)
-      const fullSignature = await getSignature(dataToSign)
+      const fullSignature = await getSignature(this.signer, dataToSign)
 
       const signature = fullSignature.substring(2)
       const r = '0x' + signature.substring(0, 64)
@@ -48,7 +56,7 @@ export class Ethers implements Client {
         v
       )
 
-      const res = await fetch(configuration.serverURL, {
+      const res = await fetch(`${this.configuration.serverURL}/transactions`, {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           transactionData: {
@@ -59,7 +67,8 @@ export class Ethers implements Client {
         method: 'POST'
       })
 
-      return (await res.json()) as string
+      const { txHash } = (await res.json()) as { txHash: string }
+      return txHash
     } catch (error) {
       console.log(
         'An error occurred trying to send the meta transaction',
@@ -69,21 +78,17 @@ export class Ethers implements Client {
     }
   }
 
-  async getDataToSign(methodData: MethodData): Promise<DataToSign> {
+  private async getDataToSign(methodData: MethodData): Promise<DataToSign> {
     const { contractData, functionSignature } = methodData
 
     const contract = this.getContract(contractData)
-
-    const [chainId, nonce]: [ChainId, string] = await Promise.all([
-      contract.getChainId(),
-      contract.getNonce(this.signer)
-    ])
+    const nonce: BigNumber = await contract.getNonce(this.signer)
 
     const domainData = {
       name: contractData.name,
       version: contractData.version,
       verifyingContract: contract.address,
-      salt: this.getSalt(chainId)
+      salt: this.getSalt(contractData.chainId)
     }
 
     return {
@@ -94,15 +99,15 @@ export class Ethers implements Client {
       domain: domainData,
       primaryType: 'MetaTransaction',
       message: {
-        nonce: parseInt(nonce, 10),
+        nonce: nonce.toNumber(),
         from: this.signer,
         functionSignature: functionSignature
       }
     }
   }
 
-  getSalt(chainId: ChainId) {
-    return ethers.utils.hexZeroPad(chainId.toString(), 64)
+  private getSalt(chainId: ChainId) {
+    return `0x${chainId.toString().padStart(64, '0')}`
   }
 
   private getContract(contractData: ContractData): Contract {

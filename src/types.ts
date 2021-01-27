@@ -29,6 +29,7 @@ export type ContractData = {
   address: string
   name: string
   version: string
+  chainId: ChainId
 }
 
 export type DataToSign = {
@@ -54,10 +55,10 @@ export enum ChainId {
   MAINNET = 1,
   ROPSTEN = 3,
   RINKEBY = 4,
+  GOERLI = 5,
   KOVAN = 42,
-  GOERLI = 420,
-  MATIC_TESTNET = 80001,
-  MATIC_MAINNET = 137
+  MATIC_TESTNET = 13881,
+  MATIC_MAINNET = 89
 }
 
 export const DOMAIN_TYPE: DomainType[] = [

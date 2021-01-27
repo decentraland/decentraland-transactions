@@ -28,6 +28,7 @@ export function getManaContract(chainId: ChainId): ContractData {
     abi: MANA_ABI,
     address,
     name,
-    version
+    version,
+    chainId
   }
 }

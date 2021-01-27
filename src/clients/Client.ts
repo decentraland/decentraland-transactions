@@ -1,18 +1,18 @@
-import { ContractData, Configuration, DataToSign } from '../types'
+import { ContractData, DataToSign } from '../types'
 
 export type MethodData = {
   functionSignature: string
   contractData: ContractData
 }
 
-export type GetSignature = (dataToSign: DataToSign) => Promise<string>
+export type GetSignature = (
+  signer: string,
+  dataToSign: DataToSign
+) => Promise<string>
 
 export interface Client {
   sendMetaTransaction(
     methodData: MethodData,
-    getSignature: GetSignature,
-    configuration: Configuration
+    getSignature: GetSignature
   ): Promise<string>
-
-  getSalt(chainId: number): string
 }
