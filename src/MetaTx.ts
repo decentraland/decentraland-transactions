@@ -1,62 +1,59 @@
+import { Contract } from './Contract'
 import { getConfiguration } from './configuration'
 import {
   Provider,
-  ChainId,
   Configuration,
   DataToSign,
-  MetaTxData,
+  ContractData,
+  DomainData,
   DOMAIN_TYPE,
   META_TRANSACTION_TYPE
 } from './types'
 
-const GET_NONCE_HEX = '2d0335ab'
-const EXECUTE_META_TRANSACTION_HEX = '0c53c51c'
-
 export class MetaTx {
+  l1Contract: Contract
+  l2Contract: Contract
   configuration: Configuration
-  private signer: string | undefined
 
   constructor(
-    public l1Provider: Provider,
-    public l2Provider: Provider,
+    l1Provider: Provider,
+    l2Provider: Provider,
     configuration: Partial<Configuration> = {}
   ) {
+    this.l1Contract = new Contract(l1Provider)
+    this.l2Contract = new Contract(l2Provider)
     this.configuration = {
       ...getConfiguration(),
       ...configuration
     }
   }
 
-  async getSigner(): Promise<string> {
-    if (this.signer) {
-      return this.signer
-    }
-    const {
-      result: accounts
-    }: { result: string[] } = await this.l1Provider.send(
-      'eth_requestAccounts',
-      []
-    )
-
-    if (accounts.length === 0) {
-      throw new Error('Could not get Accounts')
-    }
-
-    this.signer = accounts[0]
-    return this.signer
-  }
-
-  async sendMetaTransaction(metaTxData: MetaTxData) {
+  async sendMetaTransaction(
+    functionSignature: string,
+    contractData: ContractData
+  ) {
     try {
-      const { functionSignature, contractData } = metaTxData
+      const account = await this.l1Contract.getAccount()
+      const nonce = await this.l2Contract.getNonce(
+        account,
+        contractData.address
+      )
+      const salt = this.l2Contract.getSalt(contractData.chainId)
 
-      const signer = await this.getSigner()
-      const dataToSign = await this.getDataToSign(metaTxData)
+      const domainData = this.getDomainData(salt, contractData)
+      const dataToSign = this.getDataToSign(
+        account,
+        nonce,
+        functionSignature,
+        domainData
+      )
+      const signature = await this.l1Contract.getSignature(
+        account,
+        JSON.stringify(dataToSign)
+      )
 
-      const fullSignature = await this.getSignature(dataToSign)
-      const signature = fullSignature.substring(2)
-
-      const txMethodData = await this.getExecuteMetaTransactionData(
+      const txData = await this.l2Contract.getExecuteMetaTransactionData(
+        account,
         signature,
         functionSignature
       )
@@ -65,8 +62,8 @@ export class MetaTx {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           transactionData: {
-            from: signer,
-            params: [contractData.address, txMethodData]
+            from: account,
+            params: [contractData.address, txData]
           }
         }),
         method: 'POST'
@@ -83,31 +80,12 @@ export class MetaTx {
     }
   }
 
-  async getSignature(dataToSign: DataToSign): Promise<string> {
-    const signer = await this.getSigner()
-
-    const {
-      result: signature
-    }: { result: string } = await this.l1Provider.send('eth_signTypedData_v4', [
-      signer,
-      JSON.stringify(dataToSign)
-    ])
-    return signature
-  }
-
-  async getDataToSign(metaTxData: MetaTxData): Promise<DataToSign> {
-    const { contractData, functionSignature } = metaTxData
-
-    const signer = await this.getSigner()
-    const nonce: string = await this.getNonce(contractData.address)
-
-    const domainData = {
-      name: contractData.name,
-      version: contractData.version,
-      verifyingContract: contractData.address,
-      salt: this.getSalt(contractData.chainId)
-    }
-
+  getDataToSign(
+    account: string,
+    nonce: string,
+    functionSignature: string,
+    domainData: DomainData
+  ): DataToSign {
     return {
       types: {
         EIP712Domain: DOMAIN_TYPE,
@@ -117,53 +95,18 @@ export class MetaTx {
       primaryType: 'MetaTransaction',
       message: {
         nonce: parseInt(nonce, 16),
-        from: signer,
+        from: account,
         functionSignature: functionSignature
       }
     }
   }
 
-  private async getExecuteMetaTransactionData(
-    signature: string,
-    functionSignature: string
-  ) {
-    const signer = await this.getSigner()
-
-    const r = signature.substring(0, 64)
-    const s = signature.substring(64, 128)
-    const v = signature.substring(128, 130)
-
-    return [
-      '0x',
-      EXECUTE_META_TRANSACTION_HEX,
-      this.to32Bytes(signer.replace('0x', '')),
-      this.to32Bytes('a0'),
-      r,
-      s,
-      this.to32Bytes(v),
-      this.to32Bytes(44),
-      functionSignature.replace('0x', '').padEnd(64 * 3, '0')
-    ].join('')
-  }
-
-  private async getNonce(contractAddress: string): Promise<string> {
-    const signer = await this.getSigner()
-    const hexSigner = this.to32Bytes(signer.replace('0x', ''))
-
-    return this.l2Provider.send('eth_call', [
-      {
-        data: `0x${GET_NONCE_HEX}${hexSigner}`,
-        to: contractAddress
-      },
-      'latest'
-    ])
-  }
-
-  private getSalt(chainId: ChainId) {
-    return `0x${this.to32Bytes(chainId)}`
-  }
-
-  private to32Bytes(value: number | string): string {
-    return value.toString().padStart(64, '0')
+  getDomainData(salt: string, contractData: ContractData): DomainData {
+    return {
+      name: contractData.name,
+      version: contractData.version,
+      verifyingContract: contractData.address,
+      salt
+    }
   }
 }

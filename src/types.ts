@@ -2,31 +2,24 @@ export interface Provider {
   send(method: string, params: Array<any>): Promise<any>
 }
 
-type DomainType = {
+export type DomainType = {
   name: string
   type: string
 }
 
-type MetaTransactionType = {
+export type MetaTransactionType = {
   name: string
   type: string
 }
 
-type DomainData = {
+export type DomainData = {
   name: string
   version: string
   verifyingContract: string
   salt: string
 }
 
-type FunctionSignature = string
-
-export type MethodData = {
-  domainType: DomainType[]
-  metaTransactionType: MetaTransactionType[]
-  domainData: DomainData
-  functionSignature: FunctionSignature
-}
+export type FunctionSignature = string
 
 export type ContractData = {
   abi: object[]
