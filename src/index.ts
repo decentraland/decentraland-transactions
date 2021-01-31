@@ -1,5 +1,5 @@
-import * as clients from './clients'
 import * as contracts from './contracts'
 
-export { clients, contracts }
+export { contracts }
+export * from './MetaTx'
 export * from './types'

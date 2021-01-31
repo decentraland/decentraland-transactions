@@ -1,3 +1,7 @@
+export interface Provider {
+  send(method: string, params: Array<any>): Promise<any>
+}
+
 type DomainType = {
   name: string
   type: string
@@ -32,6 +36,11 @@ export type ContractData = {
   chainId: ChainId
 }
 
+export type MetaTxData = {
+  functionSignature: string
+  contractData: ContractData
+}
+
 export type DataToSign = {
   types: {
     EIP712Domain: DomainType[]
@@ -48,7 +57,6 @@ export type DataToSign = {
 
 export type Configuration = {
   serverURL: string
-  websocketProvider: string
 }
 
 export enum ChainId {
