@@ -1,10 +1,11 @@
-import { Provider } from './types'
+import { Provider, EIPProvider } from './types'
 
 const GET_NONCE_HEX = '2d0335ab'
 const EXECUTE_META_TRANSACTION_HEX = '0c53c51c'
 
 export async function getAccount(provider: Provider): Promise<string> {
-  const { result: accounts }: { result: string[] } = await provider.send(
+  const { result: accounts }: { result: string[] } = await send(
+    provider,
     'eth_requestAccounts',
     []
   )
@@ -16,12 +17,11 @@ export async function getSignature(
   account: string,
   dataToSign: string
 ): Promise<string> {
-  const {
-    result: signature
-  }: { result: string } = await provider.send('eth_signTypedData_v4', [
-    account,
-    dataToSign
-  ])
+  const { result: signature }: { result: string } = await send(
+    provider,
+    'eth_signTypedData_v4',
+    [account, dataToSign]
+  )
   return signature
 }
 
@@ -55,7 +55,7 @@ export async function getNonce(
 ): Promise<string> {
   const hexSigner = to32Bytes(account.replace('0x', ''))
 
-  return provider.send('eth_call', [
+  return send(provider, 'eth_call', [
     {
       data: `0x${GET_NONCE_HEX}${hexSigner}`,
       to: contractAddress
@@ -70,4 +70,20 @@ export function getSalt(chainId: number | string): string {
 
 function to32Bytes(value: number | string): string {
   return value.toString().padStart(64, '0')
+}
+
+async function send(
+  provider: Provider,
+  method: string,
+  params: any[]
+): Promise<any> {
+  if (typeof provider['request'] !== 'undefined') {
+    return (provider as EIPProvider).request({ method, params })
+  }
+  if (typeof provider['send'] !== 'undefined') {
+    return provider.send(method, params)
+  }
+  throw new Error(
+    'Could not send the transaction. Provider is missing either a send or request method'
+  )
 }

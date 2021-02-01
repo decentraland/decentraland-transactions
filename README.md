@@ -209,10 +209,17 @@ Check [configuration.ts](https://github.com/decentraland/decentraland-transactio
 
 ### Provider
 
+Defines the minimun required interface for a Provider. It tries to accomodate for different lib implementations
+
 ```typescript
-interface Provider {
-  send(method: string, params: Array<any>): Promise<any>
+export interface EIPProvider {
+  request: (reqArgs: { method: string; params?: any[] }) => Promise<any>
+  send?: (method: string, params?: any[]) => Promise<any>
 }
+export interface LegacyProvider {
+  send: (method: string, params: any[]) => Promise<any>
+}
+export type Provider = EIPProvider | LegacyProvider
 ```
 
 ### ChainId

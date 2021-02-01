@@ -1,6 +1,13 @@
-export interface Provider {
-  send(method: string, params: Array<any>): Promise<any>
+export interface EIPProvider {
+  request: (reqArgs: { method: string; params?: any[] }) => Promise<any>
+  send?: (method: string, params?: any[]) => Promise<any>
 }
+export interface LegacyProvider {
+  send: (method: string, params: any[]) => Promise<any>
+}
+// We need to create this Provider type to accomodate for the different popular provider implementations.
+// All implementations differ sligthly, most notably defining params as `any[] | undefined` (web3x) and `any[]` (ethers)
+export type Provider = EIPProvider | LegacyProvider
 
 export type DomainType = {
   name: string
