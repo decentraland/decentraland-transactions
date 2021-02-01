@@ -4,7 +4,7 @@ import {
   getSignature,
   getExecuteMetaTransactionData,
   getSalt
-} from './ethereum'
+} from './utils'
 import { getConfiguration } from './configuration'
 import {
   Provider,
@@ -22,7 +22,7 @@ export async function sendMetaTransaction(
   functionSignature: string,
   contractData: ContractData,
   partialConfiguration: Partial<Configuration> = {}
-) {
+): Promise<string> {
   const configuration = {
     ...getConfiguration(),
     ...partialConfiguration

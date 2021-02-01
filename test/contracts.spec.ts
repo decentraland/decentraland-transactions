@@ -1,11 +1,13 @@
 import { expect } from 'chai'
-import { getManaContract, MANA_ABI } from '../src/contracts'
+import { abis } from '../src/abis'
+import { getManaContract } from '../src/contracts'
 import { ChainId } from '../src/types'
 
 describe('#getManaContract', () => {
+  const abi = abis.MANA
   it('should return the configuration for Goerli', () => {
     expect(getManaContract(ChainId.GOERLI)).to.deep.eq({
-      abi: MANA_ABI,
+      abi,
       address: '0xe7fDae84ACaba2A5Ba817B6E6D8A2d415DBFEdbe',
       name: 'MANAToken',
       version: '1',
@@ -15,7 +17,7 @@ describe('#getManaContract', () => {
 
   it('should return the configuration for Mumbai', () => {
     expect(getManaContract(ChainId.MATIC_TESTNET)).to.deep.eq({
-      abi: MANA_ABI,
+      abi,
       address: '0x882Da5967c435eA5cC6b09150d55E8304B838f45',
       name: 'Decentraland MANA (PoS)',
       version: '1',
@@ -25,7 +27,7 @@ describe('#getManaContract', () => {
 
   it('should return the configuration for Matic Mainnet', () => {
     expect(getManaContract(ChainId.MATIC_MAINNET)).to.deep.eq({
-      abi: MANA_ABI,
+      abi,
       address: '0xA1c57f48F0Deb89f569dFbE6E2B7f46D33606fD4',
       name: '(PoS) Decentraland MANA (MANA)',
       version: '1',

@@ -29,7 +29,7 @@ export function getExecuteMetaTransactionData(
   account: string,
   fullSignature: string,
   functionSignature: string
-) {
+): string {
   const signature = fullSignature.replace('0x', '')
   const r = signature.substring(0, 64)
   const s = signature.substring(64, 128)
@@ -64,7 +64,7 @@ export async function getNonce(
   ])
 }
 
-export function getSalt(chainId: number | string) {
+export function getSalt(chainId: number | string): string {
   return `0x${to32Bytes(chainId)}`
 }
 
