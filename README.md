@@ -7,7 +7,7 @@ Send meta transactions
 # Table of contents
 
 - [API](#api)
-  - [sendMetaTransactoin](#ConnectionManager)
+  - [sendMetaTransaction](#sendMetaTransaction)
   - [contracts](#contracts)
     - [getManaContract](#getManaContract)
   - [utils](#utils)
@@ -68,7 +68,7 @@ const txHash = await sendMetaTransaction(
 Collection of useful Decentraland contracts for the different Ethereum [chains](#ChainId). It contains all the information necessary to call `sendMetaTransaction`. It returns a [ContractData](#ContractData) object
 
 ```typescript
-import { contracts } from 'decentraland-transactions
+import { contracts } from 'decentraland-transactions'
 ```
 
 ### getManaContract
