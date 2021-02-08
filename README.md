@@ -8,12 +8,12 @@ Send meta transactions
 
 - [API](#api)
   - [sendMetaTransaction](#sendMetaTransaction)
-  - [contracts](#contracts)
-    - [getManaContract](#getManaContract)
+  - [getContract](#getContract)
   - [Types](#types)
     - [Configuration](#Configuration)
     - [Provider](#Provider)
     - [ChainId](#ChainId)
+    - [ContractName](#ContractName)
     - [ContractData](#ContractData)
     - [DataToSign](#DataToSign)
     - [DomainData](#DomainData)
@@ -46,9 +46,10 @@ async function sendMetaTransaction(
 Using [ethers](https://github.com/ethers-io/ethers.js) for the providers
 
 ```typescript
+import { sendMetaTransaction, getContract, ContractName, ChainId } from 'decentraland-transactions'
 import { ethers } from 'ethers'
 
-const manaConfig = contracts.getManaContract(ChainId.MATIC_TESTNET)
+const manaConfig = getContract(ContractName.MANAToken, ChainId.MATIC_TESTNET)
 const manaContract = new ethers.Contract(manaConfig.address, manaConfig.abi, provider)
 
 const txHash = await sendMetaTransaction(
@@ -60,26 +61,21 @@ const txHash = await sendMetaTransaction(
 )
 ```
 
-## contracts
+## getContract
 
-Collection of useful Decentraland contracts for the different Ethereum [chains](#ChainId). It contains all the information necessary to call `sendMetaTransaction`. It returns a [ContractData](#ContractData) object
+Returns data for a collection of useful Decentraland [contracts](#ContractName) enum. for the different Ethereum [chains](#ChainId). It contains all the information necessary to call `sendMetaTransaction`.
 
-```typescript
-import { contracts } from 'decentraland-transactions'
-```
-
-### getManaContract
 
 **Definition**
 
 ```typescript
-function getManaContract(chainId: ChainId): ContractData
+function getContract(contractName: ContractName, chainId: ChainId): ContractData
 ```
 
 **Usage**
 
 ```typescript
-contracts.getManaContract(ChainId.ROPSTEN)
+getContract(ContractName.MANAToken, ChainId.ROPSTEN)
 ```
 
 
@@ -123,6 +119,16 @@ enum ChainId {
   KOVAN = 42,
   MATIC_TESTNET = 13881,
   MATIC_MAINNET = 89
+}
+```
+
+### ContractName
+
+Supported contract names
+
+```typescript
+enum ContractName {
+  MANAToken = 'MANAToken'
 }
 ```
 
@@ -177,7 +183,7 @@ Example using [decentraland-connect](https://github.com/decentraland/decentralan
 
 ```typescript
 import { connection, ProviderType } from 'decentraland-connect'
-import { sendMetaTransaction } from 'decentraland-transactions'
+import { sendMetaTransaction, getContract, ContractName, ChainId } from 'decentraland-transactions'
 
 async function transferMana() {
   try {
@@ -191,7 +197,7 @@ async function transferMana() {
       // Function signature
       '0xa9059cbb000000000000000000000000a8d82b0bf686eee78eb5ec882cac98fdd1335ef50000000000000000000000000000000000000000000000000000000000000001',
       // Mana contract for MATIC_TESTNET
-      contracts.getManaContract(ChainId.MATIC_TESTNET)
+      getContract(ContractName.MANAToken, ChainId.MATIC_TESTNET)
     )
 
     console.log('Result tx hash', txHash)
