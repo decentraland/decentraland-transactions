@@ -36,6 +36,10 @@ export type ContractData = {
   chainId: ChainId
 }
 
+export enum ContractName {
+  MANAToken = 'MANAToken'
+}
+
 export type MetaTxData = {
   functionSignature: string
   contractData: ContractData

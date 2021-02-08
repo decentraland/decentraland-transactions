@@ -1,7 +1,7 @@
 import { Provider, EIPProvider } from './types'
 
-const GET_NONCE_HEX = '2d0335ab'
-const EXECUTE_META_TRANSACTION_HEX = '0c53c51c'
+const GET_NONCE_FUNCTION_SELECTOR = '2d0335ab'
+const EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR = '0c53c51c'
 
 export async function getAccount(provider: Provider): Promise<string> {
   const { result: accounts }: { result: string[] } = await send(
@@ -37,7 +37,7 @@ export function getExecuteMetaTransactionData(
 
   return [
     '0x',
-    EXECUTE_META_TRANSACTION_HEX,
+    EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR,
     to32Bytes(account.replace('0x', '')),
     to32Bytes('a0'),
     r,
@@ -57,7 +57,7 @@ export async function getNonce(
 
   return send(provider, 'eth_call', [
     {
-      data: `0x${GET_NONCE_HEX}${hexSigner}`,
+      data: `0x${GET_NONCE_FUNCTION_SELECTOR}${hexSigner}`,
       to: contractAddress
     },
     'latest'
