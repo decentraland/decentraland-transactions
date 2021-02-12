@@ -2,19 +2,19 @@ import { abis } from '../abis'
 import { ChainId } from '../types'
 
 export const manaContract = {
-  [ChainId.GOERLI]: {
+  [ChainId.ETHEREUM_GOERLI]: {
     version: '1',
     abi: abis.MANAToken,
     address: '0xe7fDae84ACaba2A5Ba817B6E6D8A2d415DBFEdbe',
     name: 'MANAToken',
-    chainId: ChainId.GOERLI
+    chainId: ChainId.ETHEREUM_GOERLI
   },
-  [ChainId.MATIC_TESTNET]: {
+  [ChainId.MATIC_MUMBAI]: {
     version: '1',
     abi: abis.MANAToken,
     address: '0x882Da5967c435eA5cC6b09150d55E8304B838f45',
     name: 'Decentraland MANA (PoS)',
-    chainId: ChainId.MATIC_TESTNET
+    chainId: ChainId.MATIC_MUMBAI
   },
   [ChainId.MATIC_MAINNET]: {
     version: '1',
