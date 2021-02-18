@@ -29,12 +29,14 @@ The API consists of one function at the moment, which is all you need to send me
 
 Sends a meta transaction using a relay server. It's provider agnostic, so it'll take the providers it needs as parameters. The [Provider](#Provider) only has to conform to the required interface found on types. See the [Configuration](#Configuration) type for information on what values you can override.
 
+The first provider refers to the "signer" of the meta transaction (usually Metamask in our use case). The second one, will be the one to send the "gasless" transaction (usually [Matic](https://polygon.technology/))
+
 **Definition**
 
 ```typescript
 async function sendMetaTransaction(
-  l1Provider: Provider,
-  l2Provider: Provider,
+  provider: Provider,
+  metaTransactionProvider: Provider,
   functionSignature: string,
   contractData: ContractData,
   partialConfiguration: Partial<Configuration> = {}
@@ -46,11 +48,20 @@ async function sendMetaTransaction(
 Using [ethers](https://github.com/ethers-io/ethers.js) for the providers
 
 ```typescript
-import { sendMetaTransaction, getContract, ContractName, ChainId } from 'decentraland-transactions'
+import {
+  sendMetaTransaction,
+  getContract,
+  ContractName,
+  ChainId
+} from 'decentraland-transactions'
 import { ethers } from 'ethers'
 
 const manaConfig = getContract(ContractName.MANAToken, ChainId.MATIC_TESTNET)
-const manaContract = new ethers.Contract(manaConfig.address, manaConfig.abi, provider)
+const manaContract = new ethers.Contract(
+  manaConfig.address,
+  manaConfig.abi,
+  provider
+)
 
 const txHash = await sendMetaTransaction(
   new ethers.providers.Web3Provider(window.ethereum),
@@ -65,7 +76,6 @@ const txHash = await sendMetaTransaction(
 
 Returns data for a collection of useful Decentraland [contracts](#ContractName) enum. for the different Ethereum [chains](#ChainId). It contains all the information necessary to call `sendMetaTransaction`.
 
-
 **Definition**
 
 ```typescript
@@ -77,7 +87,6 @@ function getContract(contractName: ContractName, chainId: ChainId): ContractData
 ```typescript
 getContract(ContractName.MANAToken, ChainId.ROPSTEN)
 ```
-
 
 ## Types
 
@@ -183,7 +192,12 @@ Example using [decentraland-connect](https://github.com/decentraland/decentralan
 
 ```typescript
 import { connection, ProviderType } from 'decentraland-connect'
-import { sendMetaTransaction, getContract, ContractName, ChainId } from 'decentraland-transactions'
+import {
+  sendMetaTransaction,
+  getContract,
+  ContractName,
+  ChainId
+} from 'decentraland-transactions'
 
 async function transferMana() {
   try {
