@@ -17,8 +17,8 @@ import {
 } from './types'
 
 export async function sendMetaTransaction(
-  l1Provider: Provider,
-  l2Provider: Provider,
+  parentProvider: Provider,
+  childProvider: Provider,
   functionSignature: string,
   contractData: ContractData,
   partialConfiguration: Partial<Configuration> = {}
@@ -29,8 +29,8 @@ export async function sendMetaTransaction(
   }
 
   try {
-    const account = await getAccount(l1Provider)
-    const nonce = await getNonce(l2Provider, account, contractData.address)
+    const account = await getAccount(parentProvider)
+    const nonce = await getNonce(childProvider, account, contractData.address)
     const salt = getSalt(contractData.chainId)
 
     const domainData = getDomainData(salt, contractData)
@@ -41,7 +41,7 @@ export async function sendMetaTransaction(
       domainData
     )
     const signature = await getSignature(
-      l1Provider,
+      parentProvider,
       account,
       JSON.stringify(dataToSign)
     )
