@@ -56,16 +56,23 @@ export async function sendMetaTransaction(
       functionSignature
     )
 
-    const res = await fetch(`${configuration.serverURL}/transactions`, {
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        transactionData: {
-          from: account,
-          params: [contractData.address, txData]
-        }
-      }),
-      method: 'POST'
-    })
+    const res: Response = await fetch(
+      `${'http://localhost:5000/v1' || configuration.serverURL}/transactions`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transactionData: {
+            from: account,
+            params: [contractData.address, txData]
+          }
+        }),
+        method: 'POST'
+      }
+    )
+
+    if (!res.ok) {
+      throw new Error(res.statusText)
+    }
 
     const { txHash } = (await res.json()) as { txHash: string }
     return txHash

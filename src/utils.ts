@@ -4,11 +4,10 @@ const GET_NONCE_FUNCTION_SELECTOR = '2d0335ab'
 const EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR = '0c53c51c'
 
 export async function getAccount(provider: Provider): Promise<string> {
-  const { result: accounts }: { result: string[] } = await send(
-    provider,
-    'eth_requestAccounts',
-    []
-  )
+  const accounts: string[] = await send(provider, 'eth_requestAccounts', [])
+  if (accounts.length === 0) {
+    throw new Error('Could not find a valid connected account')
+  }
   return accounts[0]
 }
 
@@ -17,12 +16,7 @@ export async function getSignature(
   account: string,
   dataToSign: string
 ): Promise<string> {
-  const { result: signature }: { result: string } = await send(
-    provider,
-    'eth_signTypedData_v4',
-    [account, dataToSign]
-  )
-  return signature
+  return send(provider, 'eth_signTypedData_v4', [account, dataToSign])
 }
 
 export function getExecuteMetaTransactionData(
@@ -72,18 +66,25 @@ function to32Bytes(value: number | string): string {
   return value.toString().padStart(64, '0')
 }
 
-async function send(
+async function send<T>(
   provider: Provider,
   method: string,
   params: any[]
-): Promise<any> {
+): Promise<T> {
+  let data: T | { result: T } | undefined
+
   if (typeof provider['request'] !== 'undefined') {
-    return (provider as EIPProvider).request({ method, params })
+    data = await (provider as EIPProvider).request({ method, params })
   }
   if (typeof provider['send'] !== 'undefined') {
-    return provider.send(method, params)
+    data = await provider.send(method, params)
   }
-  throw new Error(
-    'Could not send the transaction. Provider is missing either a send or request method'
-  )
+
+  if (data) {
+    return data['result'] || data
+  } else {
+    throw new Error(
+      'Could not send the transaction. Provider is missing either a send or request method'
+    )
+  }
 }
