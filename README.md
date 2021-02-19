@@ -29,7 +29,7 @@ The API consists of one function at the moment, which is all you need to send me
 
 Sends a meta transaction using a relay server. It's provider agnostic, so it'll take the providers it needs as parameters. The [Provider](#Provider) only has to conform to the required interface found on types. See the [Configuration](#Configuration) type for information on what values you can override.
 
-The first provider refers to the "signer" of the meta transaction (usually Metamask in our use case). The second one, will be the one to send the "gasless" transaction (usually [Matic](https://polygon.technology/))
+The `provider` argument refers to which network you are connected to and therefore where the meta transaction will be signed. The `metaTransactionProvider` argument is where the meta transaction will be executed. E.g: If you want to send a meta transaction to a second layer like [Matic](https://polygon.technology/) by staying connected on Ethereum Mainnet, `provider` could be Metamask connected to the Ethereum Mainnet and `metaTransactionProvider` could be a provider instantiated with a Matic Mainnet RPC URL.
 
 **Definition**
 
