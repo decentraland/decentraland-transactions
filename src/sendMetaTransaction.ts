@@ -16,9 +16,17 @@ import {
   META_TRANSACTION_TYPE
 } from './types'
 
+/**
+ * Send a meta transaction using a relay server
+ * @param provider Which network you are connected to and therefore where the meta transaction will be signed
+ * @param metaTransactionProvider Where the meta transaction will be executed
+ * @param functionSignature Hexa of the transaction data you want to execute
+ * @param contractData Related contract data necessary to execute the transaction. Check getContract from this same package
+ * @param partialConfiguration Configurable params like which relay server to use
+ */
 export async function sendMetaTransaction(
-  l1Provider: Provider,
-  l2Provider: Provider,
+  provider: Provider,
+  metaTransactionProvider: Provider,
   functionSignature: string,
   contractData: ContractData,
   partialConfiguration: Partial<Configuration> = {}
@@ -29,8 +37,12 @@ export async function sendMetaTransaction(
   }
 
   try {
-    const account = await getAccount(l1Provider)
-    const nonce = await getNonce(l2Provider, account, contractData.address)
+    const account = await getAccount(provider)
+    const nonce = await getNonce(
+      metaTransactionProvider,
+      account,
+      contractData.address
+    )
     const salt = getSalt(contractData.chainId)
 
     const domainData = getDomainData(salt, contractData)
@@ -41,7 +53,7 @@ export async function sendMetaTransaction(
       domainData
     )
     const signature = await getSignature(
-      l1Provider,
+      provider,
       account,
       JSON.stringify(dataToSign)
     )
@@ -52,16 +64,23 @@ export async function sendMetaTransaction(
       functionSignature
     )
 
-    const res = await fetch(`${configuration.serverURL}/transactions`, {
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        transactionData: {
-          from: account,
-          params: [contractData.address, txData]
-        }
-      }),
-      method: 'POST'
-    })
+    const res: Response = await fetch(
+      `${'http://localhost:5000/v1' || configuration.serverURL}/transactions`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transactionData: {
+            from: account,
+            params: [contractData.address, txData]
+          }
+        }),
+        method: 'POST'
+      }
+    )
+
+    if (!res.ok) {
+      throw new Error(res.statusText)
+    }
 
     const { txHash } = (await res.json()) as { txHash: string }
     return txHash
