@@ -1,7 +1,8 @@
+import { ChainId } from '@dcl/schemas'
 import { expect } from 'chai'
 import { abis } from '../src/abis'
 import { getContract } from '../src/contracts'
-import { ContractName, ChainId } from '../src/types'
+import { ContractName } from '../src/types'
 
 describe('#getContract', () => {
   it('should throw if the contract name is not supported', () => {

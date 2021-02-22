@@ -1,4 +1,5 @@
-import { ContractName, ContractData, ChainId } from '../types'
+import { ChainId } from '@dcl/schemas'
+import { ContractName, ContractData } from '../types'
 import { manaContract } from './manaContract'
 
 const contracts: Record<

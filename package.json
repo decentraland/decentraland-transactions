@@ -49,5 +49,7 @@
     "type": "git",
     "url": "https://github.com/decentraland/decentraland-transactions.git"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@dcl/schemas": "^0.2.0"
+  }
 }
