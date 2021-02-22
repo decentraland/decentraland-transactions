@@ -1,3 +1,5 @@
+import { ChainId } from '@dcl/schemas'
+
 export interface EIPProvider {
   request: (reqArgs: { method: string; params?: any[] }) => Promise<any>
   send?: (method: string, params?: any[]) => Promise<any>
@@ -61,16 +63,6 @@ export type DataToSign = {
 
 export type Configuration = {
   serverURL: string
-}
-
-export enum ChainId {
-  ETHEREUM_MAINNET = 1,
-  ETHEREUM_ROPSTEN = 3,
-  ETHEREUM_RINKEBY = 4,
-  ETHEREUM_GOERLI = 5,
-  ETHEREUM_KOVAN = 42,
-  MATIC_MUMBAI = 13881,
-  MATIC_MAINNET = 89
 }
 
 export const DOMAIN_TYPE: DomainType[] = [

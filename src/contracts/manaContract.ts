@@ -1,5 +1,5 @@
+import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
-import { ChainId } from '../types'
 
 export const manaContract = {
   [ChainId.ETHEREUM_GOERLI]: {
