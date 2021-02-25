@@ -9,7 +9,9 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@master
-      - run:  npm install
+      - run: npm install
+      - name: npm run build
+        run: npm run build
       - name: Publish
         uses: menduz/oddish-action@master
         env:
