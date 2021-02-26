@@ -65,7 +65,7 @@ export async function sendMetaTransaction(
     )
 
     const res: Response = await fetch(
-      `${'http://localhost:5000/v1' || configuration.serverURL}/transactions`,
+      `${configuration.serverURL}/transactions`,
       {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
