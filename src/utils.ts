@@ -29,6 +29,9 @@ export function getExecuteMetaTransactionData(
   const s = signature.substring(64, 128)
   const v = signature.substring(128, 130)
 
+  const signatureLength = (functionSignature.length / 2).toString(16)
+  const signaturePadding = Math.ceil(functionSignature.length / 64)
+
   return [
     '0x',
     EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR,
@@ -37,8 +40,8 @@ export function getExecuteMetaTransactionData(
     r,
     s,
     to32Bytes(v),
-    to32Bytes(44),
-    functionSignature.replace('0x', '').padEnd(64 * 3, '0')
+    to32Bytes(signatureLength),
+    functionSignature.replace('0x', '').padEnd(64 * signaturePadding, '0')
   ].join('')
 }
 
