@@ -36,6 +36,12 @@ export async function sendMetaTransaction(
     ...partialConfiguration
   }
 
+  if (!contractData.address.trim()) {
+    throw new Error(
+      `The contract address for ${contractData.name} is empty. You're probably trying to get a proxy contract. Try adding an address to the result of getContract`
+    )
+  }
+
   try {
     const account = await getAccount(provider)
     const nonce = await getNonce(

@@ -143,7 +143,7 @@ enum ContractName {
 
 ### ContractData
 
-Represents all the information necessary to interact with a contract
+Represents all the information necessary to interact with a contract. If the contract is a proxy and doesn't need the address, you can leave it empty.
 
 ```typescript
 type ContractData = {
