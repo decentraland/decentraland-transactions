@@ -36,8 +36,10 @@ export async function sendMetaTransaction(
     ...partialConfiguration
   }
 
-  if (contractData.address.length === 0) {
-    throw new Error('Missing contract address')
+  if (!contractData.address.trim()) {
+    throw new Error(
+      `The contract address for ${contractData.name} is empty. You're probably trying to get a proxy contract. Try adding an address to the result of getContract`
+    )
   }
 
   try {
