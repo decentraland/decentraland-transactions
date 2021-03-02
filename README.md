@@ -12,7 +12,6 @@ Send meta transactions
   - [Types](#types)
     - [Configuration](#Configuration)
     - [Provider](#Provider)
-    - [ChainId](#ChainId)
     - [ContractName](#ContractName)
     - [ContractData](#ContractData)
     - [DataToSign](#DataToSign)
@@ -56,7 +55,7 @@ import {
 } from 'decentraland-transactions'
 import { ethers } from 'ethers'
 
-const manaConfig = getContract(ContractName.MANAToken, ChainId.MATIC_TESTNET)
+const manaConfig = getContract(ContractName.MANAToken, ChainId.MATIC_MUMBAI)
 const manaContract = new ethers.Contract(
   manaConfig.address,
   manaConfig.abi,
@@ -210,8 +209,8 @@ async function transferMana() {
       new ethers.providers.JsonRpcProvider('https://rpc-mumbai.matic.today'),
       // Function signature
       '0xa9059cbb000000000000000000000000a8d82b0bf686eee78eb5ec882cac98fdd1335ef50000000000000000000000000000000000000000000000000000000000000001',
-      // Mana contract for MATIC_TESTNET
-      getContract(ContractName.MANAToken, ChainId.MATIC_TESTNET)
+      // Mana contract for MATIC_MUMBAI
+      getContract(ContractName.MANAToken, ChainId.MATIC_MUMBAI)
     )
 
     console.log('Result tx hash', txHash)
