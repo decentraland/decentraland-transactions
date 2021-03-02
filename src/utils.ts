@@ -36,7 +36,7 @@ export function getExecuteMetaTransactionData(
   return [
     '0x',
     EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR,
-    to32Bytes(account.replace('0x', '')),
+    to32Bytes(account),
     to32Bytes('a0'),
     r,
     s,
@@ -51,15 +51,16 @@ export async function getNonce(
   account: string,
   contractAddress: string
 ): Promise<string> {
-  const hexSigner = to32Bytes(account.replace('0x', ''))
+  const hexSigner = to32Bytes(account)
 
-  return send(provider, 'eth_call', [
+  const nonce: string = await send(provider, 'eth_call', [
     {
       data: `0x${GET_NONCE_FUNCTION_SELECTOR}${hexSigner}`,
       to: contractAddress
     },
     'latest'
   ])
+  return to32Bytes(nonce)
 }
 
 export function getSalt(chainId: number | string): string {
@@ -67,7 +68,10 @@ export function getSalt(chainId: number | string): string {
 }
 
 function to32Bytes(value: number | string): string {
-  return value.toString().padStart(64, '0')
+  return value
+    .toString()
+    .replace('0x', '')
+    .padStart(64, '0')
 }
 
 async function send<T>(
