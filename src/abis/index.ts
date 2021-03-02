@@ -8,7 +8,6 @@ import { Rarities } from './Rarities'
 import { Marketplace } from './Marketplace'
 import { CollectionStore } from './CollectionStore'
 
-
 export const abis = {
   [ContractName.MANAToken]: MANAToken,
   [ContractName.ERC721CollectionV2]: ERC721CollectionV2,

@@ -8,8 +8,6 @@ import { raritiesContract } from './raritiesContract'
 import { marketplaceContract } from './marketplaceContract'
 import { collectionStoreContract } from './collectionStoreContract'
 
-
-
 const contracts: Record<
   ContractName,
   Partial<Record<ChainId, ContractData>>

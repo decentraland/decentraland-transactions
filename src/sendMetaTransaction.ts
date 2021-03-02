@@ -36,6 +36,10 @@ export async function sendMetaTransaction(
     ...partialConfiguration
   }
 
+  if (contractData.address.length === 0) {
+    throw new Error('Missing contract address')
+  }
+
   try {
     const account = await getAccount(provider)
     const nonce = await getNonce(

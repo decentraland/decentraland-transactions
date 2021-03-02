@@ -32,10 +32,10 @@ export type FunctionSignature = string
 
 export type ContractData = {
   abi: object[]
-  address?: string
-  name?: string
-  version?: string
-  chainId?: ChainId
+  address: string
+  name: string
+  version: string
+  chainId: ChainId
 }
 
 export enum ContractName {

@@ -1,17 +1,37 @@
 {
-  "extends": ["dcl-tslint-config-standard", "tslint-plugin-prettier"],
+  "extends": [
+    "dcl-tslint-config-standard",
+    "tslint-plugin-prettier"
+  ],
   "rules": {
     "no-commented-out-code": false,
-    "ban-types": [true, "Number", "Boolean", "String", "Object"],
+    "ban-types": [
+      true,
+      "Number",
+      "Boolean",
+      "String",
+      "Object"
+    ],
     "prettier": [
       true,
-      { "printWidth": 80, "singleQuote": true, "semi": false }
+      {
+        "printWidth": 80,
+        "singleQuote": true,
+        "semi": false
+      }
     ],
-    "quotemark": [true, "single"],
+    "quotemark": [
+      true,
+      "single"
+    ],
     "strict-type-predicates": false,
     "ter-indent": false
   },
   "linterOptions": {
-    "exclude": ["config/**/*.js", "node_modules/**/*.ts", "./**/*.js"]
+    "exclude": [
+      "config/**/*.js",
+      "node_modules/**/*.ts",
+      "./**/*.js"
+    ]
   }
 }
