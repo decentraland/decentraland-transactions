@@ -32,14 +32,20 @@ export type FunctionSignature = string
 
 export type ContractData = {
   abi: object[]
-  address: string
-  name: string
-  version: string
-  chainId: ChainId
+  address?: string
+  name?: string
+  version?: string
+  chainId?: ChainId
 }
 
 export enum ContractName {
-  MANAToken = 'MANAToken'
+  MANAToken = 'MANAToken',
+  ERC721CollectionV2 = 'ERC721CollectionV2',
+  CollectionManager = 'CollectionManager',
+  Committee = 'Committee',
+  Rarities = 'Rarities',
+  Marketplace = 'Marketplace',
+  CollectionStore = 'CollectionStore'
 }
 
 export type MetaTxData = {

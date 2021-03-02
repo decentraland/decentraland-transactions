@@ -1,0 +1,11 @@
+import { ChainId } from '@dcl/schemas'
+import { abis } from '../abis'
+
+export const erc721CollectionV2Contract = {
+  [ChainId.MATIC_MUMBAI]: {
+    version: '2',
+    abi: abis.ERC721CollectionV2,
+    name: 'Decentraland Collection',
+    chainId: ChainId.MATIC_MUMBAI
+  }
+}
