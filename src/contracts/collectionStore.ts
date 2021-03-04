@@ -1,7 +1,7 @@
 import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
 
-export const collectionStoreContract = {
+export const collectionStore = {
   [ChainId.MATIC_MUMBAI]: {
     version: '1',
     abi: abis.CollectionStore,

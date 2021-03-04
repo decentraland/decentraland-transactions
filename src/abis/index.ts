@@ -1,19 +1,23 @@
 import { ContractName } from '../types'
 
-import { MANAToken } from './MANAToken'
-import { ERC721CollectionV2 } from './ERC721CollectionV2'
+import { CollectionFactory } from './CollectionFactory'
 import { CollectionManager } from './CollectionManager'
-import { Committee } from './Committee'
-import { Rarities } from './Rarities'
-import { Marketplace } from './Marketplace'
 import { CollectionStore } from './CollectionStore'
+import { Committee } from './Committee'
+import { ERC721CollectionV2 } from './ERC721CollectionV2'
+import { Forwarder } from './Forwarder'
+import { MANAToken } from './MANAToken'
+import { Marketplace } from './Marketplace'
+import { Rarities } from './Rarities'
 
 export const abis = {
-  [ContractName.MANAToken]: MANAToken,
-  [ContractName.ERC721CollectionV2]: ERC721CollectionV2,
+  [ContractName.CollectionFactory]: CollectionFactory,
   [ContractName.CollectionManager]: CollectionManager,
+  [ContractName.CollectionStore]: CollectionStore,
   [ContractName.Committee]: Committee,
-  [ContractName.Rarities]: Rarities,
+  [ContractName.ERC721CollectionV2]: ERC721CollectionV2,
+  [ContractName.Forwarder]: Forwarder,
+  [ContractName.MANAToken]: MANAToken,
   [ContractName.Marketplace]: Marketplace,
-  [ContractName.CollectionStore]: CollectionStore
+  [ContractName.Rarities]: Rarities
 }

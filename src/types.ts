@@ -39,13 +39,15 @@ export type ContractData = {
 }
 
 export enum ContractName {
-  MANAToken = 'MANAToken',
-  ERC721CollectionV2 = 'ERC721CollectionV2',
+  CollectionFactory = 'CollectionFactory',
   CollectionManager = 'CollectionManager',
+  CollectionStore = 'CollectionStore',
   Committee = 'Committee',
-  Rarities = 'Rarities',
+  ERC721CollectionV2 = 'ERC721CollectionV2',
+  Forwarder = 'Forwarder',
+  MANAToken = 'MANAToken',
   Marketplace = 'Marketplace',
-  CollectionStore = 'CollectionStore'
+  Rarities = 'Rarities'
 }
 
 export type MetaTxData = {
