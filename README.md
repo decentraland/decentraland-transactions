@@ -2,6 +2,10 @@
 
 # Decentraland Transactions
 
+
+[![NPM version](https://badge.fury.io/js/decentraland-transactions.svg)](https://npmjs.org/package/decentraland-transactions@latest)
+[![Install Size](https://packagephobia.now.sh/badge?p=decentraland-transactions@latest)](https://packagephobia.now.sh/result?p=decentraland-transactions@latest)
+
 Send meta transactions
 
 # Table of contents
