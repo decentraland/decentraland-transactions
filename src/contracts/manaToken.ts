@@ -1,7 +1,7 @@
 import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
 
-export const manaContract = {
+export const manaToken = {
   [ChainId.ETHEREUM_GOERLI]: {
     version: '1',
     abi: abis.MANAToken,
