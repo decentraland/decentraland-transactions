@@ -64,6 +64,10 @@ export async function getNonce(
 }
 
 export function getSalt(chainId: number | string): string {
+  if (typeof chainId === 'number') {
+    return `0x${to32Bytes(chainId.toString(16))}`
+  }
+
   return `0x${to32Bytes(chainId)}`
 }
 

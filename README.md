@@ -2,7 +2,6 @@
 
 # Decentraland Transactions
 
-
 [![NPM version](https://badge.fury.io/js/decentraland-transactions.svg)](https://npmjs.org/package/decentraland-transactions@latest)
 [![Install Size](https://packagephobia.now.sh/badge?p=decentraland-transactions@latest)](https://packagephobia.now.sh/result?p=decentraland-transactions@latest)
 
@@ -116,22 +115,6 @@ export interface LegacyProvider {
   send: (method: string, params: any[]) => Promise<any>
 }
 export type Provider = EIPProvider | LegacyProvider
-```
-
-### ChainId
-
-Different L1 and L2 chains
-
-```typescript
-export enum ChainId {
-  ETHEREUM_MAINNET = 1,
-  ETHEREUM_ROPSTEN = 3,
-  ETHEREUM_RINKEBY = 4,
-  ETHEREUM_GOERLI = 5,
-  ETHEREUM_KOVAN = 42,
-  MATIC_MUMBAI = 13881,
-  MATIC_MAINNET = 89
-}
 ```
 
 ### ContractName
