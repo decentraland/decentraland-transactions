@@ -43,6 +43,8 @@ export enum ContractName {
   CollectionManager = 'CollectionManager',
   CollectionStore = 'CollectionStore',
   Committee = 'Committee',
+  ERC20 = 'ERC20',
+  ERC721 = 'ERC721',
   ERC721CollectionV2 = 'ERC721CollectionV2',
   Forwarder = 'Forwarder',
   MANAToken = 'MANAToken',
