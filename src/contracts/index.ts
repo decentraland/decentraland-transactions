@@ -5,6 +5,8 @@ import { collectionFactory } from './collectionFactory'
 import { collectionManager } from './collectionManager'
 import { collectionStore } from './collectionStore'
 import { committee } from './committee'
+import { erc20 } from './erc20'
+import { erc721 } from './erc721'
 import { erc721CollectionV2 } from './erc721CollectionV2'
 import { forwarder } from './forwarder'
 import { manaToken } from './manaToken'
@@ -19,6 +21,8 @@ const contracts: Record<
   [ContractName.CollectionManager]: collectionManager,
   [ContractName.CollectionStore]: collectionStore,
   [ContractName.Committee]: committee,
+  [ContractName.ERC20]: erc20,
+  [ContractName.ERC721]: erc721,
   [ContractName.ERC721CollectionV2]: erc721CollectionV2,
   [ContractName.Forwarder]: forwarder,
   [ContractName.MANAToken]: manaToken,
