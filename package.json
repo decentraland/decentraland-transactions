@@ -16,6 +16,7 @@
     "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "typescript": "^4.1.3",
     "dcl-tslint-config-standard": "^3.0.0",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
@@ -24,6 +25,12 @@
     "ts-node": "^7.0.0",
     "tslint-config-prettier": "^1.10.0",
     "tslint-plugin-prettier": "^1.3.0"
+  },
+  "dependencies": {
+    "@dcl/schemas": "^1.1.0"
+  },
+  "peerDependencies": {
+    "@dcl/schemas": ">=1.1.0"
   },
   "prettier": {
     "printWidth": 80,
@@ -47,9 +54,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/decentraland/decentraland-transactions.git"
-  },
-  "dependencies": {
-    "@dcl/schemas": "^0.2.0",
-    "typescript": "^4.1.3"
   }
 }
