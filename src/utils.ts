@@ -87,6 +87,8 @@ async function send<T>(
 
   if (typeof provider['request'] !== 'undefined') {
     data = await (provider as EIPProvider).request({ method, params })
+  } else if (typeof provider['sendAsync'] !== 'undefined') {
+    data = await provider.sendAsync({ method, params })
   } else if (typeof provider['send'] !== 'undefined') {
     data = await provider.send(method, params)
   }

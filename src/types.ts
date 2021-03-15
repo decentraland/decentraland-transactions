@@ -2,9 +2,11 @@ import { ChainId } from '@dcl/schemas'
 
 export interface EIPProvider {
   request: (reqArgs: { method: string; params?: any[] }) => Promise<any>
+  sendAsync?: (reqArgs: { method: string; params?: any[] }) => Promise<any>
   send?: (method: string, params?: any[]) => Promise<any>
 }
 export interface LegacyProvider {
+  sendAsync: (reqArgs: { method: string; params?: any[] }) => Promise<any>
   send: (method: string, params: any[]) => Promise<any>
 }
 // We need to create this Provider type to accomodate for the different popular provider implementations.
