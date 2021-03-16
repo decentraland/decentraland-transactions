@@ -2,6 +2,7 @@ import { Provider, EIPProvider } from './types'
 
 const GET_NONCE_FUNCTION_SELECTOR = '2d0335ab'
 const EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR = '0c53c51c'
+let rpcId = 0
 
 export async function getAccount(provider: Provider): Promise<string> {
   const accounts: string[] = await send(provider, 'eth_requestAccounts', [])
@@ -84,11 +85,17 @@ async function send<T>(
   params: any[]
 ): Promise<T> {
   let data: T | { result: T } | undefined
+  let args = {
+    jsonrpc: '2.0',
+    id: ++rpcId,
+    method,
+    params
+  }
 
   if (typeof provider['request'] !== 'undefined') {
-    data = await (provider as EIPProvider).request({ method, params })
+    data = await (provider as EIPProvider).request(args)
   } else if (typeof provider['sendAsync'] !== 'undefined') {
-    data = await provider.sendAsync({ method, params })
+    data = await provider.sendAsync(args)
   } else if (typeof provider['send'] !== 'undefined') {
     data = await provider.send(method, params)
   }
