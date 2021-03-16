@@ -1,4 +1,4 @@
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '../schemas'
 import { abis } from '../abis'
 
 export const collectionManager = {

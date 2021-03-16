@@ -1,0 +1,11 @@
+{
+  "name": "decentraland-transactions",
+  "version": "0.0.0-development",
+  "repository": "decentraland/decentraland-transactions",
+  "homepage": "https://github.com/decentraland/decentraland-transactions",
+  "bugs": "https://github.com/decentraland/decentraland-transactions/issues",
+  "license": "LGPL-3.0",
+  "main": "./index.js",
+  "typings": "./decentraland-transactions.d.ts",
+  "decentralandLibrary": {}
+}

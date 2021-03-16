@@ -1,4 +1,4 @@
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '../schemas'
 import { ContractName, ContractData } from '../types'
 
 import { collectionFactory } from './collectionFactory'

@@ -1,4 +1,4 @@
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from './schemas'
 
 export interface EIPProvider {
   request: (reqArgs: { method: string; params?: any[] }) => Promise<any>
