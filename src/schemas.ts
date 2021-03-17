@@ -1,1 +1,1 @@
-export { ChainId } from "@dcl/schemas"
+export { ChainId } from '@dcl/schemas'

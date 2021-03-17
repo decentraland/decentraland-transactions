@@ -16,8 +16,8 @@ const plugins = [
   }),
   typescript({
     verbosity: 2,
-    clean: true,    useTsconfigDeclarationDir: true
-
+    clean: true,
+    useTsconfigDeclarationDir: true
   }),
   resolve({
     browser: true,
