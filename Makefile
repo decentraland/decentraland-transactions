@@ -36,3 +36,11 @@ provision-bundled:
 		@rm -rf ./dist/decl || true
 		@rm -rf ./dist/dist || true
 		@rm -rf ./dist/temp || true
+
+test:
+		node --experimental-modules --es-module-specifier-resolution=node node_modules/.bin/nyc node_modules/mocha/bin/_mocha
+
+test-codecov:
+		${NYC} report --reporter=text-lcov > coverage.lcov
+
+ci: | build test test-codecov
