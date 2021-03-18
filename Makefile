@@ -19,6 +19,7 @@ clean:
 
 build: clean
 		@echo '> Building'
+		@sed -i '13d' ./node_modules/@dcl/schemas/dist/index.js
 		${ROLLUP} -c --environment BUILD:production
 		$(MAKE) provision-bundled
 
