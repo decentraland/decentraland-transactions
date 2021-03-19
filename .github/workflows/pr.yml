@@ -32,7 +32,3 @@ jobs:
         run:  make ci
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
-      - name: report coverage
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
