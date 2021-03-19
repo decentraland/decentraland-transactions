@@ -26,9 +26,6 @@ const plugins = [
   commonjs({
     ignoreGlobal: true,
     include: [/node_modules/],
-    namedExports: {
-      '@dcl/schemas': ['ChainId']
-    }
   }),
 
   PROD && terser({}),

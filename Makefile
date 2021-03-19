@@ -19,7 +19,6 @@ clean:
 
 build: clean
 		@echo '> Building'
-		@sed -i '13d' ./node_modules/@dcl/schemas/dist/index.js
 		${ROLLUP} -c --environment BUILD:production
 		$(MAKE) provision-bundled
 
@@ -43,3 +42,5 @@ test:
 		node --experimental-modules --es-module-specifier-resolution=node node_modules/.bin/nyc node_modules/mocha/bin/_mocha
 
 ci: | build test
+
+.PHONY: build test
