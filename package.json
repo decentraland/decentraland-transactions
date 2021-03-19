@@ -2,7 +2,6 @@
   "name": "decentraland-transactions",
   "version": "0.0.0-development",
   "main": "dist",
-  "type": "module",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "npm run lint && npm run test && tsc --project tsconfig.json",
