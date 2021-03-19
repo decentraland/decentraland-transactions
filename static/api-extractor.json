@@ -308,15 +308,20 @@
      */
     "extractorMessageReporting": {
       "default": {
-        "logLevel": "warning",
+        "logLevel": "none",
         "addToApiReportFile": true
       },
       "ae-extra-release-tag": {
         "logLevel": "none",
         "addToApiReportFile": true
+      },
+      "ae-forgotten-export": {
+        "logLevel": "none",
+        "addToApiReportFile": true
       }
       // . . .
     },
+    
     /**
      * Configures handling of messages reported by the TSDoc parser when analyzing code comments.
      *
