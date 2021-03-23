@@ -13,10 +13,19 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@master
-      - run: npm install
-      - name: npm run build
-        run: npm run build
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: clean
+        run:  make clean
+      - name: install
+        run:  npm ci
+      - name: build & test & publish
+        run:  make ci
       - name: Publish
         uses: menduz/oddish-action@master
+        with:
+          cwd: ./dist
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

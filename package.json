@@ -6,7 +6,7 @@
     "prebuild": "rimraf dist",
     "build": "npm run lint && npm run test && tsc --project tsconfig.json",
     "lint": "tslint --project tsconfig.json -e '*.json' -c tslint.json 'src/**/*.ts{,x}'",
-    "test": "nyc mocha --require ts-node/register --project ./tsconfig.json --watch-files src, test/**/*.ts",
+    "test": "node --experimental-modules --es-module-specifier-resolution=node node_modules/.bin/nyc node_modules/mocha/bin/_mocha",
     "test:watch": "npm test -- --watch",
     "test:report": "npx nyc --silent --no-clean npm run test && npx nyc report --reporter=lcov --reporter=text"
   },
@@ -24,12 +24,19 @@
     "rimraf": "^2.6.3",
     "ts-node": "^7.0.0",
     "tslint-config-prettier": "^1.10.0",
-    "tslint-plugin-prettier": "^1.3.0"
-  },
-  "dependencies": {
+    "tslint-plugin-prettier": "^1.3.0",
     "@dcl/schemas": "^1.1.0",
-    "typescript": "^4.1.3"
+    "@microsoft/api-documenter": "^7.12.7",
+    "@microsoft/api-extractor": "^7.13.2",
+    "@rollup/plugin-json": "^4.1.0",
+    "rollup": "^2.39.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.30.0"
   },
+  "dependencies": {},
   "peerDependencies": {
     "@dcl/schemas": ">=1.1.0"
   },
