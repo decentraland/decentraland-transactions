@@ -45,7 +45,7 @@ describe('#getContract', () => {
       ).to.deep.eq({
         abi,
         address: '0xA1c57f48F0Deb89f569dFbE6E2B7f46D33606fD4',
-        name: '(PoS) Decentraland MANA (MANA)',
+        name: '(PoS) Decentraland MANA',
         version: '1',
         chainId: ChainId.MATIC_MAINNET
       })
