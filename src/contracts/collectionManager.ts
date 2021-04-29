@@ -5,7 +5,7 @@ export const collectionManager = {
   [ChainId.MATIC_MUMBAI]: {
     version: '1',
     abi: abis.CollectionManager,
-    address: '0xE2200eb4B7aC180e29fbaD3dd43346B7Bfa43bfe',
+    address: '0x79DC8d5cc3EcbEF1DB8EFA8989401DbD3bde70dd',
     name: 'Decentraland Collection Manager',
     chainId: ChainId.MATIC_MUMBAI
   }

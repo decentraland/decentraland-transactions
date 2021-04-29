@@ -5,7 +5,7 @@ export const collectionFactory = {
   [ChainId.MATIC_MUMBAI]: {
     version: '2',
     abi: abis.CollectionFactory,
-    address: '0x0657fA4a3B14E568b0D9D49910D2875C5B6620F0',
+    address: '0x2C3212DEae0554E253e91cBa2B36A6ee888483C6',
     name: 'CollectionFactory',
     chainId: ChainId.MATIC_MUMBAI
   }

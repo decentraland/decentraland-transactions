@@ -5,7 +5,7 @@ export const collectionStore = {
   [ChainId.MATIC_MUMBAI]: {
     version: '1',
     abi: abis.CollectionStore,
-    address: '0x56D5cD2A5F299854c2Ab3EE4c3126f285140BB9b',
+    address: '0x934477ec39CE757e95f5C7dD24562c1D5F5d1CC6',
     name: 'Decentraland Collection Store',
     chainId: ChainId.MATIC_MUMBAI
   }

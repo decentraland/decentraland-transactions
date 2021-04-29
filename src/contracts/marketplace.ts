@@ -5,7 +5,7 @@ export const marketplace = {
   [ChainId.MATIC_MUMBAI]: {
     version: '1',
     abi: abis.Marketplace,
-    address: '0xa274eC4366703d31bF58F5053b708335FaAC2b52',
+    address: '0x4D005B77334E36cD53843e9bABDf10340862C7f2',
     name: 'Decentraland Marketplace',
     chainId: ChainId.MATIC_MUMBAI
   },
