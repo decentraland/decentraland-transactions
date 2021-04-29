@@ -171,6 +171,11 @@ export const CollectionFactory = [
         internalType: 'address',
         name: '_address',
         type: 'address'
+      },
+      {
+        internalType: 'bytes',
+        name: '_data',
+        type: 'bytes'
       }
     ],
     name: 'getAddress',

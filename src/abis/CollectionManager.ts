@@ -25,6 +25,16 @@ export const CollectionManager = [
         internalType: 'contract IRarities',
         name: '_rarities',
         type: 'address'
+      },
+      {
+        internalType: 'bytes4[]',
+        name: '_committeeMethods',
+        type: 'bytes4[]'
+      },
+      {
+        internalType: 'bool[]',
+        name: '_committeeValues',
+        type: 'bool[]'
       }
     ],
     stateMutability: 'nonpayable',
@@ -47,6 +57,25 @@ export const CollectionManager = [
       }
     ],
     name: 'AcceptedTokenSet',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'bytes4',
+        name: '_method',
+        type: 'bytes4'
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: '_isAllowed',
+        type: 'bool'
+      }
+    ],
+    name: 'CommitteeMethodSet',
     type: 'event'
   },
   {
@@ -158,6 +187,25 @@ export const CollectionManager = [
         internalType: 'contract IERC20',
         name: '',
         type: 'address'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes4',
+        name: '',
+        type: 'bytes4'
+      }
+    ],
+    name: 'allowedCommitteeMethods',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool'
       }
     ],
     stateMutability: 'view',
@@ -434,6 +482,24 @@ export const CollectionManager = [
       }
     ],
     name: 'setCommittee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes4[]',
+        name: '_methods',
+        type: 'bytes4[]'
+      },
+      {
+        internalType: 'bool[]',
+        name: '_values',
+        type: 'bool[]'
+      }
+    ],
+    name: 'setCommitteeMethods',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function'

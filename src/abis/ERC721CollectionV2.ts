@@ -866,6 +866,13 @@ export const ERC721CollectionV2 = [
     type: 'function'
   },
   {
+    inputs: [],
+    name: 'initImplementation',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
     inputs: [
       {
         internalType: 'string',
