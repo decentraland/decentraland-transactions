@@ -68,21 +68,21 @@ describe('#getContractName', () => {
   })
 
   it('should support addresses from multiple chains', () => {
-    const addressMumbai = '0xa274eC4366703d31bF58F5053b708335FaAC2b52'
+    const addressMumbai = '0x0053e887b0F73e3aED2973968d5e85F33d305cbD'
     const addressMainnet = '0x8e5660b4ab70168b5a6feea0e0315cb49c8cd539'
 
-    expect(getContractName(addressMumbai)).to.eq(ContractName.Marketplace)
+    expect(getContractName(addressMumbai)).to.eq(ContractName.Forwarder)
     expect(getContractName(addressMainnet)).to.eq(ContractName.Marketplace)
   })
 
   it('should support all cases', () => {
-    const lowerCaseAddress = '0xe11663feb948892f2d2d966bfcb40ba2f5c02bb5'
-    const upperCaseAddress = '0XE11663FEB948892F2D2D966BFCB40BA2F5C02BB5'
-    const mixedCaseAddress = '0XE11663feb948892f2d2d966bfcb40BA2F5C02BB5'
+    const lowerCaseAddress = '0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4'
+    const upperCaseAddress = '0XA1C57F48F0DEB89F569DFBE6E2B7F46D33606FD4'
+    const mixedCaseAddress = '0xA1C57f48f0deb89F569DFbe6e2B7f46d33606Fd4'
 
-    expect(getContractName(lowerCaseAddress)).to.eq(ContractName.Forwarder)
-    expect(getContractName(upperCaseAddress)).to.eq(ContractName.Forwarder)
-    expect(getContractName(mixedCaseAddress)).to.eq(ContractName.Forwarder)
+    expect(getContractName(lowerCaseAddress)).to.eq(ContractName.MANAToken)
+    expect(getContractName(upperCaseAddress)).to.eq(ContractName.MANAToken)
+    expect(getContractName(mixedCaseAddress)).to.eq(ContractName.MANAToken)
   })
 
   it('should throw if the address does not correspond to a contract', () => {
