@@ -53,9 +53,9 @@ describe('#getContract', () => {
 
     it('should throw if the chain is not supported', () => {
       expect(() =>
-        getContract(ContractName.MANAToken, ChainId.ETHEREUM_ROPSTEN)
+        getContract(ContractName.Rarities, ChainId.ETHEREUM_RINKEBY)
       ).to.throw(
-        `Could not get a valid contract for ${ContractName.MANAToken} using chain ${ChainId.ETHEREUM_ROPSTEN}`
+        `Could not get a valid contract for ${ContractName.Rarities} using chain ${ChainId.ETHEREUM_RINKEBY}`
       )
     })
   })
