@@ -2,6 +2,13 @@ import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
 
 export const marketplace = {
+  [ChainId.ETHEREUM_ROPSTEN]: {
+    version: '1',
+    abi: abis.Marketplace,
+    address: '0x3d2f10c76b115db93a418ed286ca0c5abfdbf5d0',
+    name: 'Decentraland Marketplace',
+    chainId: ChainId.ETHEREUM_ROPSTEN
+  },
   [ChainId.MATIC_MUMBAI]: {
     version: '1',
     abi: abis.Marketplace,
