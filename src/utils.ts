@@ -5,7 +5,15 @@ const EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR = '0c53c51c'
 let rpcId = 0
 
 export async function getAccount(provider: Provider): Promise<string> {
-  const accounts: string[] = await send(provider, 'eth_requestAccounts', [])
+  let accounts: string[] = []
+  try {
+    // Some accounts do not support the RPC call eth_requestAccounts but use eth_accounts
+    // Both are part of the EIP1193: https://eips.ethereum.org/EIPS/eip-1193
+    accounts = await send(provider, 'eth_requestAccounts', [])
+  } catch (error) {
+    accounts = await send(provider, 'eth_accounts', [])
+  }
+
   if (accounts.length === 0) {
     throw new Error('Could not find a valid connected account')
   }
