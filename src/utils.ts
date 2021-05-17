@@ -112,7 +112,7 @@ async function send<T>(
     return data['result'] || data
   } else {
     throw new Error(
-      'Could not send the transaction. Provider is missing either a send or request method'
+      `Could not send the transaction correcty. Either the provider does not support the method "${method}" or is missing a proper send/request.`
     )
   }
 }

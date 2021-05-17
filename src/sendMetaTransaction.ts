@@ -91,8 +91,8 @@ export async function sendMetaTransaction(
     const { txHash } = (await res.json()) as { txHash: string }
     return txHash
   } catch (error) {
-    console.log(
-      'An error occurred trying to send the meta transaction',
+    console.warn(
+      'An error occurred trying to send the meta transaction. Error:',
       error.message
     )
     throw error
