@@ -46,9 +46,9 @@ export const ERC721CollectionV2 = [
             type: 'string'
           },
           {
-            internalType: 'bytes32',
+            internalType: 'string',
             name: 'contentHash',
-            type: 'bytes32'
+            type: 'string'
           }
         ],
         indexed: false,
@@ -246,9 +246,9 @@ export const ERC721CollectionV2 = [
       },
       {
         indexed: false,
-        internalType: 'bytes32',
+        internalType: 'string',
         name: '_contentHash',
-        type: 'bytes32'
+        type: 'string'
       },
       {
         indexed: false,
@@ -1138,9 +1138,9 @@ export const ERC721CollectionV2 = [
         type: 'string'
       },
       {
-        internalType: 'bytes32',
+        internalType: 'string',
         name: 'contentHash',
-        type: 'bytes32'
+        type: 'string'
       }
     ],
     stateMutability: 'view',
@@ -1232,9 +1232,9 @@ export const ERC721CollectionV2 = [
         type: 'uint256[]'
       },
       {
-        internalType: 'bytes32[]',
+        internalType: 'string[]',
         name: '_contentHashes',
-        type: 'bytes32[]'
+        type: 'string[]'
       },
       {
         internalType: 'string[]',
