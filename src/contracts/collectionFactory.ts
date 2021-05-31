@@ -12,7 +12,7 @@ export const collectionFactory = {
   [ChainId.MATIC_MUMBAI]: {
     version: '2',
     abi: abis.CollectionFactory,
-    address: '0x2C3212DEae0554E253e91cBa2B36A6ee888483C6',
+    address: '0x2A72Ec4241Ac4fBc915ae98aC5a5b01AdE721f4B',
     name: 'CollectionFactory',
     chainId: ChainId.MATIC_MUMBAI
   }

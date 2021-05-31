@@ -1,5 +1,6 @@
 import { ContractName } from '../types'
 
+import { Bid } from './Bid'
 import { CollectionFactory } from './CollectionFactory'
 import { CollectionManager } from './CollectionManager'
 import { CollectionStore } from './CollectionStore'
@@ -13,6 +14,7 @@ import { Marketplace } from './Marketplace'
 import { Rarities } from './Rarities'
 
 export const abis = {
+  [ContractName.Bid]: Bid,
   [ContractName.CollectionFactory]: CollectionFactory,
   [ContractName.CollectionManager]: CollectionManager,
   [ContractName.CollectionStore]: CollectionStore,

@@ -68,10 +68,10 @@ describe('#getContractName', () => {
   })
 
   it('should support addresses from multiple chains', () => {
-    const addressMumbai = '0x0053e887b0F73e3aED2973968d5e85F33d305cbD'
+    const addressMumbai = '0x882Da5967c435eA5cC6b09150d55E8304B838f45'
     const addressMainnet = '0x8e5660b4ab70168b5a6feea0e0315cb49c8cd539'
 
-    expect(getContractName(addressMumbai)).to.eq(ContractName.Forwarder)
+    expect(getContractName(addressMumbai)).to.eq(ContractName.MANAToken)
     expect(getContractName(addressMainnet)).to.eq(ContractName.Marketplace)
   })
 
