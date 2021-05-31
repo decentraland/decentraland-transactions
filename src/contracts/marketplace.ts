@@ -22,5 +22,12 @@ export const marketplace = {
     address: '0x8e5660b4ab70168b5a6feea0e0315cb49c8cd539',
     name: 'Decentraland Marketplace',
     chainId: ChainId.ETHEREUM_MAINNET
+  },
+  [ChainId.MATIC_MAINNET]: {
+    version: '1',
+    abi: abis.Marketplace,
+    address: '0x65376FA5A0de14b28777Eb6fF9B5619aDcABc76b',
+    name: 'Decentraland Marketplace',
+    chainId: ChainId.MATIC_MAINNET
   }
 }

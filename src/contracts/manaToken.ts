@@ -2,6 +2,13 @@ import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
 
 export const manaToken = {
+  [ChainId.ETHEREUM_MAINNET]: {
+    version: '1',
+    abi: abis.MANAToken,
+    address: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942',
+    name: 'MANAToken',
+    chainId: ChainId.ETHEREUM_MAINNET
+  },
   [ChainId.ETHEREUM_ROPSTEN]: {
     version: '1',
     abi: abis.MANAToken,
