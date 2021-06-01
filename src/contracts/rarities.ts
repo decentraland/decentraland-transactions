@@ -8,5 +8,12 @@ export const rarities = {
     address: '0x8eabF06f6cf667915bfF30138be70543bCE2901A',
     name: 'Decentraland Rarities',
     chainId: ChainId.MATIC_MUMBAI
+  },
+  [ChainId.MATIC_MAINNET]: {
+    version: '1',
+    abi: abis.Rarities,
+    address: '0xbdA0Cf0678E6873774b3536dB1bA1d25B09F60ab',
+    name: 'Decentraland Rarities',
+    chainId: ChainId.MATIC_MAINNET
   }
 }
