@@ -3,7 +3,8 @@ import {
   getNonce,
   getSignature,
   getExecuteMetaTransactionData,
-  getSalt
+  getSalt,
+  isContract
 } from './utils'
 import { getConfiguration } from './configuration'
 import {
@@ -44,6 +45,11 @@ export async function sendMetaTransaction(
 
   try {
     const account = await getAccount(provider)
+
+    if (await isContract(provider, account)) {
+      throw new Error('Contract wallets are not supported')
+    }
+
     const nonce = await getNonce(
       metaTransactionProvider,
       account,
