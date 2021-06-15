@@ -16,6 +16,7 @@ import {
   DOMAIN_TYPE,
   META_TRANSACTION_TYPE
 } from './types'
+import { ErrorCode, MetaTransactionError } from './errors'
 
 /**
  * Send a meta transaction using a relay server
@@ -38,8 +39,9 @@ export async function sendMetaTransaction(
   }
 
   if (!contractData.address.trim()) {
-    throw new Error(
-      `The contract address for ${contractData.name} is empty. You're probably trying to get a proxy contract. Try adding an address to the result of getContract`
+    throw new MetaTransactionError(
+      `The contract address for ${contractData.name} is empty. You're probably trying to get a proxy contract. Try adding an address to the result of getContract`,
+      ErrorCode.INVALID_ADDRESS
     )
   }
 
@@ -47,7 +49,10 @@ export async function sendMetaTransaction(
     const account = await getAccount(provider)
 
     if (await isContract(provider, account)) {
-      throw new Error('Contract wallets are not supported')
+      throw new MetaTransactionError(
+        'Contract accounts are not supported',
+        ErrorCode.CONTRACT_ACCOUNT
+      )
     }
 
     const nonce = await getNonce(
@@ -97,11 +102,17 @@ export async function sendMetaTransaction(
     const { txHash } = (await res.json()) as { txHash: string }
     return txHash
   } catch (error) {
-    console.warn(
-      'An error occurred trying to send the meta transaction. Error:',
-      error.message
-    )
-    throw error
+    const isKnown = error instanceof MetaTransactionError
+    console.log(error, error instanceof MetaTransactionError)
+    if (!isKnown) {
+      console.warn(
+        'An error occurred trying to send the meta transaction. Error:',
+        error.message
+      )
+      throw new MetaTransactionError(error.message, ErrorCode.UNKNOWN)
+    } else {
+      throw error
+    }
   }
 }
 
