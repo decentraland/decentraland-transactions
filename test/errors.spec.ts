@@ -64,5 +64,30 @@ describe('#Errors', () => {
         expect(error.code).to.be.equal(ErrorCode.CONTRACT_ACCOUNT)
       })
     })
+    describe('User denied', () => {
+      it('should throw if user rejects transaction', async () => {
+        const fakeProvider = {
+          request: fake.throws(new Error('User denied message signature'))
+        }
+        const fakeMetaTransactionProvider = {
+          request: fake()
+        }
+        const promise = sendMetaTransaction(
+          fakeProvider,
+          fakeMetaTransactionProvider,
+          '0x',
+          {
+            name: 'Fake Contract',
+            address: '0xcafebabe',
+            chainId: ChainId.MATIC_MAINNET,
+            version: '1',
+            abi: []
+          }
+        )
+        const error = await getError<MetaTransactionError>(promise)
+        expect(error).to.be.instanceOf(MetaTransactionError)
+        expect(error.code).to.be.equal(ErrorCode.USER_DENIED)
+      })
+    })
   })
 })

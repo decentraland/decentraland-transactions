@@ -102,6 +102,14 @@ export async function sendMetaTransaction(
     const { txHash } = (await res.json()) as { txHash: string }
     return txHash
   } catch (error) {
+    // User denied error
+    const isUserDenied =
+      error.message.indexOf('User denied message signature') !== -1
+    if (isUserDenied) {
+      throw new MetaTransactionError(error.message, ErrorCode.USER_DENIED)
+    }
+
+    // Other errors
     const isKnown = error instanceof MetaTransactionError
     if (!isKnown) {
       console.warn(

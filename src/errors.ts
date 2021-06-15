@@ -1,6 +1,7 @@
 export enum ErrorCode {
   INVALID_ADDRESS = 'invalid_address',
   CONTRACT_ACCOUNT = 'contract_account',
+  USER_DENIED = 'user_denied',
   UNKNOWN = 'unknown'
 }
 
