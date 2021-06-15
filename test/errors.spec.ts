@@ -39,28 +39,30 @@ describe('#Errors', () => {
       expect(error).to.be.instanceOf(MetaTransactionError)
       expect(error.code).to.be.equal(ErrorCode.INVALID_ADDRESS)
     })
-    it('should throw if bytecode is non-zero', async () => {
-      const fakeProvider = {
-        request: fake.returns('0x1') // returns non-zero bytecode
-      }
-      const fakeMetaTransactionProvider = {
-        request: fake()
-      }
-      const promise = sendMetaTransaction(
-        fakeProvider,
-        fakeMetaTransactionProvider,
-        '0x',
-        {
-          name: 'Fake Contract',
-          address: '0xcafebabe',
-          chainId: ChainId.MATIC_MAINNET,
-          version: '1',
-          abi: []
+    describe('Contract account', () => {
+      it('should throw if bytecode is non-zero', async () => {
+        const fakeProvider = {
+          request: fake.returns('0x1') // returns non-zero bytecode
         }
-      )
-      const error = await getError<MetaTransactionError>(promise)
-      expect(error).to.be.instanceOf(MetaTransactionError)
-      expect(error.code).to.be.equal(ErrorCode.CONTRACT_ACCOUNT)
+        const fakeMetaTransactionProvider = {
+          request: fake()
+        }
+        const promise = sendMetaTransaction(
+          fakeProvider,
+          fakeMetaTransactionProvider,
+          '0x',
+          {
+            name: 'Fake Contract',
+            address: '0xcafebabe',
+            chainId: ChainId.MATIC_MAINNET,
+            version: '1',
+            abi: []
+          }
+        )
+        const error = await getError<MetaTransactionError>(promise)
+        expect(error).to.be.instanceOf(MetaTransactionError)
+        expect(error.code).to.be.equal(ErrorCode.CONTRACT_ACCOUNT)
+      })
     })
   })
 })
