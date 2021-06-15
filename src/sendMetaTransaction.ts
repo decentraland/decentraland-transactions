@@ -103,7 +103,6 @@ export async function sendMetaTransaction(
     return txHash
   } catch (error) {
     const isKnown = error instanceof MetaTransactionError
-    console.log(error, error instanceof MetaTransactionError)
     if (!isKnown) {
       console.warn(
         'An error occurred trying to send the meta transaction. Error:',
