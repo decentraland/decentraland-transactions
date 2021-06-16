@@ -3,7 +3,8 @@ import {
   getNonce,
   getSignature,
   getExecuteMetaTransactionData,
-  getSalt
+  getSalt,
+  isContract
 } from './utils'
 import { getConfiguration } from './configuration'
 import {
@@ -15,6 +16,7 @@ import {
   DOMAIN_TYPE,
   META_TRANSACTION_TYPE
 } from './types'
+import { ErrorCode, MetaTransactionError } from './errors'
 
 /**
  * Send a meta transaction using a relay server
@@ -37,13 +39,22 @@ export async function sendMetaTransaction(
   }
 
   if (!contractData.address.trim()) {
-    throw new Error(
-      `The contract address for ${contractData.name} is empty. You're probably trying to get a proxy contract. Try adding an address to the result of getContract`
+    throw new MetaTransactionError(
+      `The contract address for ${contractData.name} is empty. You're probably trying to get a proxy contract. Try adding an address to the result of getContract`,
+      ErrorCode.INVALID_ADDRESS
     )
   }
 
   try {
     const account = await getAccount(provider)
+
+    if (await isContract(provider, account)) {
+      throw new MetaTransactionError(
+        'Contract accounts are not supported',
+        ErrorCode.CONTRACT_ACCOUNT
+      )
+    }
+
     const nonce = await getNonce(
       metaTransactionProvider,
       account,
@@ -91,11 +102,24 @@ export async function sendMetaTransaction(
     const { txHash } = (await res.json()) as { txHash: string }
     return txHash
   } catch (error) {
-    console.warn(
-      'An error occurred trying to send the meta transaction. Error:',
-      error.message
-    )
-    throw error
+    // User denied error
+    const isUserDenied =
+      error.message.indexOf('User denied message signature') !== -1
+    if (isUserDenied) {
+      throw new MetaTransactionError(error.message, ErrorCode.USER_DENIED)
+    }
+
+    // Other errors
+    const isKnown = error instanceof MetaTransactionError
+    if (!isKnown) {
+      console.warn(
+        'An error occurred trying to send the meta transaction. Error:',
+        error.message
+      )
+      throw new MetaTransactionError(error.message, ErrorCode.UNKNOWN)
+    } else {
+      throw error
+    }
   }
 }
 

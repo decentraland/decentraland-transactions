@@ -2,6 +2,7 @@ import { Provider, EIPProvider } from './types'
 
 const GET_NONCE_FUNCTION_SELECTOR = '2d0335ab'
 const EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR = '0c53c51c'
+const ZERO_ADDRESS = hexZeroPad('0x')
 let rpcId = 0
 
 export async function getAccount(provider: Provider): Promise<string> {
@@ -78,6 +79,31 @@ export function getSalt(chainId: number | string): string {
   }
 
   return `0x${to32Bytes(chainId)}`
+}
+
+export function getCode(provider: Provider, account: string) {
+  return send<string>(provider, 'eth_getCode', [account.toLowerCase()])
+}
+
+export async function isContract(provider: Provider, account: string) {
+  const bytecode = await getCode(provider, account)
+  return !isZeroAddress(bytecode)
+}
+
+export function hexZeroPad(hex: string) {
+  if (!/^0x[0-9a-f]*$/gi.test(hex)) {
+    throw new Error(`Not a valid hex string "${hex}"`)
+  }
+
+  let padded = hex.slice(2)
+  while (padded.length < 40) {
+    padded = '0' + padded
+  }
+  return '0x' + padded
+}
+
+export function isZeroAddress(address: string) {
+  return hexZeroPad(address.toLowerCase()) === ZERO_ADDRESS
 }
 
 function to32Bytes(value: number | string): string {
