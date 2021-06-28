@@ -37,7 +37,21 @@ export function getExecuteMetaTransactionData(
   const signature = fullSignature.replace('0x', '')
   const r = signature.substring(0, 64)
   const s = signature.substring(64, 128)
-  const v = signature.substring(128, 130)
+  let v = signature.substring(128, 130)
+
+  /* 
+    This is a fix for an issue with Ledger, where `v` is returned as 0 or 1 and we expect it to be 27 or 28. 
+    See issue #26 of decentraland-transactions for more details: https://github.com/decentraland/decentraland-transactions/issues/26
+  */
+  let parsedV = parseInt(v, 16)
+  if (parsedV < 27) {
+    // this is because Ledger returns 0 or 1
+    parsedV += 27
+  }
+  if (parsedV !== 27 && parsedV !== 28) {
+    throw Error(`Invalid signature version "${v}" (parsed: ${parsedV})`)
+  }
+  v = parsedV.toString(16)
 
   const method = functionSignature.replace('0x', '')
   const signatureLength = (method.length / 2).toString(16)
