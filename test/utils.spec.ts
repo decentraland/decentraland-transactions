@@ -5,7 +5,8 @@ import {
   getSalt,
   hexZeroPad,
   isContract,
-  isZeroAddress
+  isZeroAddress,
+  normalizeVersion
 } from '../src/utils'
 
 describe('#Utils', () => {
@@ -120,6 +121,24 @@ describe('#Utils', () => {
       expect(isZeroAddress('0x1')).to.be.false
       expect(isZeroAddress('0x0000000000000000000000000000000000000001')).to.be
         .false
+    })
+  })
+
+  describe('normalizeVersion', () => {
+    it('should return "1b" when v="1b"', () => {
+      expect(normalizeVersion('1b')).to.equal('1b')
+    })
+    it('should return "1c" when v="1c"', () => {
+      expect(normalizeVersion('1c')).to.equal('1c')
+    })
+    it('should return "1b" when v="0"', () => {
+      expect(normalizeVersion('0')).to.equal('1b')
+    })
+    it('should return "1c" when v="1"', () => {
+      expect(normalizeVersion('1')).to.equal('1c')
+    })
+    it('should throw when v="2"', () => {
+      expect(() => normalizeVersion('2')).to.throw
     })
   })
 })
