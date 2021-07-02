@@ -57,8 +57,8 @@ export function getExecuteMetaTransactionData(
 }
 
 export function normalizeVersion(version: string) {
-  /* 
-    This is a fix for an issue with Ledger, where `v` is returned as 0 or 1 and we expect it to be 27 or 28. 
+  /*
+    This is a fix for an issue with Ledger, where `v` is returned as 0 or 1 and we expect it to be 27 or 28.
     See issue #26 of decentraland-transactions for more details: https://github.com/decentraland/decentraland-transactions/issues/26
   */
   let parsed = parseInt(version, 16)
@@ -98,7 +98,10 @@ export function getSalt(chainId: number | string): string {
 }
 
 export function getCode(provider: Provider, account: string) {
-  return send<string>(provider, 'eth_getCode', [account.toLowerCase()])
+  return send<string>(provider, 'eth_getCode', [
+    account.toLowerCase(),
+    'latest'
+  ])
 }
 
 export async function isContract(provider: Provider, account: string) {

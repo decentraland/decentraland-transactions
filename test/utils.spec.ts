@@ -62,7 +62,8 @@ describe('#Utils', () => {
       await getCode(fakeProvider, '0xcafebabe')
       expect(fakeProvider.request.args[0][0].method).to.equal('eth_getCode')
       expect(fakeProvider.request.args[0][0].params).to.have.same.members([
-        '0xcafebabe'
+        '0xcafebabe',
+        'latest'
       ])
     })
     it('should lowercase the account address when sending it to the provider', async () => {
@@ -71,7 +72,8 @@ describe('#Utils', () => {
       }
       await getCode(fakeProvider, '0xCAFEBABE')
       expect(fakeProvider.request.args[0][0].params).to.have.same.members([
-        '0xcafebabe'
+        '0xcafebabe',
+        'latest'
       ])
     })
   })
