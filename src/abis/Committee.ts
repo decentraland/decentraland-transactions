@@ -180,9 +180,9 @@ export const Committee = [
         type: 'address'
       },
       {
-        internalType: 'bytes',
+        internalType: 'bytes[]',
         name: '_data',
-        type: 'bytes'
+        type: 'bytes[]'
       }
     ],
     name: 'manageCollection',
