@@ -12,7 +12,7 @@ export const committee = {
   [ChainId.MATIC_MAINNET]: {
     version: '1',
     abi: abis.Committee,
-    address: '0x71d9350Ef44E1e451F00e447C0DfF2d1FB75510a',
+    address: '0xaeec95a8aa671a6d3fec56594827d7804964fa70',
     name: 'Decentraland Collection Committee',
     chainId: ChainId.MATIC_MAINNET
   }
