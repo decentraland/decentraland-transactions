@@ -12,7 +12,7 @@ export const marketplace = {
   [ChainId.ETHEREUM_ROPSTEN]: {
     version: '1',
     abi: abis.Marketplace,
-    address: '0x5424912699dabaa5f2998750c1c66e73d67ad219',
+    address: '0xb9F9e00b4169b831f91124386566D40e60677Ea8',
     name: 'Decentraland Marketplace',
     chainId: ChainId.ETHEREUM_ROPSTEN
   },

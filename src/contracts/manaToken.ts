@@ -12,7 +12,7 @@ export const manaToken = {
   [ChainId.ETHEREUM_ROPSTEN]: {
     version: '1',
     abi: abis.MANAToken,
-    address: '0x2a8fd99c19271f4f04b1b7b9c4f7cf264b626edb',
+    address: '0xedc3b1d1819Ea39e35D425af2d2d6a79Ce4103dD',
     name: 'MANAToken',
     chainId: ChainId.ETHEREUM_ROPSTEN
   },
