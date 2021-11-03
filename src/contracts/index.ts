@@ -13,6 +13,8 @@ import { forwarder } from './forwarder'
 import { manaToken } from './manaToken'
 import { marketplace } from './marketplace'
 import { rarities } from './rarities'
+import { tiers } from './tiers'
+import { thirdPartyRegistry } from './thirdPartyRegistry'
 
 const contracts: Record<
   ContractName,
@@ -29,7 +31,9 @@ const contracts: Record<
   [ContractName.Forwarder]: forwarder,
   [ContractName.MANAToken]: manaToken,
   [ContractName.Marketplace]: marketplace,
-  [ContractName.Rarities]: rarities
+  [ContractName.Rarities]: rarities,
+  [ContractName.ThirdPartyRegistry]: thirdPartyRegistry,
+  [ContractName.Tiers]: tiers
 }
 
 export function getContract(

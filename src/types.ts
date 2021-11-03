@@ -52,7 +52,9 @@ export enum ContractName {
   Forwarder = 'Forwarder',
   MANAToken = 'MANAToken',
   Marketplace = 'Marketplace',
-  Rarities = 'Rarities'
+  Rarities = 'Rarities',
+  ThirdPartyRegistry = 'ThirdPartyRegistry',
+  Tiers = 'Tiers'
 }
 
 export type MetaTxData = {
