@@ -12,6 +12,8 @@ import { Forwarder } from './Forwarder'
 import { MANAToken } from './MANAToken'
 import { Marketplace } from './Marketplace'
 import { Rarities } from './Rarities'
+import { Tiers } from './Tiers'
+import { ThirdPartyRegistry } from './ThirdPartyRegistry'
 
 export const abis = {
   [ContractName.Bid]: Bid,
@@ -25,5 +27,7 @@ export const abis = {
   [ContractName.Forwarder]: Forwarder,
   [ContractName.MANAToken]: MANAToken,
   [ContractName.Marketplace]: Marketplace,
-  [ContractName.Rarities]: Rarities
+  [ContractName.Rarities]: Rarities,
+  [ContractName.ThirdPartyRegistry]: ThirdPartyRegistry,
+  [ContractName.Tiers]: Tiers
 }
