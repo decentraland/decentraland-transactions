@@ -52,6 +52,7 @@ export enum ContractName {
   Forwarder = 'Forwarder',
   MANAToken = 'MANAToken',
   Marketplace = 'Marketplace',
+  MarketplaceV2 = 'MarketplaceV2',
   Rarities = 'Rarities',
   ThirdPartyRegistry = 'ThirdPartyRegistry',
   Tiers = 'Tiers'
