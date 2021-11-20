@@ -11,6 +11,8 @@ import { ERC721CollectionV2 } from './ERC721CollectionV2'
 import { Forwarder } from './Forwarder'
 import { MANAToken } from './MANAToken'
 import { Marketplace } from './Marketplace'
+import { MarketplaceV2 } from './MarketplaceV2'
+
 import { Rarities } from './Rarities'
 import { Tiers } from './Tiers'
 import { ThirdPartyRegistry } from './ThirdPartyRegistry'
@@ -27,6 +29,7 @@ export const abis = {
   [ContractName.Forwarder]: Forwarder,
   [ContractName.MANAToken]: MANAToken,
   [ContractName.Marketplace]: Marketplace,
+  [ContractName.MarketplaceV2]: MarketplaceV2,
   [ContractName.Rarities]: Rarities,
   [ContractName.ThirdPartyRegistry]: ThirdPartyRegistry,
   [ContractName.Tiers]: Tiers

@@ -12,6 +12,7 @@ import { erc721CollectionV2 } from './erc721CollectionV2'
 import { forwarder } from './forwarder'
 import { manaToken } from './manaToken'
 import { marketplace } from './marketplace'
+import { marketplaceV2 } from './marketplaceV2'
 import { rarities } from './rarities'
 import { tiers } from './tiers'
 import { thirdPartyRegistry } from './thirdPartyRegistry'
@@ -31,6 +32,7 @@ const contracts: Record<
   [ContractName.Forwarder]: forwarder,
   [ContractName.MANAToken]: manaToken,
   [ContractName.Marketplace]: marketplace,
+  [ContractName.MarketplaceV2]: marketplaceV2,
   [ContractName.Rarities]: rarities,
   [ContractName.ThirdPartyRegistry]: thirdPartyRegistry,
   [ContractName.Tiers]: tiers
