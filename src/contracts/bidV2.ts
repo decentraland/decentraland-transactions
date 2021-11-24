@@ -1,12 +1,12 @@
 import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
 
-export const marketplaceV2 = {
+export const bidV2 = {
   [ChainId.MATIC_MUMBAI]: {
     version: '2',
-    abi: abis.MarketplaceV2,
-    address: '0x5A467398dfa9d5C663a656423A2D055f538198A4',
-    name: 'Decentraland Marketplace',
+    abi: abis.Bid,
+    address: '0xa8f508624F4eFabD2A3a85099F15B0a3Fa06687a',
+    name: 'Decentraland Bid',
     chainId: ChainId.MATIC_MUMBAI
   }
 }

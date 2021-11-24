@@ -42,6 +42,7 @@ export type ContractData = {
 
 export enum ContractName {
   Bid = 'Bid',
+  BidV2 = 'BidV2',
   CollectionFactory = 'CollectionFactory',
   CollectionManager = 'CollectionManager',
   CollectionStore = 'CollectionStore',

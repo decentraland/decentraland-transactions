@@ -2,6 +2,7 @@ import { ChainId } from '@dcl/schemas'
 import { ContractName, ContractData } from '../types'
 
 import { bid } from './bid'
+import { bidV2 } from './bidV2'
 import { collectionFactory } from './collectionFactory'
 import { collectionManager } from './collectionManager'
 import { collectionStore } from './collectionStore'
@@ -22,6 +23,7 @@ const contracts: Record<
   Partial<Record<ChainId, ContractData>>
 > = {
   [ContractName.Bid]: bid,
+  [ContractName.BidV2]: bidV2,
   [ContractName.CollectionFactory]: collectionFactory,
   [ContractName.CollectionManager]: collectionManager,
   [ContractName.CollectionStore]: collectionStore,
