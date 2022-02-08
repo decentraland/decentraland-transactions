@@ -5,7 +5,7 @@ export const thirdPartyRegistry = {
   [ChainId.MATIC_MUMBAI]: {
     version: '1',
     abi: abis.ThirdPartyRegistry,
-    address: '0xc6349360cf0143bf54fdc376060532c044883b8c',
+    address: '0x83cB8cd93698c0726AF6b5497540C9A1B410fFA2',
     name: 'Decentraland Third Party Registry',
     chainId: ChainId.MATIC_MUMBAI
   }

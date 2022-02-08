@@ -56,7 +56,8 @@ export enum ContractName {
   MarketplaceV2 = 'MarketplaceV2',
   Rarities = 'Rarities',
   ThirdPartyRegistry = 'ThirdPartyRegistry',
-  Tiers = 'Tiers'
+  Tiers = 'Tiers',
+  ChainlinkOracle = 'ChainlinkOracle'
 }
 
 export type MetaTxData = {
