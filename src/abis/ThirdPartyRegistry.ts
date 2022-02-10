@@ -27,9 +27,14 @@ export const ThirdPartyRegistry = [
         type: 'address'
       },
       {
-        internalType: 'contract ITiers',
-        name: '_itemTiers',
+        internalType: 'contract IOracle',
+        name: '_oracle',
         type: 'address'
+      },
+      {
+        internalType: 'uint256',
+        name: '_itemSlotPrice',
+        type: 'uint256'
       }
     ],
     stateMutability: 'nonpayable',
@@ -214,19 +219,50 @@ export const ThirdPartyRegistry = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_oldItemSlotPrice',
+        type: 'uint256'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_newItemSlotPrice',
+        type: 'uint256'
+      }
+    ],
+    name: 'ItemSlotPriceSet',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'string',
+        name: '_thirdPartyId',
+        type: 'string'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_qty',
+        type: 'uint256'
+      },
+      {
         indexed: true,
-        internalType: 'contract ITiers',
-        name: '_oldItemTiers',
+        internalType: 'address',
+        name: '_signer',
         type: 'address'
       },
       {
         indexed: true,
-        internalType: 'contract ITiers',
-        name: '_newItemTiers',
+        internalType: 'address',
+        name: '_sender',
         type: 'address'
       }
     ],
-    name: 'ItemTiersSet',
+    name: 'ItemSlotsConsumed',
     type: 'event'
   },
   {
@@ -290,6 +326,25 @@ export const ThirdPartyRegistry = [
     inputs: [
       {
         indexed: true,
+        internalType: 'contract IOracle',
+        name: '_oldOracle',
+        type: 'address'
+      },
+      {
+        indexed: true,
+        internalType: 'contract IOracle',
+        name: '_newOracle',
+        type: 'address'
+      }
+    ],
+    name: 'OracleSet',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: 'address',
         name: 'previousOwner',
         type: 'address'
@@ -336,6 +391,12 @@ export const ThirdPartyRegistry = [
         internalType: 'address[]',
         name: '_managers',
         type: 'address[]'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_itemSlots',
+        type: 'uint256'
       },
       {
         indexed: false,
@@ -394,7 +455,7 @@ export const ThirdPartyRegistry = [
         type: 'address'
       }
     ],
-    name: 'ThirdPartyItemsBought',
+    name: 'ThirdPartyItemSlotsBought',
     type: 'event'
   },
   {
@@ -433,6 +494,68 @@ export const ThirdPartyRegistry = [
       },
       {
         indexed: false,
+        internalType: 'bytes32',
+        name: '_root',
+        type: 'bytes32'
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: '_isApproved',
+        type: 'bool'
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      }
+    ],
+    name: 'ThirdPartyReviewedWithRoot',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'string',
+        name: '_thirdPartyId',
+        type: 'string'
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: '_rule',
+        type: 'string'
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: '_value',
+        type: 'bool'
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      }
+    ],
+    name: 'ThirdPartyRuleAdded',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'string',
+        name: '_thirdPartyId',
+        type: 'string'
+      },
+      {
+        indexed: false,
         internalType: 'string',
         name: '_metadata',
         type: 'string'
@@ -454,6 +577,12 @@ export const ThirdPartyRegistry = [
         internalType: 'bool[]',
         name: '_managerValues',
         type: 'bool[]'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_itemSlots',
+        type: 'uint256'
       },
       {
         indexed: false,
@@ -536,6 +665,11 @@ export const ThirdPartyRegistry = [
             internalType: 'bool[]',
             name: 'managerValues',
             type: 'bool[]'
+          },
+          {
+            internalType: 'uint256',
+            name: 'slots',
+            type: 'uint256'
           }
         ],
         internalType: 'struct ThirdPartyRegistry.ThirdPartyParam[]',
@@ -557,12 +691,12 @@ export const ThirdPartyRegistry = [
       },
       {
         internalType: 'uint256',
-        name: '_tierIndex',
+        name: '_qty',
         type: 'uint256'
       },
       {
         internalType: 'uint256',
-        name: '_price',
+        name: '_maxPrice',
         type: 'uint256'
       }
     ],
@@ -582,6 +716,51 @@ export const ThirdPartyRegistry = [
       }
     ],
     stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_thirdPartyId',
+        type: 'string'
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'qty',
+            type: 'uint256'
+          },
+          {
+            internalType: 'bytes32',
+            name: 'salt',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'bytes32',
+            name: 'sigR',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'bytes32',
+            name: 'sigS',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'uint8',
+            name: 'sigV',
+            type: 'uint8'
+          }
+        ],
+        internalType: 'struct ThirdPartyRegistry.ConsumeSlotsParam[]',
+        name: '_consumeSlotsParams',
+        type: 'tuple[]'
+      }
+    ],
+    name: 'consumeSlots',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function'
   },
   {
@@ -682,6 +861,30 @@ export const ThirdPartyRegistry = [
     type: 'function'
   },
   {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_thirdPartyId',
+        type: 'string'
+      },
+      {
+        internalType: 'string',
+        name: '_rule',
+        type: 'string'
+      }
+    ],
+    name: 'getRuleValue',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
     inputs: [],
     name: 'initialItemValue',
     outputs: [
@@ -757,12 +960,12 @@ export const ThirdPartyRegistry = [
   },
   {
     inputs: [],
-    name: 'itemTiers',
+    name: 'itemSlotPrice',
     outputs: [
       {
-        internalType: 'contract ITiers',
+        internalType: 'uint256',
         name: '',
-        type: 'address'
+        type: 'uint256'
       }
     ],
     stateMutability: 'view',
@@ -828,6 +1031,19 @@ export const ThirdPartyRegistry = [
         internalType: 'uint256',
         name: '',
         type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'oracle',
+    outputs: [
+      {
+        internalType: 'contract IOracle',
+        name: '',
+        type: 'address'
       }
     ],
     stateMutability: 'view',
@@ -908,6 +1124,56 @@ export const ThirdPartyRegistry = [
   {
     inputs: [
       {
+        internalType: 'string',
+        name: '_thirdPartyId',
+        type: 'string'
+      },
+      {
+        internalType: 'bytes32',
+        name: '_root',
+        type: 'bytes32'
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'qty',
+            type: 'uint256'
+          },
+          {
+            internalType: 'bytes32',
+            name: 'salt',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'bytes32',
+            name: 'sigR',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'bytes32',
+            name: 'sigS',
+            type: 'bytes32'
+          },
+          {
+            internalType: 'uint8',
+            name: 'sigV',
+            type: 'uint8'
+          }
+        ],
+        internalType: 'struct ThirdPartyRegistry.ConsumeSlotsParam[]',
+        name: '_consumeSlotsParams',
+        type: 'tuple[]'
+      }
+    ],
+    name: 'reviewThirdPartyWithRoot',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
         internalType: 'contract IERC20',
         name: '_newAcceptedToken',
         type: 'address'
@@ -973,12 +1239,48 @@ export const ThirdPartyRegistry = [
   {
     inputs: [
       {
-        internalType: 'contract ITiers',
-        name: '_newItemTiers',
+        internalType: 'uint256',
+        name: '_newItemSlotPrice',
+        type: 'uint256'
+      }
+    ],
+    name: 'setItemSlotPrice',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'contract IOracle',
+        name: '_newOracle',
         type: 'address'
       }
     ],
-    name: 'setItemTiers',
+    name: 'setOracle',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_thirdPartyId',
+        type: 'string'
+      },
+      {
+        internalType: 'string[]',
+        name: '_rules',
+        type: 'string[]'
+      },
+      {
+        internalType: 'bool[]',
+        name: '_values',
+        type: 'bool[]'
+      }
+    ],
+    name: 'setRules',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function'
@@ -1007,6 +1309,31 @@ export const ThirdPartyRegistry = [
     name: 'thirdParties',
     outputs: [
       {
+        internalType: 'bool',
+        name: 'isApproved',
+        type: 'bool'
+      },
+      {
+        internalType: 'bytes32',
+        name: 'root',
+        type: 'bytes32'
+      },
+      {
+        internalType: 'uint256',
+        name: 'maxItems',
+        type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: 'consumedSlots',
+        type: 'uint256'
+      },
+      {
+        internalType: 'uint256',
+        name: 'registered',
+        type: 'uint256'
+      },
+      {
         internalType: 'string',
         name: 'metadata',
         type: 'string'
@@ -1015,21 +1342,6 @@ export const ThirdPartyRegistry = [
         internalType: 'string',
         name: 'resolver',
         type: 'string'
-      },
-      {
-        internalType: 'uint256',
-        name: 'maxItems',
-        type: 'uint256'
-      },
-      {
-        internalType: 'bool',
-        name: 'isApproved',
-        type: 'bool'
-      },
-      {
-        internalType: 'uint256',
-        name: 'registered',
-        type: 'uint256'
       }
     ],
     stateMutability: 'view',
@@ -1151,6 +1463,11 @@ export const ThirdPartyRegistry = [
             internalType: 'bool[]',
             name: 'managerValues',
             type: 'bool[]'
+          },
+          {
+            internalType: 'uint256',
+            name: 'slots',
+            type: 'uint256'
           }
         ],
         internalType: 'struct ThirdPartyRegistry.ThirdPartyParam[]',

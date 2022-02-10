@@ -17,6 +17,7 @@ import { marketplaceV2 } from './marketplaceV2'
 import { rarities } from './rarities'
 import { tiers } from './tiers'
 import { thirdPartyRegistry } from './thirdPartyRegistry'
+import { chainlinkOracle } from './chainlinkOracle'
 
 const contracts: Record<
   ContractName,
@@ -37,7 +38,8 @@ const contracts: Record<
   [ContractName.MarketplaceV2]: marketplaceV2,
   [ContractName.Rarities]: rarities,
   [ContractName.ThirdPartyRegistry]: thirdPartyRegistry,
-  [ContractName.Tiers]: tiers
+  [ContractName.Tiers]: tiers,
+  [ContractName.ChainlinkOracle]: chainlinkOracle
 }
 
 export function getContract(
