@@ -124,7 +124,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -167,7 +167,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -215,16 +215,16 @@ export const ThirdPartyRegistry = [
         type: 'address'
       },
       {
-        indexed: true,
-        internalType: 'address',
-        name: '_sender',
-        type: 'address'
-      },
-      {
         indexed: false,
         internalType: 'bytes32',
         name: '_messageHash',
         type: 'bytes32'
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
       }
     ],
     name: 'ItemSlotsConsumed',
@@ -254,7 +254,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -366,7 +366,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -416,7 +416,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -441,7 +441,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -552,7 +552,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
