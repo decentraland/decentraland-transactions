@@ -219,6 +219,12 @@ export const ThirdPartyRegistry = [
         internalType: 'address',
         name: '_sender',
         type: 'address'
+      },
+      {
+        indexed: false,
+        internalType: 'bytes32',
+        name: '_messageHash',
+        type: 'bytes32'
       }
     ],
     name: 'ItemSlotsConsumed',
