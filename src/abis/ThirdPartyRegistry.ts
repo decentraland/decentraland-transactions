@@ -1,46 +1,5 @@
 export const ThirdPartyRegistry = [
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_owner',
-        type: 'address'
-      },
-      {
-        internalType: 'address',
-        name: '_thirdPartyAgregator',
-        type: 'address'
-      },
-      {
-        internalType: 'address',
-        name: '_feesCollector',
-        type: 'address'
-      },
-      {
-        internalType: 'contract ICommittee',
-        name: '_committee',
-        type: 'address'
-      },
-      {
-        internalType: 'contract IERC20',
-        name: '_acceptedToken',
-        type: 'address'
-      },
-      {
-        internalType: 'contract IOracle',
-        name: '_oracle',
-        type: 'address'
-      },
-      {
-        internalType: 'uint256',
-        name: '_itemSlotPrice',
-        type: 'uint256'
-      }
-    ],
-    stateMutability: 'nonpayable',
-    type: 'constructor'
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -165,7 +124,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -208,7 +167,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -256,6 +215,12 @@ export const ThirdPartyRegistry = [
         type: 'address'
       },
       {
+        indexed: false,
+        internalType: 'bytes32',
+        name: '_messageHash',
+        type: 'bytes32'
+      },
+      {
         indexed: true,
         internalType: 'address',
         name: '_sender',
@@ -289,7 +254,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -401,7 +366,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -414,17 +379,17 @@ export const ThirdPartyRegistry = [
       {
         indexed: true,
         internalType: 'address',
-        name: '_oldThirdPartyAgregator',
+        name: '_oldThirdPartyAggregator',
         type: 'address'
       },
       {
         indexed: true,
         internalType: 'address',
-        name: '_newThirdPartyAgregator',
+        name: '_newThirdPartyAggregator',
         type: 'address'
       }
     ],
-    name: 'ThirdPartyAgregatorSet',
+    name: 'ThirdPartyAggregatorSet',
     type: 'event'
   },
   {
@@ -451,7 +416,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -476,7 +441,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -587,7 +552,7 @@ export const ThirdPartyRegistry = [
       {
         indexed: false,
         internalType: 'address',
-        name: '_caller',
+        name: '_sender',
         type: 'address'
       }
     ],
@@ -908,6 +873,49 @@ export const ThirdPartyRegistry = [
       }
     ],
     stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_owner',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_thirdPartyAggregator',
+        type: 'address'
+      },
+      {
+        internalType: 'address',
+        name: '_feesCollector',
+        type: 'address'
+      },
+      {
+        internalType: 'contract ICommittee',
+        name: '_committee',
+        type: 'address'
+      },
+      {
+        internalType: 'contract IERC20',
+        name: '_acceptedToken',
+        type: 'address'
+      },
+      {
+        internalType: 'contract IOracle',
+        name: '_oracle',
+        type: 'address'
+      },
+      {
+        internalType: 'uint256',
+        name: '_itemSlotPrice',
+        type: 'uint256'
+      }
+    ],
+    name: 'initialize',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function'
   },
   {
@@ -1289,11 +1297,11 @@ export const ThirdPartyRegistry = [
     inputs: [
       {
         internalType: 'address',
-        name: '_newThirdPartyAgregator',
+        name: '_newThirdPartyAggregator',
         type: 'address'
       }
     ],
-    name: 'setThirdPartyAgregator',
+    name: 'setThirdPartyAggregator',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function'
@@ -1362,7 +1370,7 @@ export const ThirdPartyRegistry = [
   },
   {
     inputs: [],
-    name: 'thirdPartyAgregator',
+    name: 'thirdPartyAggregator',
     outputs: [
       {
         internalType: 'address',
