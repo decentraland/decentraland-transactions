@@ -13,10 +13,10 @@ import { Forwarder } from './Forwarder'
 import { MANAToken } from './MANAToken'
 import { Marketplace } from './Marketplace'
 import { MarketplaceV2 } from './MarketplaceV2'
+
 import { Rarities } from './Rarities'
 import { Tiers } from './Tiers'
 import { ThirdPartyRegistry } from './ThirdPartyRegistry'
-import { ThirdPartyRegistryV2 } from './ThirdPartyRegistryV2'
 import { ChainlinkOracle } from './ChainlinkOracle'
 
 export const abis = {
@@ -35,7 +35,6 @@ export const abis = {
   [ContractName.MarketplaceV2]: MarketplaceV2,
   [ContractName.Rarities]: Rarities,
   [ContractName.ThirdPartyRegistry]: ThirdPartyRegistry,
-  [ContractName.ThirdPartyRegistryV2]: ThirdPartyRegistryV2,
   [ContractName.Tiers]: Tiers,
   [ContractName.ChainlinkOracle]: ChainlinkOracle
 }
