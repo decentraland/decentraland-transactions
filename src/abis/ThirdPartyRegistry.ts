@@ -117,43 +117,6 @@ export const ThirdPartyRegistry = [
       },
       {
         indexed: false,
-        internalType: 'bool',
-        name: '_value',
-        type: 'bool'
-      },
-      {
-        indexed: false,
-        internalType: 'address',
-        name: '_sender',
-        type: 'address'
-      }
-    ],
-    name: 'ItemAdded',
-    type: 'event'
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'string',
-        name: '_thirdPartyId',
-        type: 'string'
-      },
-      {
-        indexed: false,
-        internalType: 'string',
-        name: '_itemId',
-        type: 'string'
-      },
-      {
-        indexed: false,
-        internalType: 'string',
-        name: '_metadata',
-        type: 'string'
-      },
-      {
-        indexed: false,
         internalType: 'string',
         name: '_contentHash',
         type: 'string'
@@ -228,37 +191,6 @@ export const ThirdPartyRegistry = [
       }
     ],
     name: 'ItemSlotsConsumed',
-    type: 'event'
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'string',
-        name: '_thirdPartyId',
-        type: 'string'
-      },
-      {
-        indexed: false,
-        internalType: 'string',
-        name: '_itemId',
-        type: 'string'
-      },
-      {
-        indexed: false,
-        internalType: 'string',
-        name: '_metadata',
-        type: 'string'
-      },
-      {
-        indexed: false,
-        internalType: 'address',
-        name: '_sender',
-        type: 'address'
-      }
-    ],
-    name: 'ItemUpdated',
     type: 'event'
   },
   {
@@ -575,36 +507,6 @@ export const ThirdPartyRegistry = [
   {
     inputs: [
       {
-        internalType: 'string',
-        name: '_thirdPartyId',
-        type: 'string'
-      },
-      {
-        components: [
-          {
-            internalType: 'string',
-            name: 'id',
-            type: 'string'
-          },
-          {
-            internalType: 'string',
-            name: 'metadata',
-            type: 'string'
-          }
-        ],
-        internalType: 'struct ThirdPartyRegistry.ItemParam[]',
-        name: '_items',
-        type: 'tuple[]'
-      }
-    ],
-    name: 'addItems',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function'
-  },
-  {
-    inputs: [
-      {
         components: [
           {
             internalType: 'string',
@@ -637,7 +539,7 @@ export const ThirdPartyRegistry = [
             type: 'uint256'
           }
         ],
-        internalType: 'struct ThirdPartyRegistry.ThirdPartyParam[]',
+        internalType: 'struct ThirdPartyRegistryV2.ThirdPartyParam[]',
         name: '_thirdParties',
         type: 'tuple[]'
       }
@@ -718,7 +620,7 @@ export const ThirdPartyRegistry = [
             type: 'uint8'
           }
         ],
-        internalType: 'struct ThirdPartyRegistry.ConsumeSlotsParam[]',
+        internalType: 'struct ThirdPartyRegistryV2.ConsumeSlotsParam[]',
         name: '_consumeSlotsParams',
         type: 'tuple[]'
       }
@@ -1017,7 +919,7 @@ export const ThirdPartyRegistry = [
             type: 'uint256'
           }
         ],
-        internalType: 'struct ThirdPartyRegistry.Item',
+        internalType: 'struct ThirdPartyRegistryV2.Item',
         name: '',
         type: 'tuple'
       }
@@ -1114,12 +1016,12 @@ export const ThirdPartyRegistry = [
                 type: 'bool'
               }
             ],
-            internalType: 'struct ThirdPartyRegistry.ItemReviewParam[]',
+            internalType: 'struct ThirdPartyRegistryV2.ItemReviewParam[]',
             name: 'items',
             type: 'tuple[]'
           }
         ],
-        internalType: 'struct ThirdPartyRegistry.ThirdPartyReviewParam[]',
+        internalType: 'struct ThirdPartyRegistryV2.ThirdPartyReviewParam[]',
         name: '_thirdParties',
         type: 'tuple[]'
       }
@@ -1169,7 +1071,7 @@ export const ThirdPartyRegistry = [
             type: 'uint8'
           }
         ],
-        internalType: 'struct ThirdPartyRegistry.ConsumeSlotsParam[]',
+        internalType: 'struct ThirdPartyRegistryV2.ConsumeSlotsParam[]',
         name: '_consumeSlotsParams',
         type: 'tuple[]'
       }
@@ -1416,36 +1318,6 @@ export const ThirdPartyRegistry = [
   {
     inputs: [
       {
-        internalType: 'string',
-        name: '_thirdPartyId',
-        type: 'string'
-      },
-      {
-        components: [
-          {
-            internalType: 'string',
-            name: 'id',
-            type: 'string'
-          },
-          {
-            internalType: 'string',
-            name: 'metadata',
-            type: 'string'
-          }
-        ],
-        internalType: 'struct ThirdPartyRegistry.ItemParam[]',
-        name: '_items',
-        type: 'tuple[]'
-      }
-    ],
-    name: 'updateItems',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function'
-  },
-  {
-    inputs: [
-      {
         components: [
           {
             internalType: 'string',
@@ -1478,7 +1350,7 @@ export const ThirdPartyRegistry = [
             type: 'uint256'
           }
         ],
-        internalType: 'struct ThirdPartyRegistry.ThirdPartyParam[]',
+        internalType: 'struct ThirdPartyRegistryV2.ThirdPartyParam[]',
         name: '_thirdParties',
         type: 'tuple[]'
       }
