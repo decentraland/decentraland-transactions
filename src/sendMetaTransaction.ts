@@ -1,3 +1,4 @@
+import fetch from 'cross-fetch'
 import {
   getAccount,
   getNonce,
@@ -81,6 +82,7 @@ export async function sendMetaTransaction(
       functionSignature
     )
 
+    console.log('---->', `${configuration.serverURL}/transactions`)
     const res: Response = await fetch(
       `${configuration.serverURL}/transactions`,
       {
@@ -95,11 +97,16 @@ export async function sendMetaTransaction(
       }
     )
 
-    if (!res.ok) {
-      throw new Error(res.statusText)
+    const { ok, txHash, message } = (await res.json()) as {
+      ok: boolean
+      txHash: string
+      message?: string
     }
 
-    const { txHash } = (await res.json()) as { txHash: string }
+    if (!res.ok || !ok) {
+      throw new Error(`HTTP Error. Status: ${res.statusText}. Body: ${message}`)
+    }
+
     return txHash
   } catch (error) {
     // User denied error
@@ -115,6 +122,7 @@ export async function sendMetaTransaction(
       error.message.indexOf(
         "The transaction data contains a sale price that's lower than the allowed minimum"
       ) !== -1
+
     if (isSalePriceTooLowError) {
       throw new MetaTransactionError(
         error.message,
