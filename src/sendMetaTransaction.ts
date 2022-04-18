@@ -109,6 +109,19 @@ export async function sendMetaTransaction(
       throw new MetaTransactionError(error.message, ErrorCode.USER_DENIED)
     }
 
+    // Check for a minimum sale price error.
+    // This is not ideal and depends on the transactions-server's implementation of InvalidSalePriceError's message
+    const isSalePriceTooLowError =
+      error.message.indexOf(
+        "The transaction data contains a sale price that's lower than the allowed minimum"
+      ) !== -1
+    if (isSalePriceTooLowError) {
+      throw new MetaTransactionError(
+        error.message,
+        ErrorCode.SALE_PRICE_TOO_LOW
+      )
+    }
+
     // Other errors
     const isKnown = error instanceof MetaTransactionError
     if (!isKnown) {
