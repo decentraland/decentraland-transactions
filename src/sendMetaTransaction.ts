@@ -104,11 +104,13 @@ export async function sendMetaTransaction(
     }
 
     if (!res.ok || !ok) {
-      throw new Error(`HTTP Error. Status: ${res.statusText}. Body: ${message}`)
+      throw new Error(`HTTP Error. Status: ${res.status}. Body: ${message}`)
     }
 
     return txHash
-  } catch (error) {
+  } catch (err) {
+    const error = err as Error
+
     // User denied error
     const isUserDenied =
       error.message.indexOf('User denied message signature') !== -1
