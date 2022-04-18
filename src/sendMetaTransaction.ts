@@ -82,7 +82,6 @@ export async function sendMetaTransaction(
       functionSignature
     )
 
-    console.log('---->', `${configuration.serverURL}/transactions`)
     const res: Response = await fetch(
       `${configuration.serverURL}/transactions`,
       {
