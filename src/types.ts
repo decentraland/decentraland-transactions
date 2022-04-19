@@ -55,6 +55,7 @@ export enum ContractName {
   Marketplace = 'Marketplace',
   MarketplaceV2 = 'MarketplaceV2',
   Rarities = 'Rarities',
+  RaritiesWithOracle = 'RaritiesWithOracle',
   ThirdPartyRegistry = 'ThirdPartyRegistry',
   Tiers = 'Tiers',
   ChainlinkOracle = 'ChainlinkOracle'
