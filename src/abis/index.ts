@@ -18,6 +18,7 @@ import { Rarities } from './Rarities'
 import { Tiers } from './Tiers'
 import { ThirdPartyRegistry } from './ThirdPartyRegistry'
 import { ChainlinkOracle } from './ChainlinkOracle'
+import { RaritiesWithOracle } from './RaritiesWithOracle'
 
 export const abis = {
   [ContractName.Bid]: Bid,
@@ -34,6 +35,7 @@ export const abis = {
   [ContractName.Marketplace]: Marketplace,
   [ContractName.MarketplaceV2]: MarketplaceV2,
   [ContractName.Rarities]: Rarities,
+  [ContractName.RaritiesWithOracle]: RaritiesWithOracle,
   [ContractName.ThirdPartyRegistry]: ThirdPartyRegistry,
   [ContractName.Tiers]: Tiers,
   [ContractName.ChainlinkOracle]: ChainlinkOracle
