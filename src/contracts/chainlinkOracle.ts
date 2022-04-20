@@ -7,7 +7,7 @@ export const chainlinkOracle = {
   [ChainId.MATIC_MUMBAI]: {
     version: '1',
     abi: abis.ChainlinkOracle,
-    address: '0x508d4AC10F057beACb7Cef6f112e79075045C3C9',
+    address: '0x3195e88aE10704b359764CB38e429D24f1c2f781',
     name,
     chainId: ChainId.MATIC_MUMBAI
   },
