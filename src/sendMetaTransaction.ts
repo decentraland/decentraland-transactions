@@ -1,3 +1,4 @@
+import fetch from 'cross-fetch'
 import {
   getAccount,
   getNonce,
@@ -95,18 +96,39 @@ export async function sendMetaTransaction(
       }
     )
 
-    if (!res.ok) {
-      throw new Error(res.statusText)
+    const { ok, txHash, message } = (await res.json()) as {
+      ok: boolean
+      txHash: string
+      message?: string
     }
 
-    const { txHash } = (await res.json()) as { txHash: string }
+    if (!res.ok || !ok) {
+      throw new Error(`HTTP Error. Status: ${res.status}. Body: ${message}`)
+    }
+
     return txHash
-  } catch (error) {
+  } catch (err) {
+    const error = err as Error
+
     // User denied error
     const isUserDenied =
       error.message.indexOf('User denied message signature') !== -1
     if (isUserDenied) {
       throw new MetaTransactionError(error.message, ErrorCode.USER_DENIED)
+    }
+
+    // Check for a minimum sale price error.
+    // This is not ideal and depends on the transactions-server's implementation of InvalidSalePriceError's message
+    const isSalePriceTooLowError =
+      error.message.indexOf(
+        "The transaction data contains a sale price that's lower than the allowed minimum"
+      ) !== -1
+
+    if (isSalePriceTooLowError) {
+      throw new MetaTransactionError(
+        error.message,
+        ErrorCode.SALE_PRICE_TOO_LOW
+      )
     }
 
     // Other errors
