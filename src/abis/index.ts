@@ -19,11 +19,13 @@ import { Tiers } from './Tiers'
 import { ThirdPartyRegistry } from './ThirdPartyRegistry'
 import { ChainlinkOracle } from './ChainlinkOracle'
 import { RaritiesWithOracle } from './RaritiesWithOracle'
+import { CollectionFactoryV3 } from './CollectionFactoryV3'
 
 export const abis = {
   [ContractName.Bid]: Bid,
   [ContractName.BidV2]: BidV2,
   [ContractName.CollectionFactory]: CollectionFactory,
+  [ContractName.CollectionFactoryV3]: CollectionFactoryV3,
   [ContractName.CollectionManager]: CollectionManager,
   [ContractName.CollectionStore]: CollectionStore,
   [ContractName.Committee]: Committee,

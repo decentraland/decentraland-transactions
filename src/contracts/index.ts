@@ -4,6 +4,7 @@ import { ContractName, ContractData } from '../types'
 import { bid } from './bid'
 import { bidV2 } from './bidV2'
 import { collectionFactory } from './collectionFactory'
+import { collectionFactoryV3 } from './collectionFactoryV3'
 import { collectionManager } from './collectionManager'
 import { collectionStore } from './collectionStore'
 import { committee } from './committee'
@@ -27,6 +28,7 @@ const contracts: Record<
   [ContractName.Bid]: bid,
   [ContractName.BidV2]: bidV2,
   [ContractName.CollectionFactory]: collectionFactory,
+  [ContractName.CollectionFactoryV3]: collectionFactoryV3,
   [ContractName.CollectionManager]: collectionManager,
   [ContractName.CollectionStore]: collectionStore,
   [ContractName.Committee]: committee,
