@@ -44,6 +44,7 @@ export enum ContractName {
   Bid = 'Bid',
   BidV2 = 'BidV2',
   CollectionFactory = 'CollectionFactory',
+  CollectionFactoryV3 = 'CollectionFactoryV3',
   CollectionManager = 'CollectionManager',
   CollectionStore = 'CollectionStore',
   Committee = 'Committee',
