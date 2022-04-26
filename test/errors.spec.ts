@@ -93,23 +93,25 @@ describe('#Errors', () => {
       })
     })
 
-    describe('Sale price too low', () => {
+    describe('Fetch error code', () => {
+      let fullFakeProvider: { request: ({ method }: { method: string }) => any }
+
       beforeEach(() => {
         ;(global as any).fetch = async (url: string) => {
           if (url === getConfiguration().serverURL + '/transactions') {
             return {
+              ok: true,
               json: async () => ({
                 ok: false,
                 message:
-                  "The transaction data contains a sale price that's lower than the allowed minimum. Sale price: 0.1 - Minimum price: 1"
+                  "The transaction data contains a sale price that's lower than the allowed minimum. Sale price: 0.1 - Minimum price: 1",
+                code: ErrorCode.SALE_PRICE_TOO_LOW
               })
             }
           }
         }
-      })
 
-      it('should throw if the server throws a sale price error', async () => {
-        const fullFakeProvider = {
+        fullFakeProvider = {
           request: ({ method }) => {
             switch (method) {
               case 'eth_requestAccounts':
@@ -125,7 +127,9 @@ describe('#Errors', () => {
             }
           }
         }
+      })
 
+      it('should throw with the received error code if the server errors out', async () => {
         const promise = sendMetaTransaction(
           fullFakeProvider,
           fullFakeProvider,
