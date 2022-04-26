@@ -3,7 +3,6 @@ import { expect } from 'chai'
 import { fake } from 'sinon'
 import { ErrorCode, MetaTransactionError, sendMetaTransaction } from '../src'
 import { getConfiguration } from '../src/configuration'
-const nock = require('nock')
 
 async function getError<T extends Error>(
   promise: Promise<any>
@@ -96,13 +95,17 @@ describe('#Errors', () => {
 
     describe('Sale price too low', () => {
       beforeEach(() => {
-        nock(getConfiguration().serverURL)
-          .post('/transactions')
-          .reply(401, {
-            ok: false,
-            message:
-              "The transaction data contains a sale price that's lower than the allowed minimum. Sale price: 0.1 - Minimum price: 1"
-          })
+        ;(global as any).fetch = async (url: string) => {
+          if (url === getConfiguration().serverURL + '/transactions') {
+            return {
+              json: async () => ({
+                ok: false,
+                message:
+                  "The transaction data contains a sale price that's lower than the allowed minimum. Sale price: 0.1 - Minimum price: 1"
+              })
+            }
+          }
+        }
       })
 
       it('should throw if the server throws a sale price error', async () => {
