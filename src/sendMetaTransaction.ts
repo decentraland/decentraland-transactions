@@ -81,7 +81,7 @@ export async function sendMetaTransaction(
       functionSignature
     )
 
-    const res: Response = await fetch(
+    const response: Response = await fetch(
       `${configuration.serverURL}/transactions`,
       {
         headers: { 'Content-Type': 'application/json' },
@@ -95,19 +95,25 @@ export async function sendMetaTransaction(
       }
     )
 
-    const { ok, txHash, message } = (await res.json()) as {
-      ok: boolean
-      txHash: string
-      message?: string
+    const body:
+      | { ok: false; message: string; code: ErrorCode }
+      | { ok: true; txHash: string } = await response.json()
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error. Status: ${response.status}.`)
     }
 
-    if (!res.ok || !ok) {
-      throw new Error(`HTTP Error. Status: ${res.status}. Body: ${message}`)
+    if (body.ok === false) {
+      throw new MetaTransactionError(body.message, body.code)
     }
 
-    return txHash
+    return body.txHash
   } catch (err) {
     const error = err as Error
+
+    if (error instanceof MetaTransactionError) {
+      throw error
+    }
 
     // User denied error
     const isUserDenied =
@@ -116,31 +122,12 @@ export async function sendMetaTransaction(
       throw new MetaTransactionError(error.message, ErrorCode.USER_DENIED)
     }
 
-    // Check for a minimum sale price error.
-    // This is not ideal and depends on the transactions-server's implementation of InvalidSalePriceError's message
-    const isSalePriceTooLowError =
-      error.message.indexOf(
-        "The transaction data contains a sale price that's lower than the allowed minimum"
-      ) !== -1
-
-    if (isSalePriceTooLowError) {
-      throw new MetaTransactionError(
-        error.message,
-        ErrorCode.SALE_PRICE_TOO_LOW
-      )
-    }
-
     // Other errors
-    const isKnown = error instanceof MetaTransactionError
-    if (!isKnown) {
-      console.warn(
-        'An error occurred trying to send the meta transaction. Error:',
-        error.message
-      )
-      throw new MetaTransactionError(error.message, ErrorCode.UNKNOWN)
-    } else {
-      throw error
-    }
+    console.warn(
+      'An error occurred trying to send the meta transaction. Error:',
+      error.message
+    )
+    throw new MetaTransactionError(error.message, ErrorCode.UNKNOWN)
   }
 }
 
