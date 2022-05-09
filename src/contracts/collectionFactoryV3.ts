@@ -8,5 +8,12 @@ export const collectionFactoryV3 = {
     address: '0xDDb3781Fff645325C8896AA1F067bAa381607ecc',
     name: 'CollectionFactory',
     chainId: ChainId.MATIC_MUMBAI
+  },
+  [ChainId.MATIC_MAINNET]: {
+    version: '3',
+    abi: abis.CollectionFactoryV3,
+    address: '0x3195e88aE10704b359764CB38e429D24f1c2f781',
+    name: 'CollectionFactory',
+    chainId: ChainId.MATIC_MAINNET
   }
 }
