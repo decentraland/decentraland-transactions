@@ -59,7 +59,8 @@ export enum ContractName {
   RaritiesWithOracle = 'RaritiesWithOracle',
   ThirdPartyRegistry = 'ThirdPartyRegistry',
   Tiers = 'Tiers',
-  ChainlinkOracle = 'ChainlinkOracle'
+  ChainlinkOracle = 'ChainlinkOracle',
+  Rentals = 'Rentals'
 }
 
 export type MetaTxData = {
