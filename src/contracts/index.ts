@@ -20,6 +20,7 @@ import { tiers } from './tiers'
 import { thirdPartyRegistry } from './thirdPartyRegistry'
 import { chainlinkOracle } from './chainlinkOracle'
 import { raritiesWithOracle } from './raritiesWithOracle'
+import { rentals } from './rentals'
 
 const contracts: Record<
   ContractName,
@@ -43,7 +44,8 @@ const contracts: Record<
   [ContractName.RaritiesWithOracle]: raritiesWithOracle,
   [ContractName.ThirdPartyRegistry]: thirdPartyRegistry,
   [ContractName.Tiers]: tiers,
-  [ContractName.ChainlinkOracle]: chainlinkOracle
+  [ContractName.ChainlinkOracle]: chainlinkOracle,
+  [ContractName.Rentals]: rentals
 }
 
 export function getContract(
