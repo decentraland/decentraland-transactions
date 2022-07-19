@@ -5,7 +5,7 @@ export const rentals = {
   [ChainId.ETHEREUM_GOERLI]: {
     version: '1',
     abi: abis.Rentals,
-    address: '0xBB2A03bf5f525734Cb0536bE4bE61BA788d7Ee01',
+    address: '0xbb2a03bf5f525734cb0536be4be61ba788d7ee01',
     name: 'Rentals',
     chainId: ChainId.ETHEREUM_GOERLI
   }

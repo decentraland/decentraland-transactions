@@ -9,6 +9,13 @@ export const marketplace = {
     name: 'Decentraland Marketplace',
     chainId: ChainId.MATIC_MUMBAI
   },
+  [ChainId.MATIC_MAINNET]: {
+    version: '1',
+    abi: abis.Marketplace,
+    address: '0x02080031b45a3c67d338dd4a2cc309d28756a160',
+    name: 'Decentraland Marketplace',
+    chainId: ChainId.MATIC_MAINNET
+  },
   [ChainId.ETHEREUM_ROPSTEN]: {
     version: '1',
     abi: abis.Marketplace,
@@ -16,18 +23,18 @@ export const marketplace = {
     name: 'Decentraland Marketplace',
     chainId: ChainId.ETHEREUM_ROPSTEN
   },
+  [ChainId.ETHEREUM_GOERLI]: {
+    version: '1',
+    abi: abis.Marketplace,
+    address: '0x5d01fbd3e22892be40f69bdae7ad921c8cda2085',
+    name: 'Decentraland Marketplace',
+    chainId: ChainId.ETHEREUM_GOERLI
+  },
   [ChainId.ETHEREUM_MAINNET]: {
     version: '1',
     abi: abis.Marketplace,
     address: '0x8e5660b4ab70168b5a6feea0e0315cb49c8cd539',
     name: 'Decentraland Marketplace',
     chainId: ChainId.ETHEREUM_MAINNET
-  },
-  [ChainId.MATIC_MAINNET]: {
-    version: '1',
-    abi: abis.Marketplace,
-    address: '0x02080031b45A3c67d338Dd4A2CC309D28756A160',
-    name: 'Decentraland Marketplace',
-    chainId: ChainId.MATIC_MAINNET
   }
 }
