@@ -19,6 +19,7 @@ clean:
 
 build: clean
 		@echo '> Building'
+		${TSC} --project . --declarationDir ./dist
 		${ROLLUP} -c --environment BUILD:production
 		$(MAKE) provision-bundled
 
