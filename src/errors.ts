@@ -12,6 +12,7 @@ export enum ErrorCode {
   SALE_PRICE_TOO_LOW = 'sale_price_too_low',
   QUOTA_REACHED = 'quota_reached',
   CONTRACT_ACCOUNT = 'contract_account',
+  HIGH_CONGESTION = 'high_congestion',
   USER_DENIED = 'user_denied'
 }
 
