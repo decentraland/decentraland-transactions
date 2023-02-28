@@ -99,12 +99,12 @@ export async function sendMetaTransaction(
       | { ok: false; message: string; code: ErrorCode }
       | { ok: true; txHash: string } = await response.json()
 
-    if (!response.ok) {
-      throw new Error(`HTTP Error. Status: ${response.status}.`)
-    }
-
     if (body.ok === false) {
-      throw new MetaTransactionError(body.message, body.code)
+      if (body.message && body.code) {
+        throw new MetaTransactionError(body.message, body.code)
+      }
+
+      throw new Error(`HTTP Error. Status: ${response.status}.`)
     }
 
     return body.txHash
