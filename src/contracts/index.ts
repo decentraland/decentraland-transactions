@@ -21,6 +21,9 @@ import { thirdPartyRegistry } from './thirdPartyRegistry'
 import { chainlinkOracle } from './chainlinkOracle'
 import { raritiesWithOracle } from './raritiesWithOracle'
 import { rentals } from './rentals'
+import { dclRegistrar } from './dclRegistrar'
+import { dclController } from './dclController'
+import { dclControllerV2 } from './dclControllerV2'
 
 const contracts: Record<
   ContractName,
@@ -45,7 +48,10 @@ const contracts: Record<
   [ContractName.ThirdPartyRegistry]: thirdPartyRegistry,
   [ContractName.Tiers]: tiers,
   [ContractName.ChainlinkOracle]: chainlinkOracle,
-  [ContractName.Rentals]: rentals
+  [ContractName.Rentals]: rentals,
+  [ContractName.DCLRegistrar]: dclRegistrar,
+  [ContractName.DCLController]: dclController,
+  [ContractName.DCLControllerV2]: dclControllerV2
 }
 
 export function getContract(
