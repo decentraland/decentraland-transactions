@@ -13,7 +13,6 @@ import { Forwarder } from './Forwarder'
 import { MANAToken } from './MANAToken'
 import { Marketplace } from './Marketplace'
 import { MarketplaceV2 } from './MarketplaceV2'
-
 import { Rarities } from './Rarities'
 import { Tiers } from './Tiers'
 import { ThirdPartyRegistry } from './ThirdPartyRegistry'
@@ -21,6 +20,9 @@ import { ChainlinkOracle } from './ChainlinkOracle'
 import { RaritiesWithOracle } from './RaritiesWithOracle'
 import { CollectionFactoryV3 } from './CollectionFactoryV3'
 import { Rentals } from './Rentals'
+import { DCLRegistrar } from './DCLRegistrar'
+import { DCLController } from './DCLController'
+import { DCLControllerV2 } from './DCLControllerV2'
 
 export const abis = {
   [ContractName.Bid]: Bid,
@@ -42,5 +44,8 @@ export const abis = {
   [ContractName.ThirdPartyRegistry]: ThirdPartyRegistry,
   [ContractName.Tiers]: Tiers,
   [ContractName.ChainlinkOracle]: ChainlinkOracle,
-  [ContractName.Rentals]: Rentals
+  [ContractName.Rentals]: Rentals,
+  [ContractName.DCLRegistrar]: DCLRegistrar,
+  [ContractName.DCLController]: DCLController,
+  [ContractName.DCLControllerV2]: DCLControllerV2
 }

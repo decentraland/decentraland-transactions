@@ -60,7 +60,10 @@ export enum ContractName {
   ThirdPartyRegistry = 'ThirdPartyRegistry',
   Tiers = 'Tiers',
   ChainlinkOracle = 'ChainlinkOracle',
-  Rentals = 'Rentals'
+  Rentals = 'Rentals',
+  DCLRegistrar = 'DCLRegistrar',
+  DCLController = 'DCLController',
+  DCLControllerV2 = 'DCLControllerV2'
 }
 
 export type MetaTxData = {
