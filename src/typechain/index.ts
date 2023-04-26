@@ -24,7 +24,6 @@ export type { RaritiesWithOracle } from "./RaritiesWithOracle";
 export type { Rentals } from "./Rentals";
 export type { ThirdPartyRegistry } from "./ThirdPartyRegistry";
 export type { Tiers } from "./Tiers";
-export * as factories from "./factories";
 export { Bid__factory } from "./factories/Bid__factory";
 export { BidV2__factory } from "./factories/BidV2__factory";
 export { ChainlinkOracle__factory } from "./factories/ChainlinkOracle__factory";
