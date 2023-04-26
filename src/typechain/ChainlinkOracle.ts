@@ -16,8 +16,7 @@ import type {
   TypedEventFilter,
   TypedEvent,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  OnEvent
 } from "./common";
 
 export interface ChainlinkOracleInterface extends utils.Interface {
