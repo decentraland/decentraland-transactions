@@ -9,7 +9,7 @@
     "test": "node --experimental-modules --es-module-specifier-resolution=node node_modules/.bin/nyc node_modules/mocha/bin/_mocha",
     "test:watch": "npm test -- --watch",
     "test:report": "npx nyc --silent --no-clean npm run test && npx nyc report --reporter=lcov --reporter=text",
-    "typechain": "typechain --target ethers-v5 --out-dir ./src/types './src/abis/*.json'"
+    "typechain": "typechain --target ethers-v5 --out-dir ./src/typechain './src/abis/*.json'"
   },
   "devDependencies": {
     "@dcl/schemas": "^1.1.1",
