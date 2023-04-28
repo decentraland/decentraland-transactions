@@ -25,13 +25,15 @@
       "single"
     ],
     "strict-type-predicates": false,
-    "ter-indent": false
+    "ter-indent": false,
+    "no-unused-variable": true
   },
   "linterOptions": {
     "exclude": [
       "config/**/*.js",
       "node_modules/**/*.ts",
-      "./**/*.js"
+      "./**/*.js",
+      "src/typechain/**/*"
     ]
   }
 }
