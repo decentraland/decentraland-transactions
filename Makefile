@@ -1,6 +1,5 @@
 NODE = @node
 TSC = $(NODE) --max-old-space-size=4096 node_modules/.bin/tsc
-TYPECHAIN = $(NODE) --max-old-space-size=4096 node_modules/.bin/typechain
 MOCHA = $(NODE) --max-old-space-size=4096 node_modules/.bin/mocha
 NYC = $(NODE) --max-old-space-size=4096 node_modules/.bin/nyc
 ROLLUP = $(NODE) --max-old-space-size=4096 node_modules/.bin/rollup
@@ -20,7 +19,6 @@ clean:
 
 build: clean
 		@echo '> Building'
-		${TYPECHAIN} --target ethers-v5 --out-dir ./src/typechain './src/abis/*.json'
 		${TSC} --project . --declarationDir ./dist
 		${ROLLUP} -c --environment BUILD:production
 		$(MAKE) provision-bundled
