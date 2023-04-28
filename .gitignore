@@ -4,4 +4,3 @@ dist
 .nyc_output
 coverage
 TODO.md
-src/typechain

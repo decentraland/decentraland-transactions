@@ -223,26 +223,6 @@ you can also check the test report using
 npm run test:report
 ```
 
-# Typed contracts
-
-You can type contracts using `typechain`. Whenever you update or add a new contract, you should run:
-
-```bash
-npm run typechain
-```
-
-This will update contracts inside the `./src/typechain` directory.
-
-These files can be used to have typed abis for use on your applications.
-
-These can be imported with:
-
-```ts
-import { DCLController, DCLController__factory } from "decentraland-transactions/dist/typechain"
-```
-
-`typechain` will sometimes generate files that import unused variables. This will cause errors when building the package. You should manually remove these imported variables.
-
 # Copyright
 
 This repository is protected with a standard Apache 2 license. See the terms and conditions in the [LICENSE](https://github.com/decentraland/decentraland-transactions/blob/master/LICENSE) file.
