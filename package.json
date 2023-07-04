@@ -11,7 +11,7 @@
     "test:report": "npx nyc --silent --no-clean npm run test && npx nyc report --reporter=lcov --reporter=text"
   },
   "devDependencies": {
-    "@dcl/schemas": "^1.1.1",
+    "@dcl/schemas": "^7.5.0",
     "@microsoft/api-documenter": "^7.12.7",
     "@microsoft/api-extractor": "^7.13.2",
     "@rollup/plugin-json": "^4.1.0",
