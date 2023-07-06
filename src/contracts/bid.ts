@@ -16,6 +16,13 @@ export const bid = {
     name: 'Decentraland Bid',
     chainId: ChainId.ETHEREUM_GOERLI
   },
+  [ChainId.ETHEREUM_SEPOLIA]: {
+    version: '1',
+    abi: abis.Bid,
+    address: '0x2c2835b95852fd975e087b3b25297322728792e2',
+    name: 'Decentraland Bid',
+    chainId: ChainId.ETHEREUM_SEPOLIA
+  },
   [ChainId.ETHEREUM_MAINNET]: {
     version: '1',
     abi: abis.Bid,

@@ -30,6 +30,13 @@ export const marketplace = {
     name: 'Decentraland Marketplace',
     chainId: ChainId.ETHEREUM_GOERLI
   },
+  [ChainId.ETHEREUM_SEPOLIA]: {
+    version: '1',
+    abi: abis.Marketplace,
+    address: '0xccf0c17da6cd68041b1bf0f7e015767242077d8c',
+    name: 'Decentraland Marketplace',
+    chainId: ChainId.ETHEREUM_SEPOLIA
+  },
   [ChainId.ETHEREUM_MAINNET]: {
     version: '1',
     abi: abis.Marketplace,
