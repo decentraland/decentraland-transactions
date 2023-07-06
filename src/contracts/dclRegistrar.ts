@@ -9,6 +9,13 @@ export const dclRegistrar = {
     name: 'DCLRegistrar',
     chainId: ChainId.ETHEREUM_GOERLI
   },
+  [ChainId.ETHEREUM_SEPOLIA]: {
+    version: '1',
+    abi: abis.DCLRegistrar,
+    address: '0x7518456ae93eb98f3e64571b689c626616bb7f30',
+    name: 'DCLRegistrar',
+    chainId: ChainId.ETHEREUM_SEPOLIA
+  },
   [ChainId.ETHEREUM_MAINNET]: {
     version: '1',
     abi: abis.DCLRegistrar,
