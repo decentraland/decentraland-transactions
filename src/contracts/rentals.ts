@@ -2,12 +2,12 @@ import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
 
 export const rentals = {
-  [ChainId.ETHEREUM_SEPOLIA]: {
+  [ChainId.ETHEREUM_GOERLI]: {
     version: '1',
     abi: abis.Rentals,
-    address: '0xe70db6319e9cee3f604909bdade58d1f5c1cf702',
+    address: '0x92159c78f0f4523b9c60382bb888f30f10a46b3b',
     name: 'Rentals',
-    chainId: ChainId.ETHEREUM_SEPOLIA
+    chainId: ChainId.ETHEREUM_GOERLI
   },
   [ChainId.ETHEREUM_MAINNET]: {
     version: '1',

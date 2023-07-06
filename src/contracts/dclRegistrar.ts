@@ -2,12 +2,12 @@ import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
 
 export const dclRegistrar = {
-  [ChainId.ETHEREUM_SEPOLIA]: {
+  [ChainId.ETHEREUM_GOERLI]: {
     version: '1',
     abi: abis.DCLRegistrar,
-    address: '0x7518456ae93eb98f3e64571b689c626616bb7f30',
+    address: '0x6b8da2752827cf926215b43bb8e46fd7b9ddac35',
     name: 'DCLRegistrar',
-    chainId: ChainId.ETHEREUM_SEPOLIA
+    chainId: ChainId.ETHEREUM_GOERLI
   },
   [ChainId.ETHEREUM_MAINNET]: {
     version: '1',
