@@ -23,6 +23,13 @@ export const manaToken = {
     name: 'MANAToken',
     chainId: ChainId.ETHEREUM_GOERLI
   },
+  [ChainId.ETHEREUM_SEPOLIA]: {
+    version: '1',
+    abi: abis.MANAToken,
+    address: '0xfa04d2e2ba9aec166c93dfeeba7427b2303befa9',
+    name: 'MANAToken',
+    chainId: ChainId.ETHEREUM_SEPOLIA
+  },
   [ChainId.MATIC_MUMBAI]: {
     version: '1',
     abi: abis.MANAToken,

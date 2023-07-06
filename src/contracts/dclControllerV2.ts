@@ -9,6 +9,13 @@ export const dclControllerV2 = {
     name: 'DCLControllerV2',
     chainId: ChainId.ETHEREUM_GOERLI
   },
+  [ChainId.ETHEREUM_SEPOLIA]: {
+    version: '1',
+    abi: abis.DCLControllerV2,
+    address: '0xd2046364317c21fa8d121d84185c39e6e910cf89',
+    name: 'DCLControllerV2',
+    chainId: ChainId.ETHEREUM_SEPOLIA
+  },
   [ChainId.ETHEREUM_MAINNET]: {
     version: '1',
     abi: abis.DCLControllerV2,
