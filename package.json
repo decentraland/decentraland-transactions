@@ -63,5 +63,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/decentraland/decentraland-transactions.git"
+  },
+  "dependencies": {
+    "@0xsquid/sdk": "^1.14.0",
+    "decentraland-connect": "^5.1.0"
   }
 }
