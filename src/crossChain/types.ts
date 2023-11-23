@@ -7,7 +7,7 @@ import {
 import { Provider } from 'decentraland-connect'
 import { ChainId } from '@dcl/schemas'
 
-export type BuyNFTXChainData = {
+export type BuyNFTCrossChainData = {
   fromAddress: string
   fromAmount: string
   toAmount: string
@@ -23,7 +23,7 @@ export type BuyNFTXChainData = {
   }
 }
 
-export type MintNFTXChainData = Omit<BuyNFTXChainData, 'nft'> & {
+export type MintNFTCrossChainData = Omit<BuyNFTCrossChainData, 'nft'> & {
   item: {
     collectionAddress: string
     itemId: string
@@ -49,7 +49,7 @@ export type Token = SquidToken
 export type RouteResponse = SquidRouteResponse
 export type Route = RouteResponse
 
-export interface XChainProvider {
+export interface CrossChainProvider {
   init(): void
   isLibInitialized(): boolean
   getFromAmount(fromAmountParams: FromAmountParams): Promise<string>
@@ -57,11 +57,18 @@ export interface XChainProvider {
   getSupportedChains(): ChainData[]
   buyNFT(
     provider: Provider,
-    buyNFTXChainData: BuyNFTXChainData
+    buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<string>
-  mintNFT(provider: Provider, ChainCallData: MintNFTXChainData): Promise<string>
-  getBuyNFTRoute(buyNFTXChainData: BuyNFTXChainData): Promise<RouteResponse>
-  getMintNFTRoute(buyNFTXChainData: MintNFTXChainData): Promise<RouteResponse>
+  mintNFT(
+    provider: Provider,
+    ChainCallData: MintNFTCrossChainData
+  ): Promise<string>
+  getBuyNFTRoute(
+    buyNFTCrossChainData: BuyNFTCrossChainData
+  ): Promise<RouteResponse>
+  getMintNFTRoute(
+    buyNFTCrossChainData: MintNFTCrossChainData
+  ): Promise<RouteResponse>
   executeRoute(
     route: RouteResponse,
     provider: Provider

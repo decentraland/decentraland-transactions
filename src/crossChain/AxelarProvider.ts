@@ -8,17 +8,17 @@ import { MarketplaceV2 } from '../abis/MarketplaceV2'
 import { ERC721 } from '../abis/ERC721'
 import { CollectionStore } from '../abis/CollectionStore'
 import {
-  BuyNFTXChainData,
+  BuyNFTCrossChainData,
   FromAmountParams,
-  MintNFTXChainData,
+  MintNFTCrossChainData,
   RouteResponse,
-  XChainProvider
+  CrossChainProvider
 } from './types'
 import { getContract } from 'contracts'
 import { ContractName } from 'types'
 import { Marketplace } from 'abis/Marketplace'
 
-export class AxelarProvider implements XChainProvider {
+export class AxelarProvider implements CrossChainProvider {
   public squid: Squid
   public initialized = false
   private squidMulticall = '0x4fd39C9E151e50580779bd04B1f7eCc310079fd3' // Squid calling contract
@@ -71,15 +71,15 @@ export class AxelarProvider implements XChainProvider {
 
   async buyNFT(
     provider: Provider,
-    buyNFTXChainData: BuyNFTXChainData
+    buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<string> {
-    const route = await this.getBuyNFTRoute(buyNFTXChainData)
+    const route = await this.getBuyNFTRoute(buyNFTCrossChainData)
     const tx = await this.executeRoute(route, provider)
     return tx.transactionHash
   }
 
   async getBuyNFTRoute(
-    buyNFTXChainData: BuyNFTXChainData
+    buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<RouteResponse> {
     await this.init()
     const {
@@ -92,7 +92,7 @@ export class AxelarProvider implements XChainProvider {
       enableExpress = true, // TODO: check if we need this
       slippage = 1, // 1 is "normal" slippage. Always set to 1
       nft: { collectionAddress, price, tokenId }
-    } = buyNFTXChainData
+    } = buyNFTCrossChainData
 
     const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
     const marketplaceContractABI =
@@ -214,15 +214,15 @@ export class AxelarProvider implements XChainProvider {
   // MINT
   async mintNFT(
     provider: Provider,
-    mintNFTXChainData: MintNFTXChainData
+    mintNFTCrossChainData: MintNFTCrossChainData
   ): Promise<string> {
-    const route = await this.getMintNFTRoute(mintNFTXChainData)
+    const route = await this.getMintNFTRoute(mintNFTCrossChainData)
     const tx = await this.executeRoute(route, provider)
     return tx.transactionHash
   }
 
   async getMintNFTRoute(
-    buyNFTXChainData: MintNFTXChainData
+    buyNFTCrossChainData: MintNFTCrossChainData
   ): Promise<RouteResponse> {
     await this.init()
     const {
@@ -235,7 +235,7 @@ export class AxelarProvider implements XChainProvider {
       enableExpress = true,
       slippage = 1, // 1 is "normal" slippage. Always set to 1
       item: { collectionAddress, price, itemId }
-    } = buyNFTXChainData
+    } = buyNFTCrossChainData
 
     const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
     const collectionStoreInterface = new ethers.utils.Interface(CollectionStore)
