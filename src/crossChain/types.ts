@@ -44,10 +44,10 @@ export const CROSS_CHAIN_SUPPORTED_CHAINS = [
   ChainId.MATIC_MAINNET
 ]
 
-export type ChainData = SquidChainData
-export type Token = SquidToken
-export type RouteResponse = SquidRouteResponse
-export type Route = RouteResponse
+export type ChainData = SquidChainData // for now, it's the same as the one provided by Squid, we can abstract it later
+export type Token = SquidToken // same as the comment above
+export type RouteResponse = SquidRouteResponse // same as the comment above
+export type Route = RouteResponse // same as the comment above
 
 export interface CrossChainProvider {
   init(): void

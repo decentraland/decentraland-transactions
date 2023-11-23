@@ -6,7 +6,10 @@ import { ChainId } from '@dcl/schemas'
 import { ERC20 } from '../abis/ERC20'
 import { MarketplaceV2 } from '../abis/MarketplaceV2'
 import { ERC721 } from '../abis/ERC721'
+import { Marketplace } from '../abis/Marketplace'
 import { CollectionStore } from '../abis/CollectionStore'
+import { getContract } from '../contracts'
+import { ContractName } from '../types'
 import {
   BuyNFTCrossChainData,
   FromAmountParams,
@@ -14,9 +17,6 @@ import {
   RouteResponse,
   CrossChainProvider
 } from './types'
-import { getContract } from 'contracts'
-import { ContractName } from 'types'
-import { Marketplace } from 'abis/Marketplace'
 
 export class AxelarProvider implements CrossChainProvider {
   public squid: Squid
@@ -81,7 +81,9 @@ export class AxelarProvider implements CrossChainProvider {
   async getBuyNFTRoute(
     buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<RouteResponse> {
-    await this.init()
+    if (!this.squid.initialized) {
+      await this.init()
+    }
     const {
       fromAddress,
       fromAmount,
@@ -224,7 +226,9 @@ export class AxelarProvider implements CrossChainProvider {
   async getMintNFTRoute(
     buyNFTCrossChainData: MintNFTCrossChainData
   ): Promise<RouteResponse> {
-    await this.init()
+    if (!this.squid.initialized) {
+      await this.init()
+    }
     const {
       fromAddress,
       fromAmount,
