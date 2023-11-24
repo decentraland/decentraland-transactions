@@ -1,7 +1,7 @@
 on:
   push:
     branches-ignore:
-      - "master"
+      - 'master'
   pull_request:
 
 name: CI Validation
@@ -24,11 +24,9 @@ jobs:
           # By default, queries listed here will override any specified in a config file.
           # Prefix the list here with "+" to use these queries and those in the config file.
           # queries: ./path/to/local/query, your-org/your-repo/queries@main
-      - name: clean
-        run:  make clean
       - name: install
-        run:  npm ci
+        run: npm ci
       - name: build & test
-        run:  make ci
+        run: npm run build
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
