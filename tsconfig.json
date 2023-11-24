@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
-    "outDir": "./dist",
-    "module": "ESNext",
+    "outDir": "dist",
+    "module": "commonjs",
     "target": "es6",
+    "declaration": true,
     "lib": ["es2017", "dom"],
     "strict": true,
     "sourceMap": true,
-    "declarationDir": "./dist/decl",
-    "declaration": true,
-    "declarationMap": true,
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
@@ -22,14 +20,7 @@
     "plugins": [{ "name": "tslint-language-service" }],
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "test",
-    "scripts",
-    "webpack"
-  ]
+  "exclude": ["node_modules", "dist", "build", "test", "scripts", "webpack"]
 }

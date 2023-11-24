@@ -1,7 +1,7 @@
 on:
   push:
     branches-ignore:
-      - "master"
+      - 'master'
   pull_request:
 
 name: CI Validation
@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Use Node.js 14.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 18.x
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
@@ -24,11 +24,9 @@ jobs:
           # By default, queries listed here will override any specified in a config file.
           # Prefix the list here with "+" to use these queries and those in the config file.
           # queries: ./path/to/local/query, your-org/your-repo/queries@main
-      - name: clean
-        run:  make clean
       - name: install
-        run:  npm ci
+        run: npm ci
       - name: build & test
-        run:  make ci
+        run: npm run build
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1

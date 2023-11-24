@@ -10,6 +10,7 @@ import { Marketplace } from '../abis/Marketplace'
 import { CollectionStore } from '../abis/CollectionStore'
 import { getContract } from '../contracts'
 import { ContractName } from '../types'
+import { NATIVE_TOKEN } from './utils'
 import {
   BuyNFTCrossChainData,
   FromAmountParams,
@@ -145,7 +146,7 @@ export class AxelarProvider implements CrossChainProvider {
               toAmount
             ]),
             payload: {
-              tokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+              tokenAddress: NATIVE_TOKEN,
               inputPos: 0
             },
             estimatedGas: '50000'
@@ -165,7 +166,7 @@ export class AxelarProvider implements CrossChainProvider {
             ]),
 
             payload: {
-              tokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // ex `0x`
+              tokenAddress: NATIVE_TOKEN, // ex `0x`
               inputPos: 0
             },
             estimatedGas: '300000'
@@ -183,7 +184,7 @@ export class AxelarProvider implements CrossChainProvider {
               [this.squidMulticall, fromAddress, tokenId]
             ),
             payload: {
-              tokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+              tokenAddress: NATIVE_TOKEN,
               inputPos: 1
             },
             estimatedGas: '50000'
@@ -281,7 +282,7 @@ export class AxelarProvider implements CrossChainProvider {
               toAmount
             ]),
             payload: {
-              tokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+              tokenAddress: NATIVE_TOKEN,
               inputPos: 0
             },
             estimatedGas: '50000'
@@ -300,7 +301,7 @@ export class AxelarProvider implements CrossChainProvider {
             ),
 
             payload: {
-              tokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // TODO: do we need this to be set as the native? it's working like this
+              tokenAddress: NATIVE_TOKEN, // TODO: do we need this to be set as the native? it's working like this
               inputPos: 0
             },
             estimatedGas: '300000' // TODO: where do we get this value from?
