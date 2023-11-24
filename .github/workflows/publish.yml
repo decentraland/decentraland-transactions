@@ -24,7 +24,6 @@ jobs:
       - name: Publish
         uses: menduz/oddish-action@master
         with:
-          cwd: ./dist
           ## Sign the deployment
           provenance: true
         env:
