@@ -24,7 +24,6 @@ jobs:
       - name: Publish
         uses: menduz/oddish-action@master
         with:
-          ## Sign the deployment
-          provenance: true
+          provenance: false
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
