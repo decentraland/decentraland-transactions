@@ -29,6 +29,7 @@ export class AxelarProvider implements CrossChainProvider {
       baseUrl: squidURL,
       integratorId: 'decentraland-sdk'
     })
+    this.squid.init()
   }
 
   async init() {
@@ -59,6 +60,9 @@ export class AxelarProvider implements CrossChainProvider {
     provider: Provider
   ): Promise<ethers.providers.TransactionReceipt> {
     const signer = await new ethers.providers.Web3Provider(provider).getSigner()
+    if (!this.squid.initialized) {
+      await this.init()
+    }
 
     // @ts-ignore
     // tslint:disable-next-line
