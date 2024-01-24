@@ -12,7 +12,6 @@
     "test:report": "npx nyc --silent --no-clean npm run test && npx nyc report --reporter=lcov --reporter=text"
   },
   "devDependencies": {
-    "@0xsquid/squid-types": "^0.1.29",
     "@dcl/schemas": "^7.5.0",
     "@microsoft/api-documenter": "^7.12.7",
     "@microsoft/api-extractor": "^7.13.2",
@@ -65,6 +64,7 @@
   ],
   "dependencies": {
     "@0xsquid/sdk": "^2.8.9",
+    "@0xsquid/squid-types": "^0.1.51",
     "decentraland-connect": "^5.5.0"
   }
 }

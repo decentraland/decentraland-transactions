@@ -133,6 +133,7 @@ export class AxelarProvider implements CrossChainProvider {
         autoMode: slippage
       },
       postHook: {
+        description: '',
         chainType: ChainType.EVM,
         fundAmount: '1',
         fundToken: destinyChainMANA,
@@ -269,6 +270,7 @@ export class AxelarProvider implements CrossChainProvider {
         autoMode: slippage
       },
       postHook: {
+        description: '',
         chainType: ChainType.EVM,
         fundAmount: '1',
         fundToken: destinyChainMANA,
