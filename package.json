@@ -23,7 +23,6 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "dcl-tslint-config-standard": "^3.0.0",
-    "decentraland-connect": "^5.2.1",
     "ethers": "^5.6.8",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
@@ -65,6 +64,7 @@
     "dist"
   ],
   "dependencies": {
-    "@0xsquid/sdk": "^2.8.9"
+    "@0xsquid/sdk": "^2.8.9",
+    "decentraland-connect": "^5.5.0"
   }
 }
