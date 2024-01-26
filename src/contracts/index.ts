@@ -74,10 +74,11 @@ export function getContract(
 
 export function getContractName(address: string): ContractName {
   for (const contractName in contracts) {
-    for (const chainId in contracts[contractName]) {
-      const contract = contracts[contractName][chainId]
+    for (const chainId in contracts[contractName as ContractName]) {
+      const contract =
+        contracts[contractName as ContractName][(chainId as unknown) as ChainId]
 
-      if (contract.address.toLowerCase() === address.toLowerCase()) {
+      if (contract?.address.toLowerCase() === address.toLowerCase()) {
         return contractName as ContractName
       }
     }

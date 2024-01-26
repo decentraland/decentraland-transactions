@@ -145,16 +145,16 @@ async function send<T>(
     params
   }
 
-  if (typeof provider['request'] !== 'undefined') {
+  if ((provider as EIPProvider)['request'] !== undefined) {
     data = await (provider as EIPProvider).request(args)
-  } else if (typeof provider['sendAsync'] !== 'undefined') {
+  } else if (provider['sendAsync'] !== undefined) {
     data = await provider.sendAsync(args)
-  } else if (typeof provider['send'] !== 'undefined') {
+  } else if (provider['send'] !== undefined) {
     data = await provider.send(method, params)
   }
 
   if (data) {
-    return data['result'] || data
+    return (data as { result: any })['result'] || data
   } else {
     throw new Error(
       `Could not send the transaction correcty. Either the provider does not support the method "${method}" or is missing a proper send/request.`

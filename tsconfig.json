@@ -2,10 +2,8 @@
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",
-    "module": "commonjs",
-    "target": "es6",
     "declaration": true,
-    "lib": ["es2017", "dom"],
+    "lib": ["es2020", "dom"],
     "strict": true,
     "sourceMap": true,
     "moduleResolution": "node",
@@ -14,13 +12,13 @@
     "noImplicitThis": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
     "plugins": [{ "name": "tslint-language-service" }],
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "importHelpers": true,
   },
-  "exclude": ["node_modules", "dist", "build", "test", "scripts", "webpack"]
+  "exclude": ["node_modules", "dist", "esm", "cjs", "test"]
 }
