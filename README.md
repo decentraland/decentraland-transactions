@@ -217,12 +217,6 @@ npm run test
 npm run build
 ```
 
-you can also check the test report using
-
-```bash
-npm run test:report
-```
-
 # Copyright
 
 This repository is protected with a standard Apache 2 license. See the terms and conditions in the [LICENSE](https://github.com/decentraland/decentraland-transactions/blob/master/LICENSE) file.

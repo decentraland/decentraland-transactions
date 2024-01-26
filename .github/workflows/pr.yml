@@ -26,7 +26,11 @@ jobs:
           # queries: ./path/to/local/query, your-org/your-repo/queries@main
       - name: install
         run: npm ci
-      - name: build & test
+      - name: lint
+        run: npm run lint
+      - name: test
+        run: npm run test
+      - name: build
         run: npm run build
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
