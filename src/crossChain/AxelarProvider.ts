@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { Squid } from '@0xsquid/sdk'
 import { SquidCallType, ChainType } from '@0xsquid/sdk/dist/types'
-import { Provider } from 'decentraland-connect/dist/types'
+import { Provider } from 'decentraland-connect'
 import { ChainId } from '@dcl/schemas'
 import { ERC20 } from '../abis/ERC20'
 import { MarketplaceV2 } from '../abis/MarketplaceV2'

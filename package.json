@@ -47,7 +47,7 @@
   "dependencies": {
     "@0xsquid/sdk": "^2.8.9",
     "@0xsquid/squid-types": "^0.1.51",
-    "decentraland-connect": "^5.5.0",
+    "decentraland-connect": "^6.0.0",
     "tslib": "^2.6.2"
   },
   "peerDependencies": {
