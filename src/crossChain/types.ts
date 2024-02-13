@@ -7,7 +7,7 @@ import {
 import { Provider } from 'decentraland-connect'
 import { ChainId } from '@dcl/schemas'
 
-export type BuyNFTCrossChainData = {
+export type CrossChainData = {
   fromAddress: string
   fromAmount: string
   toAmount: string
@@ -16,6 +16,9 @@ export type BuyNFTCrossChainData = {
   toChain: ChainId
   enableExpress?: boolean
   slippage?: number
+}
+
+export type BuyNFTCrossChainData = CrossChainData & {
   nft: {
     collectionAddress: string
     tokenId: string
@@ -23,7 +26,11 @@ export type BuyNFTCrossChainData = {
   }
 }
 
-export type MintNFTCrossChainData = Omit<BuyNFTCrossChainData, 'nft'> & {
+export type RegisterNameCrossChainData = CrossChainData & {
+  name: string
+}
+
+export type MintNFTCrossChainData = CrossChainData & {
   item: {
     collectionAddress: string
     itemId: string

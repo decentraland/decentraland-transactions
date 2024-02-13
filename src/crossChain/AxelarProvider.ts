@@ -4,6 +4,7 @@ import { SquidCallType, ChainType } from '@0xsquid/sdk/dist/types'
 import { Provider } from 'decentraland-connect'
 import { ChainId } from '@dcl/schemas'
 import { ERC20 } from '../abis/ERC20'
+import { DCLControllerV2 } from '../abis/DCLControllerV2'
 import { MarketplaceV2 } from '../abis/MarketplaceV2'
 import { ERC721 } from '../abis/ERC721'
 import { Marketplace } from '../abis/Marketplace'
@@ -16,7 +17,8 @@ import {
   FromAmountParams,
   MintNFTCrossChainData,
   RouteResponse,
-  CrossChainProvider
+  CrossChainProvider,
+  RegisterNameCrossChainData
 } from './types'
 
 export class AxelarProvider implements CrossChainProvider {
@@ -84,6 +86,112 @@ export class AxelarProvider implements CrossChainProvider {
     return tx.transactionHash
   }
 
+  async getRegisterNameRoute(
+    getRegisterNameCrossChainData: RegisterNameCrossChainData
+  ): Promise<RouteResponse> {
+    if (!this.squid.initialized) {
+      await this.init()
+    }
+    const {
+      fromAddress,
+      fromAmount,
+      fromChain,
+      fromToken,
+      toChain,
+      toAmount, // the registration price
+      enableExpress = true,
+      slippage = 1, // 1 is "normal" slippage. Always set to 1
+      name
+    } = getRegisterNameCrossChainData
+
+    const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
+    const destinationChainMANA = getContract(ContractName.MANAToken, toChain)
+      .address
+    const controllerContract = getContract(
+      ContractName.DCLControllerV2,
+      toChain
+    )
+    const ControllerV2Interface = new ethers.utils.Interface(DCLControllerV2)
+
+    return this.squid.getRoute({
+      fromAddress,
+      fromAmount,
+      fromToken,
+      fromChain: fromChain.toString(),
+      toToken: destinationChainMANA,
+      toChain: toChain.toString(),
+      toAddress: controllerContract.address,
+      enableBoost: enableExpress,
+      slippageConfig: {
+        autoMode: slippage
+      },
+      postHook: {
+        description: '',
+        chainType: ChainType.EVM,
+        fundAmount: '1',
+        fundToken: destinationChainMANA,
+        calls: [
+          // ===================================
+          // Approve MANA to be spent by Decentraland contract
+          // ===================================
+          {
+            chainType: ChainType.EVM,
+            callType: SquidCallType.DEFAULT,
+            target: destinationChainMANA,
+            value: '0',
+            callData: ERC20ContractInterface.encodeFunctionData('approve', [
+              controllerContract.address,
+              toAmount
+            ]),
+            payload: {
+              tokenAddress: NATIVE_TOKEN,
+              inputPos: 0
+            },
+            estimatedGas: '50000'
+          },
+          // ===================================
+          // Register name using the Controller V2 contract
+          // ===================================
+          {
+            chainType: ChainType.EVM,
+            callType: SquidCallType.DEFAULT,
+            target: controllerContract.address,
+            value: '0',
+            callData: ControllerV2Interface.encodeFunctionData('register', [
+              name,
+              fromAddress
+            ]),
+            payload: {
+              tokenAddress: NATIVE_TOKEN,
+              inputPos: 0
+            },
+            estimatedGas: '50000'
+          },
+          // ===================================
+          // Transfer remaining MANA to registerer
+          // ===================================
+          {
+            chainType: ChainType.EVM,
+            callType: SquidCallType.FULL_TOKEN_BALANCE,
+            target: destinationChainMANA,
+            value: '0',
+            callData: ERC20ContractInterface.encodeFunctionData('transfer', [
+              fromAddress,
+              '0'
+            ]),
+            payload: {
+              tokenAddress: destinationChainMANA,
+              // This will replace the parameter at index 1 in the encoded Function,
+              //  with FULL_TOKEN_BALANCE (instead of "0")
+              inputPos: 1
+            },
+            estimatedGas: '50000'
+          }
+        ]
+      }
+    })
+  }
+
   async getBuyNFTRoute(
     buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<RouteResponse> {
@@ -111,10 +219,10 @@ export class AxelarProvider implements CrossChainProvider {
     )
     const ERC721ContractInterface = new ethers.utils.Interface(ERC721)
 
-    const destinyChainMANA = getContract(ContractName.MANAToken, toChain)
+    const destinationChainMANA = getContract(ContractName.MANAToken, toChain)
       .address
 
-    const destinyChainMarketplace = getContract(
+    const destinationChainMarketplace = getContract(
       toChain === ChainId.MATIC_MAINNET
         ? ContractName.MarketplaceV2
         : ContractName.Marketplace,
@@ -126,9 +234,9 @@ export class AxelarProvider implements CrossChainProvider {
       fromAmount,
       fromToken,
       fromChain: fromChain.toString(),
-      toToken: destinyChainMANA,
+      toToken: destinationChainMANA,
       toChain: toChain.toString(),
-      toAddress: destinyChainMarketplace,
+      toAddress: destinationChainMarketplace,
       enableBoost: enableExpress,
       slippageConfig: {
         autoMode: slippage
@@ -137,7 +245,7 @@ export class AxelarProvider implements CrossChainProvider {
         description: '',
         chainType: ChainType.EVM,
         fundAmount: '1',
-        fundToken: destinyChainMANA,
+        fundToken: destinationChainMANA,
         calls: [
           // ===================================
           // Approve MANA to be spent by Decentraland contract
@@ -145,10 +253,10 @@ export class AxelarProvider implements CrossChainProvider {
           {
             chainType: ChainType.EVM,
             callType: SquidCallType.DEFAULT,
-            target: destinyChainMANA,
+            target: destinationChainMANA,
             value: '0',
             callData: ERC20ContractInterface.encodeFunctionData('approve', [
-              destinyChainMarketplace,
+              destinationChainMarketplace,
               toAmount
             ]),
             payload: {
@@ -163,7 +271,7 @@ export class AxelarProvider implements CrossChainProvider {
           {
             chainType: ChainType.EVM,
             callType: SquidCallType.DEFAULT,
-            target: destinyChainMarketplace,
+            target: destinationChainMarketplace,
             value: '0',
             callData: marketplaceInterface.encodeFunctionData('executeOrder', [
               collectionAddress,
@@ -201,14 +309,14 @@ export class AxelarProvider implements CrossChainProvider {
           {
             chainType: ChainType.EVM,
             callType: SquidCallType.FULL_TOKEN_BALANCE,
-            target: destinyChainMANA,
+            target: destinationChainMANA,
             value: '0',
             callData: ERC20ContractInterface.encodeFunctionData('transfer', [
               fromAddress,
               '0'
             ]),
             payload: {
-              tokenAddress: destinyChainMANA,
+              tokenAddress: destinationChainMANA,
               // This will replace the parameter at index 1 in the encoded Function,
               //  with FULL_TOKEN_BALANCE (instead of "0")
               inputPos: 1
@@ -251,9 +359,9 @@ export class AxelarProvider implements CrossChainProvider {
     const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
     const collectionStoreInterface = new ethers.utils.Interface(CollectionStore)
 
-    const destinyChainMANA = getContract(ContractName.MANAToken, toChain)
+    const destinationChainMANA = getContract(ContractName.MANAToken, toChain)
       .address
-    const destinyChaiCollectionStoreAddress = getContract(
+    const destinationChaiCollectionStoreAddress = getContract(
       ContractName.CollectionStore,
       toChain
     ).address
@@ -263,7 +371,7 @@ export class AxelarProvider implements CrossChainProvider {
       fromAmount,
       fromToken,
       fromChain: fromChain.toString(),
-      toToken: destinyChainMANA,
+      toToken: destinationChainMANA,
       toChain: toChain.toString(),
       toAddress: fromAddress,
       enableBoost: enableExpress, // TODO: check if we need this
@@ -274,7 +382,7 @@ export class AxelarProvider implements CrossChainProvider {
         description: '',
         chainType: ChainType.EVM,
         fundAmount: '1',
-        fundToken: destinyChainMANA,
+        fundToken: destinationChainMANA,
         calls: [
           // ===================================
           // Approve MANA to be spent by Decentraland contract
@@ -282,7 +390,7 @@ export class AxelarProvider implements CrossChainProvider {
           {
             chainType: ChainType.EVM,
             callType: SquidCallType.DEFAULT,
-            target: destinyChainMANA,
+            target: destinationChainMANA,
             value: '0',
             callData: ERC20ContractInterface.encodeFunctionData('approve', [
               getContract(ContractName.CollectionStore, toChain).address,
@@ -300,7 +408,7 @@ export class AxelarProvider implements CrossChainProvider {
           {
             chainType: ChainType.EVM,
             callType: SquidCallType.DEFAULT,
-            target: destinyChaiCollectionStoreAddress,
+            target: destinationChaiCollectionStoreAddress,
             value: '0', // @TODO: WHY 0?
             callData: collectionStoreInterface.encodeFunctionData(
               'buy((address,uint256[],uint256[],address[])[])',
@@ -319,14 +427,14 @@ export class AxelarProvider implements CrossChainProvider {
           {
             chainType: ChainType.EVM,
             callType: SquidCallType.FULL_TOKEN_BALANCE,
-            target: destinyChainMANA,
+            target: destinationChainMANA,
             value: '0',
             callData: ERC20ContractInterface.encodeFunctionData('transfer', [
               fromAddress,
               '0'
             ]),
             payload: {
-              tokenAddress: destinyChainMANA,
+              tokenAddress: destinationChainMANA,
               // This will replace the parameter at index 1 in the encoded Function,
               //  with FULL_TOKEN_BALANCE (instead of "0")
               inputPos: 1
