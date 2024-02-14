@@ -58,5 +58,40 @@ export const erc721: Record<ChainId, ContractData> = {
     address: '',
     name: 'ERC271',
     chainId: ChainId.ETHEREUM_SEPOLIA
+  },
+  [ChainId.ARBITRUM_MAINNET]: {
+    version: '2',
+    abi: abis.ERC721,
+    address: '',
+    name: 'ERC271',
+    chainId: ChainId.ARBITRUM_MAINNET
+  },
+  [ChainId.OPTIMISM_MAINNET]: {
+    version: '2',
+    abi: abis.ERC721,
+    address: '',
+    name: 'ERC271',
+    chainId: ChainId.OPTIMISM_MAINNET
+  },
+  [ChainId.AVALANCHE_MAINNET]: {
+    version: '2',
+    abi: abis.ERC721,
+    address: '',
+    name: 'ERC271',
+    chainId: ChainId.AVALANCHE_MAINNET
+  },
+  [ChainId.FANTOM_MAINNET]: {
+    version: '2',
+    abi: abis.ERC721,
+    address: '',
+    name: 'ERC271',
+    chainId: ChainId.FANTOM_MAINNET
+  },
+  [ChainId.BSC_MAINNET]: {
+    version: '2',
+    abi: abis.ERC721,
+    address: '',
+    name: 'ERC271',
+    chainId: ChainId.BSC_MAINNET
   }
 }

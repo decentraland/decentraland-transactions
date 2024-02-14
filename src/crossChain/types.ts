@@ -48,7 +48,12 @@ export const CROSS_CHAIN_SUPPORTED_CHAINS = [
   ChainId.MATIC_MUMBAI,
   ChainId.ETHEREUM_SEPOLIA,
   ChainId.ETHEREUM_MAINNET,
-  ChainId.MATIC_MAINNET
+  ChainId.MATIC_MAINNET,
+  ChainId.OPTIMISM_MAINNET,
+  ChainId.ARBITRUM_MAINNET,
+  ChainId.AVALANCHE_MAINNET,
+  ChainId.BSC_MAINNET,
+  ChainId.FANTOM_MAINNET
 ]
 
 export type ChainData = SquidChainData // for now, it's the same as the one provided by Squid, we can abstract it later
