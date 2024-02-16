@@ -78,6 +78,9 @@ export interface CrossChainProvider {
   getBuyNFTRoute(
     buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<RouteResponse>
+  getRegisterNameRoute(
+    getRegisterNameCrossChainData: RegisterNameCrossChainData
+  ): Promise<RouteResponse>
   getMintNFTRoute(
     buyNFTCrossChainData: MintNFTCrossChainData
   ): Promise<RouteResponse>
