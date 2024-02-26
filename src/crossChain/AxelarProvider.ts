@@ -99,7 +99,9 @@ export class AxelarProvider implements CrossChainProvider {
           integratorId: INTEGRATOR_ID,
           requestId: route.requestId
         })
-      } catch (error) {}
+      } catch (error) {
+        console.error('error: ', error)
+      }
       txResponse = null
       const polygonRPC = getRpcUrls(ProviderType.NETWORK)[ChainId.MATIC_MAINNET]
       const polygonProvider = new ethers.providers.JsonRpcProvider(polygonRPC)
@@ -111,7 +113,9 @@ export class AxelarProvider implements CrossChainProvider {
             integratorId: INTEGRATOR_ID,
             requestId: route.requestId
           })
-        } catch (error) {}
+        } catch (error) {
+          console.error('error: ', error)
+        }
         await new Promise(resolve => setTimeout(resolve, 1000)) // fetch every 1 seg
       }
       txResponse = await polygonProvider.getTransaction(
