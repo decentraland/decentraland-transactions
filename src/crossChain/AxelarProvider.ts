@@ -105,8 +105,7 @@ export class AxelarProvider implements CrossChainProvider {
         console.error('error: ', error)
       }
       txResponse = null
-      const destinationChain = (route.route.params
-        .toChain as unknown) as ChainId
+      const destinationChain = Number(route.route.params.toChain) as ChainId
       const destinationChainRPC = getRpcUrls(ProviderType.NETWORK)[
         destinationChain
       ]
