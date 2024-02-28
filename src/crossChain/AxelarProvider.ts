@@ -1,8 +1,12 @@
 import { ethers } from 'ethers'
 import { Squid } from '@0xsquid/sdk'
-import { SquidCallType, ChainType } from '@0xsquid/sdk/dist/types'
-import { Provider } from 'decentraland-connect'
-import { ChainId } from '@dcl/schemas'
+import {
+  SquidCallType,
+  ChainType,
+  StatusResponse
+} from '@0xsquid/sdk/dist/types'
+import { Provider, getRpcUrls } from 'decentraland-connect'
+import { ChainId, ProviderType } from '@dcl/schemas'
 import { ERC20 } from '../abis/ERC20'
 import { DCLControllerV2 } from '../abis/DCLControllerV2'
 import { MarketplaceV2 } from '../abis/MarketplaceV2'
@@ -21,15 +25,18 @@ import {
   RegisterNameCrossChainData
 } from './types'
 
+const INTEGRATOR_ID = 'decentraland-sdk'
+
 export class AxelarProvider implements CrossChainProvider {
   public squid: Squid
   public initialized = false
-  private squidMulticall = '0x4fd39C9E151e50580779bd04B1f7eCc310079fd3' // Squid calling contract
+  private polygonSquidMulticallContract =
+    '0xEa749Fd6bA492dbc14c24FE8A3d08769229b896c' // default value, will be overriden in the init method by the latest one gotten from the sdk
 
   constructor(squidURL: string) {
     this.squid = new Squid({
       baseUrl: squidURL,
-      integratorId: 'decentraland-sdk'
+      integratorId: INTEGRATOR_ID
     })
     // tslint:disable-next-line
     this.squid.init()
@@ -38,6 +45,13 @@ export class AxelarProvider implements CrossChainProvider {
   async init() {
     if (!this.squid.initialized) {
       await this.squid.init()
+      const polygonChainData = this.squid.chains.find(
+        c => c.chainId === ChainId.MATIC_MAINNET.toString()
+      )
+      if (polygonChainData?.squidContracts.squidMulticall) {
+        this.polygonSquidMulticallContract =
+          polygonChainData.squidContracts.squidMulticall
+      }
       this.initialized = true
     }
   }
@@ -69,11 +83,52 @@ export class AxelarProvider implements CrossChainProvider {
 
     // @ts-ignore
     // tslint:disable-next-line
-    const txResponse = (await this.squid.executeRoute({
-      route: route.route,
-      signer
-    })) as ethers.providers.TransactionResponse
+    let txResponse: ethers.providers.TransactionResponse | null = (await this.squid.executeRoute(
+      {
+        route: route.route,
+        signer
+      }
+    )) as ethers.providers.TransactionResponse
 
+    const originChainTxHash = txResponse.hash
+
+    // if it's an actual cross-chain interaction, we need to get the tx hash in the destination chain
+    if (route.route.params.fromChain !== route.route.params.toChain) {
+      let status: StatusResponse | undefined
+      try {
+        status = await this.squid.getStatus({
+          transactionId: txResponse.hash,
+          integratorId: INTEGRATOR_ID,
+          requestId: route.requestId
+        })
+      } catch (error) {
+        console.error('error: ', error)
+      }
+      txResponse = null
+      const destinationChain = Number(route.route.params.toChain) as ChainId
+      const destinationChainRPC = getRpcUrls(ProviderType.NETWORK)[
+        destinationChain
+      ]
+      const destinationChainProvider = new ethers.providers.JsonRpcProvider(
+        destinationChainRPC
+      )
+      while (!status || !status?.toChain?.transactionId) {
+        // wrapping in try-catch since it throws an error if the tx is not found (the first seconds after triggering it)
+        try {
+          status = await this.squid.getStatus({
+            transactionId: originChainTxHash,
+            integratorId: INTEGRATOR_ID,
+            requestId: route.requestId
+          })
+        } catch (error) {
+          console.error('error: ', error)
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000)) // fetch every 1 seg
+      }
+      txResponse = await destinationChainProvider.getTransaction(
+        status?.toChain?.transactionId
+      )
+    }
     return txResponse.wait()
   }
 
@@ -295,7 +350,7 @@ export class AxelarProvider implements CrossChainProvider {
             value: '0',
             callData: ERC721ContractInterface.encodeFunctionData(
               'safeTransferFrom(address, address, uint256)',
-              [this.squidMulticall, fromAddress, tokenId]
+              [this.polygonSquidMulticallContract, fromAddress, tokenId]
             ),
             payload: {
               tokenAddress: NATIVE_TOKEN,
