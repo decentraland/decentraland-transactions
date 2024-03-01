@@ -2,7 +2,8 @@ import { ethers } from 'ethers'
 import {
   ChainData as SquidChainData,
   Token as SquidToken,
-  RouteResponse as SquidRouteResponse
+  RouteResponse as SquidRouteResponse,
+  StatusResponse as SquidStatusResponse
 } from '@0xsquid/sdk/dist/types'
 import { Provider } from 'decentraland-connect'
 import { ChainId } from '@dcl/schemas'
@@ -60,6 +61,7 @@ export type ChainData = SquidChainData // for now, it's the same as the one prov
 export type Token = SquidToken // same as the comment above
 export type RouteResponse = SquidRouteResponse // same as the comment above
 export type Route = RouteResponse // same as the comment above
+export type StatusResponse = SquidStatusResponse
 
 export interface CrossChainProvider {
   init(): void
@@ -88,4 +90,9 @@ export interface CrossChainProvider {
     route: RouteResponse,
     provider: Provider
   ): Promise<ethers.providers.TransactionReceipt>
+  getStatus(
+    routeRequestId: string,
+    originChainHash: string
+  ): Promise<StatusResponse>
+  getTxLink(txHash: string): string
 }
