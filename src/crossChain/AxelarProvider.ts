@@ -1,12 +1,8 @@
 import { ethers } from 'ethers'
 import { Squid } from '@0xsquid/sdk'
-import {
-  SquidCallType,
-  ChainType,
-  StatusResponse
-} from '@0xsquid/sdk/dist/types'
-import { Provider, getRpcUrls } from 'decentraland-connect'
-import { ChainId, ProviderType } from '@dcl/schemas'
+import { SquidCallType, ChainType } from '@0xsquid/sdk/dist/types'
+import { Provider } from 'decentraland-connect'
+import { ChainId } from '@dcl/schemas'
 import { ERC20 } from '../abis/ERC20'
 import { DCLControllerV2 } from '../abis/DCLControllerV2'
 import { MarketplaceV2 } from '../abis/MarketplaceV2'
@@ -90,45 +86,6 @@ export class AxelarProvider implements CrossChainProvider {
       }
     )) as ethers.providers.TransactionResponse
 
-    const originChainTxHash = txResponse.hash
-
-    // if it's an actual cross-chain interaction, we need to get the tx hash in the destination chain
-    if (route.route.params.fromChain !== route.route.params.toChain) {
-      let status: StatusResponse | undefined
-      try {
-        status = await this.squid.getStatus({
-          transactionId: txResponse.hash,
-          integratorId: INTEGRATOR_ID,
-          requestId: route.requestId
-        })
-      } catch (error) {
-        console.error('error: ', error)
-      }
-      txResponse = null
-      const destinationChain = Number(route.route.params.toChain) as ChainId
-      const destinationChainRPC = getRpcUrls(ProviderType.NETWORK)[
-        destinationChain
-      ]
-      const destinationChainProvider = new ethers.providers.JsonRpcProvider(
-        destinationChainRPC
-      )
-      while (!status || !status?.toChain?.transactionId) {
-        // wrapping in try-catch since it throws an error if the tx is not found (the first seconds after triggering it)
-        try {
-          status = await this.squid.getStatus({
-            transactionId: originChainTxHash,
-            integratorId: INTEGRATOR_ID,
-            requestId: route.requestId
-          })
-        } catch (error) {
-          console.error('error: ', error)
-        }
-        await new Promise(resolve => setTimeout(resolve, 1000)) // fetch every 1 seg
-      }
-      txResponse = await destinationChainProvider.getTransaction(
-        status?.toChain?.transactionId
-      )
-    }
     return txResponse.wait()
   }
 
@@ -499,5 +456,17 @@ export class AxelarProvider implements CrossChainProvider {
         ]
       }
     })
+  }
+
+  async getStatus(routeRequestId: string, originChainTxHash: string) {
+    return this.squid.getStatus({
+      transactionId: originChainTxHash,
+      integratorId: INTEGRATOR_ID,
+      requestId: routeRequestId
+    })
+  }
+
+  getTxLink(txHash: string) {
+    return `https://axelarscan.io/gmp/${txHash}`
   }
 }
