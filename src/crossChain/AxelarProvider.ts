@@ -466,7 +466,7 @@ export class AxelarProvider implements CrossChainProvider {
     })
   }
 
-  getTxLink(txHash: string) {
+  static getTxLink(txHash: string) {
     return `https://axelarscan.io/gmp/${txHash}`
   }
 }

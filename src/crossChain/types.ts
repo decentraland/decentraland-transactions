@@ -94,5 +94,4 @@ export interface CrossChainProvider {
     routeRequestId: string,
     originChainHash: string
   ): Promise<StatusResponse>
-  getTxLink(txHash: string): string
 }
