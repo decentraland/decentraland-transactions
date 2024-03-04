@@ -38,6 +38,10 @@ export class AxelarProvider implements CrossChainProvider {
     this.squid.init()
   }
 
+  static getTxLink(txHash: string) {
+    return `https://axelarscan.io/gmp/${txHash}`
+  }
+
   async init() {
     if (!this.squid.initialized) {
       await this.squid.init()
@@ -464,9 +468,5 @@ export class AxelarProvider implements CrossChainProvider {
       integratorId: INTEGRATOR_ID,
       requestId: routeRequestId
     })
-  }
-
-  static getTxLink(txHash: string) {
-    return `https://axelarscan.io/gmp/${txHash}`
   }
 }
