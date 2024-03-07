@@ -26,9 +26,6 @@ const INTEGRATOR_ID = 'decentraland-sdk'
 export class AxelarProvider implements CrossChainProvider {
   public squid: Squid
   public initialized = false
-  private polygonSquidMulticallContract =
-    '0xEa749Fd6bA492dbc14c24FE8A3d08769229b896c' // default value, will be overriden in the init method by the latest one gotten from the sdk
-
   constructor(squidURL: string) {
     this.squid = new Squid({
       baseUrl: squidURL,
@@ -45,13 +42,6 @@ export class AxelarProvider implements CrossChainProvider {
   async init() {
     if (!this.squid.initialized) {
       await this.squid.init()
-      const polygonChainData = this.squid.chains.find(
-        c => c.chainId === ChainId.MATIC_MAINNET.toString()
-      )
-      if (polygonChainData?.squidContracts.squidMulticall) {
-        this.polygonSquidMulticallContract =
-          polygonChainData.squidContracts.squidMulticall
-      }
       this.initialized = true
     }
   }
@@ -245,6 +235,10 @@ export class AxelarProvider implements CrossChainProvider {
       toChain
     ).address
 
+    const squidMulticallContract = this.squid.chains.find(
+      c => c.chainId === toChain.toString()
+    )?.squidContracts.squidMulticall
+
     return this.squid.getRoute({
       fromAddress,
       fromAmount,
@@ -311,7 +305,7 @@ export class AxelarProvider implements CrossChainProvider {
             value: '0',
             callData: ERC721ContractInterface.encodeFunctionData(
               'safeTransferFrom(address, address, uint256)',
-              [this.polygonSquidMulticallContract, fromAddress, tokenId]
+              [squidMulticallContract, fromAddress, tokenId]
             ),
             payload: {
               tokenAddress: NATIVE_TOKEN,
