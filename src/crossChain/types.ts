@@ -64,7 +64,7 @@ export type Route = RouteResponse // same as the comment above
 export type StatusResponse = SquidStatusResponse
 
 export interface CrossChainProvider {
-  init(): void
+  init(): Promise<void>
   isLibInitialized(): boolean
   getFromAmount(fromAmountParams: FromAmountParams): Promise<string>
   getSupportedTokens(): Token[]
