@@ -93,5 +93,12 @@ export const erc20: Record<ChainId, ContractData> = {
     address: '',
     name: 'ERC20',
     chainId: ChainId.FANTOM_MAINNET
+  },
+  [ChainId.MATIC_AMOY]: {
+    version: '2',
+    abi: abis.ERC20,
+    address: '',
+    name: 'ERC20',
+    chainId: ChainId.MATIC_AMOY
   }
 }

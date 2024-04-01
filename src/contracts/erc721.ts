@@ -93,5 +93,12 @@ export const erc721: Record<ChainId, ContractData> = {
     address: '',
     name: 'ERC271',
     chainId: ChainId.BSC_MAINNET
+  },
+  [ChainId.MATIC_AMOY]: {
+    version: '2',
+    abi: abis.ERC721,
+    address: '',
+    name: 'ERC271',
+    chainId: ChainId.MATIC_AMOY
   }
 }
