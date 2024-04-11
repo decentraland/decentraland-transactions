@@ -17,5 +17,12 @@ export const chainlinkOracle = {
     address: '0xe18B1361d41afC44658216F3Dc27e48c2336e3c2',
     name,
     chainId: ChainId.MATIC_MAINNET
+  },
+  [ChainId.MATIC_AMOY]: {
+    version: '1',
+    abi: abis.ChainlinkOracle,
+    address: '0x7474ae33311ad160ed35c8d9cea95f0856ca782a',
+    name,
+    chainId: ChainId.MATIC_AMOY
   }
 }

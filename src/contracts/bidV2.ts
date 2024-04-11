@@ -15,5 +15,12 @@ export const bidV2 = {
     address: '0xb96697FA4A3361Ba35B774a42c58dACcaAd1B8E1',
     name: 'Decentraland Bid',
     chainId: ChainId.MATIC_MAINNET
+  },
+  [ChainId.MATIC_AMOY]: {
+    version: '2',
+    abi: abis.Bid,
+    address: '0x4b66eab79cc03a96fb6275cfcdf23c0db431606d',
+    name: 'Decentraland Bid',
+    chainId: ChainId.MATIC_AMOY
   }
 }
