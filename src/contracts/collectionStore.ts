@@ -15,5 +15,12 @@ export const collectionStore = {
     address: '0x214ffC0f0103735728dc66b61A22e4F163e275ae',
     name: 'Decentraland Collection Store',
     chainId: ChainId.MATIC_MAINNET
+  },
+  [ChainId.MATIC_AMOY]: {
+    version: '1',
+    abi: abis.CollectionStore,
+    address: '0xe36abc9ec616c83caaa386541380829106149d68',
+    name: 'Decentraland Collection Store',
+    chainId: ChainId.MATIC_AMOY
   }
 }

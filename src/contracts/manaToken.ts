@@ -43,5 +43,12 @@ export const manaToken = {
     address: '0xA1c57f48F0Deb89f569dFbE6E2B7f46D33606fD4',
     name: '(PoS) Decentraland MANA',
     chainId: ChainId.MATIC_MAINNET
+  },
+  [ChainId.MATIC_AMOY]: {
+    version: '1',
+    abi: abis.MANAToken,
+    address: '0x7ad72b9f944ea9793cf4055d88f81138cc2c63a0',
+    name: '(PoS) Decentraland MANA',
+    chainId: ChainId.MATIC_AMOY
   }
 }
