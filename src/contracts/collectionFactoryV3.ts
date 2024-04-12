@@ -19,7 +19,7 @@ export const collectionFactoryV3 = {
   [ChainId.MATIC_AMOY]: {
     version: '3',
     abi: abis.CollectionFactoryV3,
-    address: '0xe21289022b9324f9b9145a91ee59297ceb040c06',
+    address: '0x802de0c509add2ee29de24de7225daaff4741c43',
     name: 'CollectionFactory',
     chainId: ChainId.MATIC_AMOY
   }
