@@ -24,5 +24,5 @@ export const thirdPartyRegistry = {
     address: '0x41e07f9d48586df0ac59a09a940ffdf4af306a13',
     name,
     chainId: ChainId.MATIC_AMOY
-  },
+  }
 }
