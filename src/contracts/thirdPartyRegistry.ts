@@ -17,5 +17,12 @@ export const thirdPartyRegistry = {
     address: '0x1C436C1EFb4608dFfDC8bace99d2B03c314f3348',
     name,
     chainId: ChainId.MATIC_MAINNET
+  },
+  [ChainId.MATIC_AMOY]: {
+    version: '1',
+    abi: abis.ThirdPartyRegistry,
+    address: '0x41e07f9d48586df0ac59a09a940ffdf4af306a13',
+    name,
+    chainId: ChainId.MATIC_AMOY
   }
 }

@@ -46,7 +46,7 @@ export type FromAmountParams = {
 }
 
 export const CROSS_CHAIN_SUPPORTED_CHAINS = [
-  ChainId.MATIC_MUMBAI,
+  ChainId.MATIC_AMOY,
   ChainId.ETHEREUM_SEPOLIA,
   ChainId.ETHEREUM_MAINNET,
   ChainId.MATIC_MAINNET,
