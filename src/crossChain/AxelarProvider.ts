@@ -106,7 +106,6 @@ export class AxelarProvider implements CrossChainProvider {
       toChain,
       toAmount, // the registration price
       enableExpress = true,
-      slippage = 1, // 1 is "normal" slippage. Always set to 1
       name
     } = getRegisterNameCrossChainData
 
@@ -128,11 +127,11 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: controllerContract.address,
       enableBoost: enableExpress,
-      slippageConfig: {
-        autoMode: slippage
-      },
-      postHook: {
+      slippage: 1,
+      preHook: {
         description: '',
+        provider: '',
+        logoURI: '',
         chainType: ChainType.EVM,
         fundAmount: '1',
         fundToken: destinationChainMANA,
@@ -248,11 +247,11 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: destinationChainMarketplace,
       enableBoost: enableExpress,
-      slippageConfig: {
-        autoMode: slippage
-      },
-      postHook: {
+      slippage: 1,
+      preHook: {
         description: '',
+        provider: '',
+        logoURI: '',
         chainType: ChainType.EVM,
         fundAmount: '1',
         fundToken: destinationChainMANA,
