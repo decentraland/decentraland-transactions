@@ -127,11 +127,11 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: controllerContract.address,
       enableBoost: enableExpress,
-      slippage: 1,
       preHook: {
-        description: '',
-        provider: '',
-        logoURI: '',
+        provider: 'Decentraland',
+        description: `Buy ${name}`,
+        logoURI:
+          'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
         fundAmount: '1',
         fundToken: destinationChainMANA,
@@ -211,7 +211,6 @@ export class AxelarProvider implements CrossChainProvider {
       toChain,
       toAmount, // the item price
       enableExpress = true, // TODO: check if we need this
-      slippage = 1, // 1 is "normal" slippage. Always set to 1
       nft: { collectionAddress, price, tokenId }
     } = buyNFTCrossChainData
 
@@ -247,14 +246,12 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: destinationChainMarketplace,
       enableBoost: enableExpress,
-      slippage: 1,
-      preHook: {
-        description: '',
-        provider: '',
-        logoURI: '',
+      postHook: {
+        provider: 'Decentraland',
+        description: `Buy NFT ${collectionAddress}-${tokenId}`,
+        logoURI:
+          'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
-        fundAmount: '1',
-        fundToken: destinationChainMANA,
         calls: [
           // ===================================
           // Approve MANA to be spent by Decentraland contract
@@ -361,7 +358,6 @@ export class AxelarProvider implements CrossChainProvider {
       toChain,
       toAmount, // the item price
       enableExpress = true,
-      slippage = 1, // 1 is "normal" slippage. Always set to 1
       item: { collectionAddress, price, itemId }
     } = buyNFTCrossChainData
 
@@ -384,11 +380,11 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: fromAddress,
       enableBoost: enableExpress, // TODO: check if we need this
-      slippageConfig: {
-        autoMode: slippage
-      },
-      postHook: {
-        description: '',
+      preHook: {
+        provider: 'Decentraland',
+        description: `Buy Item ${collectionAddress}-${itemId}`,
+        logoURI:
+          'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
         fundAmount: '1',
         fundToken: destinationChainMANA,
