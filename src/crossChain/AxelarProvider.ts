@@ -127,14 +127,12 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: controllerContract.address,
       enableBoost: enableExpress,
-      preHook: {
+      postHook: {
         provider: 'Decentraland',
         description: `Buy ${name}`,
         logoURI:
           'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
-        fundAmount: '1',
-        fundToken: destinationChainMANA,
         calls: [
           // ===================================
           // Approve MANA to be spent by Decentraland contract
@@ -380,14 +378,12 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: fromAddress,
       enableBoost: enableExpress, // TODO: check if we need this
-      preHook: {
+      postHook: {
         provider: 'Decentraland',
         description: `Buy Item ${collectionAddress}-${itemId}`,
         logoURI:
           'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
-        fundAmount: '1',
-        fundToken: destinationChainMANA,
         calls: [
           // ===================================
           // Approve MANA to be spent by Decentraland contract
