@@ -23,6 +23,7 @@ import { Rentals } from './Rentals'
 import { DCLRegistrar } from './DCLRegistrar'
 import { DCLController } from './DCLController'
 import { DCLControllerV2 } from './DCLControllerV2'
+import { OffChainMarketplace } from './OffChainMarketplace'
 
 export const abis = {
   [ContractName.Bid]: Bid,
@@ -47,5 +48,6 @@ export const abis = {
   [ContractName.Rentals]: Rentals,
   [ContractName.DCLRegistrar]: DCLRegistrar,
   [ContractName.DCLController]: DCLController,
-  [ContractName.DCLControllerV2]: DCLControllerV2
+  [ContractName.DCLControllerV2]: DCLControllerV2,
+  [ContractName.OffChainMarketplace]: OffChainMarketplace
 }

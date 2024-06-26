@@ -24,6 +24,7 @@ import { rentals } from './rentals'
 import { dclRegistrar } from './dclRegistrar'
 import { dclController } from './dclController'
 import { dclControllerV2 } from './dclControllerV2'
+import { offChainMarketplace } from './offChainMarketplace'
 
 const contracts: Record<
   ContractName,
@@ -51,7 +52,8 @@ const contracts: Record<
   [ContractName.Rentals]: rentals,
   [ContractName.DCLRegistrar]: dclRegistrar,
   [ContractName.DCLController]: dclController,
-  [ContractName.DCLControllerV2]: dclControllerV2
+  [ContractName.DCLControllerV2]: dclControllerV2,
+  [ContractName.OffChainMarketplace]: offChainMarketplace
 }
 
 export function getContract(
