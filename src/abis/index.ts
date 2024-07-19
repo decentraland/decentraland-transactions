@@ -23,7 +23,9 @@ import { Rentals } from './Rentals'
 import { DCLRegistrar } from './DCLRegistrar'
 import { DCLController } from './DCLController'
 import { DCLControllerV2 } from './DCLControllerV2'
-import { OffChainMarketplace } from './OffChainMarketplace'
+import { OffChainMarketplaceEthereum } from './OffChainMarketplaceEthereum'
+import { Network } from '@dcl/schemas'
+import { OffChainMarketplacePolygon } from './OffChainMarketplacePolygon'
 
 export const abis = {
   [ContractName.Bid]: Bid,
@@ -49,5 +51,8 @@ export const abis = {
   [ContractName.DCLRegistrar]: DCLRegistrar,
   [ContractName.DCLController]: DCLController,
   [ContractName.DCLControllerV2]: DCLControllerV2,
-  [ContractName.OffChainMarketplace]: OffChainMarketplace
+  [ContractName.OffChainMarketplace]: {
+    [Network.ETHEREUM]: OffChainMarketplaceEthereum,
+    [Network.MATIC]: OffChainMarketplacePolygon
+  }
 }
