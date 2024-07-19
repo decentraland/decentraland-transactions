@@ -1,10 +1,23 @@
-export const OffChainMarketplace = [
+export const OffChainMarketplaceEthereum = [
   {
     inputs: [
       { internalType: 'address', name: '_owner', type: 'address' },
       { internalType: 'address', name: '_couponManager', type: 'address' },
       { internalType: 'address', name: '_feeCollector', type: 'address' },
-      { internalType: 'uint256', name: '_feeRate', type: 'uint256' }
+      { internalType: 'uint256', name: '_feeRate', type: 'uint256' },
+      { internalType: 'address', name: '_manaAddress', type: 'address' },
+      { internalType: 'address', name: '_manaEthAggregator', type: 'address' },
+      {
+        internalType: 'uint256',
+        name: '_manaEthAggregatorTolerance',
+        type: 'uint256'
+      },
+      { internalType: 'address', name: '_ethUsdAggregator', type: 'address' },
+      {
+        internalType: 'uint256',
+        name: '_ethUsdAggregatorTolerance',
+        type: 'uint256'
+      }
     ],
     stateMutability: 'nonpayable',
     type: 'constructor'
@@ -19,6 +32,8 @@ export const OffChainMarketplace = [
     name: 'AddressInsufficientBalance',
     type: 'error'
   },
+  { inputs: [], name: 'AggregatorAnswerIsNegative', type: 'error' },
+  { inputs: [], name: 'AggregatorAnswerIsStale', type: 'error' },
   { inputs: [], name: 'EnforcedPause', type: 'error' },
   { inputs: [], name: 'ExpectedPause', type: 'error' },
   { inputs: [], name: 'Expired', type: 'error' },
@@ -52,7 +67,6 @@ export const OffChainMarketplace = [
     name: 'StringTooLong',
     type: 'error'
   },
-  { inputs: [], name: 'TradesAndCouponsLengthMismatch', type: 'error' },
   {
     inputs: [{ internalType: 'uint256', name: '_assetType', type: 'uint256' }],
     name: 'UnsupportedAssetType',
@@ -104,6 +118,25 @@ export const OffChainMarketplace = [
       {
         indexed: true,
         internalType: 'address',
+        name: '_aggregator',
+        type: 'address'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_tolerance',
+        type: 'uint256'
+      }
+    ],
+    name: 'EthUsdAggregatorUpdated',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
         name: '_caller',
         type: 'address'
       },
@@ -134,6 +167,25 @@ export const OffChainMarketplace = [
       }
     ],
     name: 'FeeRateUpdated',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_aggregator',
+        type: 'address'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_tolerance',
+        type: 'uint256'
+      }
+    ],
+    name: 'ManaEthAggregatorUpdated',
     type: 'event'
   },
   {
@@ -248,6 +300,13 @@ export const OffChainMarketplace = [
   {
     inputs: [],
     name: 'ASSET_TYPE_ERC721',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'ASSET_TYPE_USD_PEGGED_MANA',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function'
@@ -603,6 +662,22 @@ export const OffChainMarketplace = [
   },
   {
     inputs: [],
+    name: 'ethUsdAggregator',
+    outputs: [
+      { internalType: 'contract IAggregator', name: '', type: 'address' }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'ethUsdAggregatorTolerance',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
     name: 'feeCollector',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
@@ -723,6 +798,29 @@ export const OffChainMarketplace = [
   },
   {
     inputs: [],
+    name: 'manaAddress',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'manaEthAggregator',
+    outputs: [
+      { internalType: 'contract IAggregator', name: '', type: 'address' }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'manaEthAggregatorTolerance',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
     name: 'owner',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
@@ -788,6 +886,16 @@ export const OffChainMarketplace = [
   },
   {
     inputs: [
+      { internalType: 'address', name: '_aggregator', type: 'address' },
+      { internalType: 'uint256', name: '_tolerance', type: 'uint256' }
+    ],
+    name: 'updateEthUsdAggregator',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
       { internalType: 'address', name: '_feeCollector', type: 'address' }
     ],
     name: 'updateFeeCollector',
@@ -798,6 +906,16 @@ export const OffChainMarketplace = [
   {
     inputs: [{ internalType: 'uint256', name: '_feeRate', type: 'uint256' }],
     name: 'updateFeeRate',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: '_aggregator', type: 'address' },
+      { internalType: 'uint256', name: '_tolerance', type: 'uint256' }
+    ],
+    name: 'updateManaEthAggregator',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function'
