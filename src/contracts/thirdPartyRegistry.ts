@@ -21,7 +21,7 @@ export const thirdPartyRegistry = {
   [ChainId.MATIC_AMOY]: {
     version: '1',
     abi: abis.ThirdPartyRegistry,
-    address: '0x41e07f9d48586df0ac59a09a940ffdf4af306a13',
+    address: '0x7d7c0b9d97385bada5fec6861e97d0df414af3c3',
     name,
     chainId: ChainId.MATIC_AMOY
   }
