@@ -261,6 +261,25 @@ export const ThirdPartyRegistry = [
     inputs: [
       {
         indexed: false,
+        internalType: 'uint256',
+        name: '_oldProgrammaticBasePurchasedSlots',
+        type: 'uint256'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_newProgrammaticBasePurchasedSlots',
+        type: 'uint256'
+      }
+    ],
+    name: 'ProgrammaticBasePurchasedSlotsSet',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: 'string',
         name: '_thirdPartyId',
         type: 'string'
@@ -294,6 +313,12 @@ export const ThirdPartyRegistry = [
         internalType: 'uint256',
         name: '_itemSlots',
         type: 'uint256'
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: '_isProgrammatic',
+        type: 'bool'
       },
       {
         indexed: false,
@@ -539,9 +564,19 @@ export const ThirdPartyRegistry = [
             type: 'uint256'
           }
         ],
-        internalType: 'struct ThirdPartyRegistryV2.ThirdPartyParam[]',
+        internalType: 'struct ThirdPartyRegistryV3.ThirdPartyParam[]',
         name: '_thirdParties',
         type: 'tuple[]'
+      },
+      {
+        internalType: 'bool[]',
+        name: '_areProgrammatic',
+        type: 'bool[]'
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_maxPrices',
+        type: 'uint256[]'
       }
     ],
     name: 'addThirdParties',
@@ -620,7 +655,7 @@ export const ThirdPartyRegistry = [
             type: 'uint8'
           }
         ],
-        internalType: 'struct ThirdPartyRegistryV2.ConsumeSlotsParam[]',
+        internalType: 'struct ThirdPartyRegistryV3.ConsumeSlotsParam[]',
         name: '_consumeSlotsParams',
         type: 'tuple[]'
       }
@@ -848,6 +883,25 @@ export const ThirdPartyRegistry = [
     inputs: [
       {
         internalType: 'string',
+        name: '',
+        type: 'string'
+      }
+    ],
+    name: 'isThirdPartyProgrammatic',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
         name: '_thirdPartyId',
         type: 'string'
       },
@@ -919,7 +973,7 @@ export const ThirdPartyRegistry = [
             type: 'uint256'
           }
         ],
-        internalType: 'struct ThirdPartyRegistryV2.Item',
+        internalType: 'struct ThirdPartyRegistryV3.Item',
         name: '',
         type: 'tuple'
       }
@@ -974,6 +1028,19 @@ export const ThirdPartyRegistry = [
   },
   {
     inputs: [],
+    name: 'programmaticBasePurchasedSlots',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
     name: 'renounceOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -1016,12 +1083,12 @@ export const ThirdPartyRegistry = [
                 type: 'bool'
               }
             ],
-            internalType: 'struct ThirdPartyRegistryV2.ItemReviewParam[]',
+            internalType: 'struct ThirdPartyRegistryV3.ItemReviewParam[]',
             name: 'items',
             type: 'tuple[]'
           }
         ],
-        internalType: 'struct ThirdPartyRegistryV2.ThirdPartyReviewParam[]',
+        internalType: 'struct ThirdPartyRegistryV3.ThirdPartyReviewParam[]',
         name: '_thirdParties',
         type: 'tuple[]'
       }
@@ -1071,7 +1138,7 @@ export const ThirdPartyRegistry = [
             type: 'uint8'
           }
         ],
-        internalType: 'struct ThirdPartyRegistryV2.ConsumeSlotsParam[]',
+        internalType: 'struct ThirdPartyRegistryV3.ConsumeSlotsParam[]',
         name: '_consumeSlotsParams',
         type: 'tuple[]'
       }
@@ -1168,6 +1235,19 @@ export const ThirdPartyRegistry = [
       }
     ],
     name: 'setOracle',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_value',
+        type: 'uint256'
+      }
+    ],
+    name: 'setProgrammaticBasePurchasedSlots',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function'
@@ -1350,7 +1430,7 @@ export const ThirdPartyRegistry = [
             type: 'uint256'
           }
         ],
-        internalType: 'struct ThirdPartyRegistryV2.ThirdPartyParam[]',
+        internalType: 'struct ThirdPartyRegistryV3.ThirdPartyParam[]',
         name: '_thirdParties',
         type: 'tuple[]'
       }
