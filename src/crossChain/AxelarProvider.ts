@@ -2,13 +2,7 @@ import { ethers } from 'ethers'
 import { Squid } from '@0xsquid/sdk'
 import { SquidCallType, ChainType, ChainCall } from '@0xsquid/sdk/dist/types'
 import { Provider } from 'decentraland-connect'
-import {
-  ChainId,
-  CollectionItemTradeAsset,
-  ERC721TradeAsset,
-  OnChainTrade,
-  TradeType
-} from '@dcl/schemas'
+import { ChainId, OnChainTrade } from '@dcl/schemas'
 import { OffChainMarketplacePolygon } from '../abis/OffChainMarketplacePolygon'
 import { OffChainMarketplaceEthereum } from '../abis/OffChainMarketplaceEthereum'
 import { ERC20 } from '../abis/ERC20'
@@ -420,20 +414,10 @@ export class AxelarProvider implements CrossChainProvider {
       c => c.chainId === toChain.toString()
     )?.squidContracts.squidMulticall
 
-    let description = `Buy NFT ${collectionAddress}-${tokenId}`
-
     let calls: ChainCall[] = []
 
     if (tradeId && fetchTradeData) {
-      const { trade, onChainTrade } = await fetchTradeData(tradeId)
-      description =
-        trade.type === TradeType.PUBLIC_NFT_ORDER
-          ? `Buy NFT ${trade.sent[0].contractAddress}-${
-              (trade.sent[0] as ERC721TradeAsset).tokenId
-            }`
-          : `Buy Item ${trade.sent[0].contractAddress}-${
-              (trade.sent[0] as CollectionItemTradeAsset).itemId
-            }`
+      const { onChainTrade } = await fetchTradeData()
 
       calls = this.getTradesContractCalls({
         destinationChainMANA,
@@ -470,7 +454,7 @@ export class AxelarProvider implements CrossChainProvider {
       enableBoost: enableExpress,
       postHook: {
         provider: 'Decentraland',
-        description,
+        description: `Buy NFT ${collectionAddress}-${tokenId}`,
         logoURI:
           'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
@@ -614,19 +598,10 @@ export class AxelarProvider implements CrossChainProvider {
       toChain
     ).address
 
-    let description = `Buy Item ${collectionAddress}-${itemId}`
     let calls: ChainCall[] = []
 
     if (tradeId && fetchTradeData) {
-      const { trade, onChainTrade } = await fetchTradeData(tradeId)
-      description =
-        trade.type === TradeType.PUBLIC_NFT_ORDER
-          ? `Buy NFT ${trade.sent[0].contractAddress}-${
-              (trade.sent[0] as ERC721TradeAsset).tokenId
-            }`
-          : `Buy Item ${trade.sent[0].contractAddress}-${
-              (trade.sent[0] as CollectionItemTradeAsset).itemId
-            }`
+      const { onChainTrade } = await fetchTradeData()
 
       calls = this.getTradesContractCalls({
         destinationChainMANA,
@@ -665,7 +640,7 @@ export class AxelarProvider implements CrossChainProvider {
       enableBoost: enableExpress, // TODO: check if we need this
       postHook: {
         provider: 'Decentraland',
-        description,
+        description: `Buy Item ${collectionAddress}-${itemId}`,
         logoURI:
           'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
