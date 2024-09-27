@@ -1,8 +1,14 @@
 import { ethers } from 'ethers'
 import { Squid } from '@0xsquid/sdk'
-import { SquidCallType, ChainType } from '@0xsquid/sdk/dist/types'
+import { SquidCallType, ChainType, ChainCall } from '@0xsquid/sdk/dist/types'
 import { Provider } from 'decentraland-connect'
-import { ChainId } from '@dcl/schemas'
+import {
+  ChainId,
+  CollectionItemTradeAsset,
+  ERC721TradeAsset,
+  OnChainTrade,
+  TradeType
+} from '@dcl/schemas'
 import { ERC20 } from '../abis/ERC20'
 import { DCLControllerV2 } from '../abis/DCLControllerV2'
 import { MarketplaceV2 } from '../abis/MarketplaceV2'
@@ -20,6 +26,8 @@ import {
   CrossChainProvider,
   RegisterNameCrossChainData
 } from './types'
+import { OffChainMarketplacePolygon } from 'abis/OffChainMarketplacePolygon'
+import { OffChainMarketplaceEthereum } from 'abis/OffChainMarketplaceEthereum'
 
 const INTEGRATOR_ID = 'decentraland-sdk'
 
@@ -195,6 +203,173 @@ export class AxelarProvider implements CrossChainProvider {
     })
   }
 
+  getExecuteOrderCalls({
+    destinationChainMANA,
+    destinationChainMarketplace,
+    toAmount,
+    fromAddress,
+    collectionAddress,
+    tokenId,
+    price,
+    marketplaceInterface,
+    ERC721ContractInterface,
+    squidMulticallContract
+  }: {
+    destinationChainMANA: string
+    destinationChainMarketplace: string
+    toAmount: string
+    fromAddress: string
+    collectionAddress: string
+    tokenId: string
+    price: string
+    marketplaceInterface: ethers.utils.Interface
+    ERC721ContractInterface: ethers.utils.Interface
+    squidMulticallContract: string | undefined
+  }): ChainCall[] {
+    const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
+    return [
+      // Approve MANA to be spent by Decentraland contract
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.DEFAULT,
+        target: destinationChainMANA,
+        value: '0',
+        callData: ERC20ContractInterface.encodeFunctionData('approve', [
+          destinationChainMarketplace,
+          toAmount
+        ]),
+        payload: {
+          tokenAddress: NATIVE_TOKEN,
+          inputPos: 0
+        },
+        estimatedGas: '50000'
+      },
+      // EXECUTE ORDER
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.DEFAULT,
+        target: destinationChainMarketplace,
+        value: '0',
+        callData: marketplaceInterface.encodeFunctionData('executeOrder', [
+          collectionAddress,
+          tokenId,
+          price
+        ]),
+
+        payload: {
+          tokenAddress: NATIVE_TOKEN, // ex `0x`
+          inputPos: 0
+        },
+        estimatedGas: '300000'
+      },
+      // Transfer NFT to buyer
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.DEFAULT,
+        target: collectionAddress,
+        value: '0',
+        callData: ERC721ContractInterface.encodeFunctionData(
+          'safeTransferFrom(address, address, uint256)',
+          [squidMulticallContract, fromAddress, tokenId]
+        ),
+        payload: {
+          tokenAddress: NATIVE_TOKEN,
+          inputPos: 1
+        },
+        estimatedGas: '50000'
+      },
+      // Transfer remaining MANA to buyer
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.FULL_TOKEN_BALANCE,
+        target: destinationChainMANA,
+        value: '0',
+        callData: ERC20ContractInterface.encodeFunctionData('transfer', [
+          fromAddress,
+          '0'
+        ]),
+        payload: {
+          tokenAddress: destinationChainMANA,
+          // This will replace the parameter at index 1 in the encoded Function,
+          //  with FULL_TOKEN_BALANCE (instead of "0")
+          inputPos: 1
+        },
+        estimatedGas: '50000'
+      }
+    ]
+  }
+
+  getTradesContractCalls({
+    destinationChainMANA,
+    destinationChainMarketplace,
+    toAmount,
+    fromAddress,
+    onChainTrade,
+    ERC20ContractInterface,
+    marketplaceInterface
+  }: {
+    destinationChainMANA: string
+    destinationChainMarketplace: string
+    toAmount: string
+    fromAddress: string
+    onChainTrade: OnChainTrade
+    ERC20ContractInterface: ethers.utils.Interface
+    marketplaceInterface: ethers.utils.Interface
+  }): ChainCall[] {
+    return [
+      // Approve MANA to be spent by Decentraland contract
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.DEFAULT,
+        target: destinationChainMANA,
+        value: '0',
+        callData: ERC20ContractInterface.encodeFunctionData('approve', [
+          destinationChainMarketplace,
+          toAmount
+        ]),
+        payload: {
+          tokenAddress: NATIVE_TOKEN,
+          inputPos: 0
+        },
+        estimatedGas: '50000'
+      },
+      // ACCEPT TRADE
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.DEFAULT,
+        target: destinationChainMarketplace,
+        value: '0',
+        callData: marketplaceInterface.encodeFunctionData('accept', [
+          onChainTrade
+        ]),
+
+        payload: {
+          tokenAddress: NATIVE_TOKEN, // ex `0x`
+          inputPos: 0
+        },
+        estimatedGas: '300000'
+      },
+      // Transfer remaining MANA to buyer
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.FULL_TOKEN_BALANCE,
+        target: destinationChainMANA,
+        value: '0',
+        callData: ERC20ContractInterface.encodeFunctionData('transfer', [
+          fromAddress,
+          '0'
+        ]),
+        payload: {
+          tokenAddress: destinationChainMANA,
+          // This will replace the parameter at index 1 in the encoded Function,
+          //  with FULL_TOKEN_BALANCE (instead of "0")
+          inputPos: 1
+        },
+        estimatedGas: '50000'
+      }
+    ]
+  }
+
   async getBuyNFTRoute(
     buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<RouteResponse> {
@@ -209,12 +384,20 @@ export class AxelarProvider implements CrossChainProvider {
       toChain,
       toAmount, // the item price
       enableExpress = true, // TODO: check if we need this
-      nft: { collectionAddress, price, tokenId }
+      order: { contractAddress, tokenId, price, tradeId },
+      fetchTradeData
     } = buyNFTCrossChainData
 
+    const collectionAddress = contractAddress
     const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
     const marketplaceContractABI =
-      toChain === ChainId.MATIC_MAINNET ? MarketplaceV2 : Marketplace
+      toChain === ChainId.MATIC_MAINNET
+        ? tradeId
+          ? OffChainMarketplacePolygon
+          : MarketplaceV2
+        : tradeId
+        ? OffChainMarketplaceEthereum
+        : Marketplace
 
     const marketplaceInterface = new ethers.utils.Interface(
       marketplaceContractABI
@@ -225,7 +408,9 @@ export class AxelarProvider implements CrossChainProvider {
       .address
 
     const destinationChainMarketplace = getContract(
-      toChain === ChainId.MATIC_MAINNET
+      tradeId
+        ? ContractName.OffChainMarketplace
+        : toChain === ChainId.MATIC_MAINNET
         ? ContractName.MarketplaceV2
         : ContractName.Marketplace,
       toChain
@@ -234,6 +419,45 @@ export class AxelarProvider implements CrossChainProvider {
     const squidMulticallContract = this.squid.chains.find(
       c => c.chainId === toChain.toString()
     )?.squidContracts.squidMulticall
+
+    let description = `Buy NFT ${collectionAddress}-${tokenId}`
+
+    let calls: ChainCall[] = []
+
+    if (tradeId && fetchTradeData) {
+      const { trade, onChainTrade } = await fetchTradeData(tradeId)
+      description =
+        trade.type === TradeType.PUBLIC_NFT_ORDER
+          ? `Buy NFT ${trade.sent[0].contractAddress}-${
+              (trade.sent[0] as ERC721TradeAsset).tokenId
+            }`
+          : `Buy Item ${trade.sent[0].contractAddress}-${
+              (trade.sent[0] as CollectionItemTradeAsset).itemId
+            }`
+
+      calls = this.getTradesContractCalls({
+        destinationChainMANA,
+        destinationChainMarketplace,
+        toAmount,
+        fromAddress,
+        onChainTrade,
+        ERC20ContractInterface,
+        marketplaceInterface
+      })
+    } else {
+      calls = this.getExecuteOrderCalls({
+        destinationChainMANA,
+        destinationChainMarketplace,
+        toAmount,
+        fromAddress,
+        collectionAddress,
+        tokenId,
+        price,
+        marketplaceInterface,
+        ERC721ContractInterface,
+        squidMulticallContract
+      })
+    }
 
     return this.squid.getRoute({
       fromAddress,
@@ -246,90 +470,96 @@ export class AxelarProvider implements CrossChainProvider {
       enableBoost: enableExpress,
       postHook: {
         provider: 'Decentraland',
-        description: `Buy NFT ${collectionAddress}-${tokenId}`,
+        description,
         logoURI:
           'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
-        calls: [
-          // ===================================
-          // Approve MANA to be spent by Decentraland contract
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.DEFAULT,
-            target: destinationChainMANA,
-            value: '0',
-            callData: ERC20ContractInterface.encodeFunctionData('approve', [
-              destinationChainMarketplace,
-              toAmount
-            ]),
-            payload: {
-              tokenAddress: NATIVE_TOKEN,
-              inputPos: 0
-            },
-            estimatedGas: '50000'
-          },
-          // ===================================
-          // EXECUTE ORDER
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.DEFAULT,
-            target: destinationChainMarketplace,
-            value: '0',
-            callData: marketplaceInterface.encodeFunctionData('executeOrder', [
-              collectionAddress,
-              tokenId,
-              price
-            ]),
-
-            payload: {
-              tokenAddress: NATIVE_TOKEN, // ex `0x`
-              inputPos: 0
-            },
-            estimatedGas: '300000'
-          },
-          // ===================================
-          // Transfer NFT to buyer
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.DEFAULT,
-            target: collectionAddress,
-            value: '0',
-            callData: ERC721ContractInterface.encodeFunctionData(
-              'safeTransferFrom(address, address, uint256)',
-              [squidMulticallContract, fromAddress, tokenId]
-            ),
-            payload: {
-              tokenAddress: NATIVE_TOKEN,
-              inputPos: 1
-            },
-            estimatedGas: '50000'
-          },
-          // ===================================
-          // Transfer remaining MANA to buyer
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.FULL_TOKEN_BALANCE,
-            target: destinationChainMANA,
-            value: '0',
-            callData: ERC20ContractInterface.encodeFunctionData('transfer', [
-              fromAddress,
-              '0'
-            ]),
-            payload: {
-              tokenAddress: destinationChainMANA,
-              // This will replace the parameter at index 1 in the encoded Function,
-              //  with FULL_TOKEN_BALANCE (instead of "0")
-              inputPos: 1
-            },
-            estimatedGas: '50000'
-          }
-        ]
+        calls
       }
     })
+  }
+
+  // MINT CALLS
+
+  getMintItemCalls({
+    destinationChainMANA,
+    destinationChainCollectionStoreAddress,
+    toAmount,
+    fromAddress,
+    collectionAddress,
+    itemId,
+    price,
+    ERC20ContractInterface,
+    collectionStoreInterface
+  }: {
+    destinationChainMANA: string
+    destinationChainCollectionStoreAddress: string
+    toAmount: string
+    fromAddress: string
+    collectionAddress: string
+    itemId: string
+    price: string
+    ERC20ContractInterface: ethers.utils.Interface
+    collectionStoreInterface: ethers.utils.Interface
+  }): ChainCall[] {
+    return [
+      // ===================================
+      // Approve MANA to be spent by Decentraland contract
+      // ===================================
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.DEFAULT,
+        target: destinationChainMANA,
+        value: '0',
+        callData: ERC20ContractInterface.encodeFunctionData('approve', [
+          destinationChainCollectionStoreAddress,
+          toAmount
+        ]),
+        payload: {
+          tokenAddress: NATIVE_TOKEN,
+          inputPos: 0
+        },
+        estimatedGas: '50000'
+      },
+      // ===================================
+      // BUY ITEM
+      // ===================================
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.DEFAULT,
+        target: destinationChainCollectionStoreAddress,
+        value: '0', // @TODO: WHY 0?
+        callData: collectionStoreInterface.encodeFunctionData(
+          'buy((address,uint256[],uint256[],address[])[])',
+          [[[collectionAddress, [itemId], [price], [fromAddress]]]]
+        ),
+        payload: {
+          tokenAddress: NATIVE_TOKEN, // TODO: do we need this to be set as the native? it's working like this
+          inputPos: 0
+        },
+        estimatedGas: '300000' // TODO: where do we get this value from?
+      },
+      // ===================================
+      // Transfer remaining MANA to buyer
+      // ===================================
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.FULL_TOKEN_BALANCE,
+        target: destinationChainMANA,
+        value: '0',
+        callData: ERC20ContractInterface.encodeFunctionData('transfer', [
+          fromAddress,
+          '0'
+        ]),
+        payload: {
+          tokenAddress: destinationChainMANA,
+          // This will replace the parameter at index 1 in the encoded Function,
+          // with FULL_TOKEN_BALANCE (instead of "0")
+          inputPos: 1
+        },
+        estimatedGas: '50000'
+      }
+    ]
   }
 
   // MINT
@@ -356,7 +586,8 @@ export class AxelarProvider implements CrossChainProvider {
       toChain,
       toAmount, // the item price
       enableExpress = true,
-      item: { collectionAddress, price, itemId }
+      item: { collectionAddress, price, itemId, tradeId },
+      fetchTradeData
     } = buyNFTCrossChainData
 
     const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
@@ -364,10 +595,64 @@ export class AxelarProvider implements CrossChainProvider {
 
     const destinationChainMANA = getContract(ContractName.MANAToken, toChain)
       .address
-    const destinationChaiCollectionStoreAddress = getContract(
+
+    const marketplaceContractABI =
+      toChain === ChainId.MATIC_MAINNET
+        ? tradeId
+          ? OffChainMarketplacePolygon
+          : MarketplaceV2
+        : tradeId
+        ? OffChainMarketplaceEthereum
+        : Marketplace
+
+    const marketplaceInterface = new ethers.utils.Interface(
+      marketplaceContractABI
+    )
+
+    const destinationChainCollectionStoreAddress = getContract(
       ContractName.CollectionStore,
       toChain
     ).address
+
+    let description = `Buy Item ${collectionAddress}-${itemId}`
+    let calls: ChainCall[] = []
+
+    if (tradeId && fetchTradeData) {
+      const { trade, onChainTrade } = await fetchTradeData(tradeId)
+      description =
+        trade.type === TradeType.PUBLIC_NFT_ORDER
+          ? `Buy NFT ${trade.sent[0].contractAddress}-${
+              (trade.sent[0] as ERC721TradeAsset).tokenId
+            }`
+          : `Buy Item ${trade.sent[0].contractAddress}-${
+              (trade.sent[0] as CollectionItemTradeAsset).itemId
+            }`
+
+      calls = this.getTradesContractCalls({
+        destinationChainMANA,
+        destinationChainMarketplace: getContract(
+          ContractName.CollectionStore,
+          toChain
+        ).address,
+        toAmount,
+        fromAddress,
+        onChainTrade,
+        ERC20ContractInterface,
+        marketplaceInterface
+      })
+    } else {
+      calls = this.getMintItemCalls({
+        destinationChainMANA,
+        destinationChainCollectionStoreAddress,
+        toAmount,
+        fromAddress,
+        collectionAddress,
+        itemId,
+        price,
+        ERC20ContractInterface,
+        collectionStoreInterface
+      })
+    }
 
     return this.squid.getRoute({
       fromAddress,
@@ -380,69 +665,11 @@ export class AxelarProvider implements CrossChainProvider {
       enableBoost: enableExpress, // TODO: check if we need this
       postHook: {
         provider: 'Decentraland',
-        description: `Buy Item ${collectionAddress}-${itemId}`,
+        description,
         logoURI:
           'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
-        calls: [
-          // ===================================
-          // Approve MANA to be spent by Decentraland contract
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.DEFAULT,
-            target: destinationChainMANA,
-            value: '0',
-            callData: ERC20ContractInterface.encodeFunctionData('approve', [
-              getContract(ContractName.CollectionStore, toChain).address,
-              toAmount
-            ]),
-            payload: {
-              tokenAddress: NATIVE_TOKEN,
-              inputPos: 0
-            },
-            estimatedGas: '50000'
-          },
-          // ===================================
-          // BUY ITEM
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.DEFAULT,
-            target: destinationChaiCollectionStoreAddress,
-            value: '0', // @TODO: WHY 0?
-            callData: collectionStoreInterface.encodeFunctionData(
-              'buy((address,uint256[],uint256[],address[])[])',
-              [[[collectionAddress, [itemId], [price], [fromAddress]]]]
-            ),
-
-            payload: {
-              tokenAddress: NATIVE_TOKEN, // TODO: do we need this to be set as the native? it's working like this
-              inputPos: 0
-            },
-            estimatedGas: '300000' // TODO: where do we get this value from?
-          },
-          // ===================================
-          // Transfer remaining MANA to buyer
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.FULL_TOKEN_BALANCE,
-            target: destinationChainMANA,
-            value: '0',
-            callData: ERC20ContractInterface.encodeFunctionData('transfer', [
-              fromAddress,
-              '0'
-            ]),
-            payload: {
-              tokenAddress: destinationChainMANA,
-              // This will replace the parameter at index 1 in the encoded Function,
-              //  with FULL_TOKEN_BALANCE (instead of "0")
-              inputPos: 1
-            },
-            estimatedGas: '50000'
-          }
-        ]
+        calls
       }
     })
   }
