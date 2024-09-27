@@ -9,6 +9,8 @@ import {
   OnChainTrade,
   TradeType
 } from '@dcl/schemas'
+import { OffChainMarketplacePolygon } from '../abis/OffChainMarketplacePolygon'
+import { OffChainMarketplaceEthereum } from '../abis/OffChainMarketplaceEthereum'
 import { ERC20 } from '../abis/ERC20'
 import { DCLControllerV2 } from '../abis/DCLControllerV2'
 import { MarketplaceV2 } from '../abis/MarketplaceV2'
@@ -26,8 +28,6 @@ import {
   CrossChainProvider,
   RegisterNameCrossChainData
 } from './types'
-import { OffChainMarketplacePolygon } from 'abis/OffChainMarketplacePolygon'
-import { OffChainMarketplaceEthereum } from 'abis/OffChainMarketplaceEthereum'
 
 const INTEGRATOR_ID = 'decentraland-sdk'
 
