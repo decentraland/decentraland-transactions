@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { ChainId, OnChainTrade, Order, Trade } from '@dcl/schemas'
 import {
   ChainData as SquidChainData,
   Token as SquidToken,
@@ -6,7 +7,6 @@ import {
   StatusResponse as SquidStatusResponse
 } from '@0xsquid/sdk/dist/types'
 import { Provider } from 'decentraland-connect'
-import { ChainId } from '@dcl/schemas'
 
 export type CrossChainData = {
   fromAddress: string
@@ -20,11 +20,13 @@ export type CrossChainData = {
 }
 
 export type BuyNFTCrossChainData = CrossChainData & {
-  nft: {
-    collectionAddress: string
-    tokenId: string
-    price: string
-  }
+  order: Order
+  fetchTradeData?: () => Promise<{ onChainTrade: OnChainTrade }>
+}
+
+export type AcceptTradeData = CrossChainData & {
+  trade: Trade
+  onChainTrade: OnChainTrade
 }
 
 export type RegisterNameCrossChainData = CrossChainData & {
@@ -36,7 +38,9 @@ export type MintNFTCrossChainData = CrossChainData & {
     collectionAddress: string
     itemId: string
     price: string
+    tradeId?: string
   }
+  fetchTradeData?: () => Promise<{ onChainTrade: OnChainTrade }>
 }
 
 export type FromAmountParams = {

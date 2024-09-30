@@ -27,7 +27,7 @@
     "test:watch": "npm test -- --watch"
   },
   "devDependencies": {
-    "@dcl/schemas": "^11.10.1",
+    "@dcl/schemas": "^13.12.0",
     "@microsoft/api-documenter": "^7.12.7",
     "@microsoft/api-extractor": "^7.13.2",
     "@types/chai": "^4.2.14",
