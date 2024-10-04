@@ -69,7 +69,8 @@ export const OffChainMarketplacePolygon = [
     name: 'SafeERC20FailedOperation',
     type: 'error'
   },
-  { inputs: [], name: 'SignatureReuse', type: 'error' },
+  { inputs: [], name: 'SignatureOveruse', type: 'error' },
+  { inputs: [], name: 'SignerAndSignatureDoNotMatch', type: 'error' },
   {
     inputs: [{ internalType: 'string', name: 'str', type: 'string' }],
     name: 'StringTooLong',
@@ -324,6 +325,90 @@ export const OffChainMarketplacePolygon = [
         internalType: 'bytes32',
         name: '_signature',
         type: 'bytes32'
+      },
+      {
+        components: [
+          { internalType: 'address', name: 'signer', type: 'address' },
+          { internalType: 'bytes', name: 'signature', type: 'bytes' },
+          {
+            components: [
+              { internalType: 'uint256', name: 'uses', type: 'uint256' },
+              { internalType: 'uint256', name: 'expiration', type: 'uint256' },
+              { internalType: 'uint256', name: 'effective', type: 'uint256' },
+              { internalType: 'bytes32', name: 'salt', type: 'bytes32' },
+              {
+                internalType: 'uint256',
+                name: 'contractSignatureIndex',
+                type: 'uint256'
+              },
+              {
+                internalType: 'uint256',
+                name: 'signerSignatureIndex',
+                type: 'uint256'
+              },
+              { internalType: 'bytes32', name: 'allowedRoot', type: 'bytes32' },
+              {
+                internalType: 'bytes32[]',
+                name: 'allowedProof',
+                type: 'bytes32[]'
+              },
+              {
+                components: [
+                  {
+                    internalType: 'address',
+                    name: 'contractAddress',
+                    type: 'address'
+                  },
+                  { internalType: 'bytes4', name: 'selector', type: 'bytes4' },
+                  { internalType: 'bytes', name: 'value', type: 'bytes' },
+                  { internalType: 'bool', name: 'required', type: 'bool' }
+                ],
+                internalType: 'struct CommonTypes.ExternalCheck[]',
+                name: 'externalChecks',
+                type: 'tuple[]'
+              }
+            ],
+            internalType: 'struct CommonTypes.Checks',
+            name: 'checks',
+            type: 'tuple'
+          },
+          {
+            components: [
+              { internalType: 'uint256', name: 'assetType', type: 'uint256' },
+              {
+                internalType: 'address',
+                name: 'contractAddress',
+                type: 'address'
+              },
+              { internalType: 'uint256', name: 'value', type: 'uint256' },
+              { internalType: 'address', name: 'beneficiary', type: 'address' },
+              { internalType: 'bytes', name: 'extra', type: 'bytes' }
+            ],
+            internalType: 'struct MarketplaceTypes.Asset[]',
+            name: 'sent',
+            type: 'tuple[]'
+          },
+          {
+            components: [
+              { internalType: 'uint256', name: 'assetType', type: 'uint256' },
+              {
+                internalType: 'address',
+                name: 'contractAddress',
+                type: 'address'
+              },
+              { internalType: 'uint256', name: 'value', type: 'uint256' },
+              { internalType: 'address', name: 'beneficiary', type: 'address' },
+              { internalType: 'bytes', name: 'extra', type: 'bytes' }
+            ],
+            internalType: 'struct MarketplaceTypes.Asset[]',
+            name: 'received',
+            type: 'tuple[]'
+          }
+        ],
+        indexed: false,
+        internalType: 'struct MarketplaceTypes.Trade',
+        name: '_trade',
+        type: 'tuple'
       }
     ],
     name: 'Traded',
@@ -406,7 +491,7 @@ export const OffChainMarketplacePolygon = [
                     type: 'address'
                   },
                   { internalType: 'bytes4', name: 'selector', type: 'bytes4' },
-                  { internalType: 'uint256', name: 'value', type: 'uint256' },
+                  { internalType: 'bytes', name: 'value', type: 'bytes' },
                   { internalType: 'bool', name: 'required', type: 'bool' }
                 ],
                 internalType: 'struct CommonTypes.ExternalCheck[]',
@@ -497,7 +582,7 @@ export const OffChainMarketplacePolygon = [
                     type: 'address'
                   },
                   { internalType: 'bytes4', name: 'selector', type: 'bytes4' },
-                  { internalType: 'uint256', name: 'value', type: 'uint256' },
+                  { internalType: 'bytes', name: 'value', type: 'bytes' },
                   { internalType: 'bool', name: 'required', type: 'bool' }
                 ],
                 internalType: 'struct CommonTypes.ExternalCheck[]',
@@ -579,7 +664,7 @@ export const OffChainMarketplacePolygon = [
                     type: 'address'
                   },
                   { internalType: 'bytes4', name: 'selector', type: 'bytes4' },
-                  { internalType: 'uint256', name: 'value', type: 'uint256' },
+                  { internalType: 'bytes', name: 'value', type: 'bytes' },
                   { internalType: 'bool', name: 'required', type: 'bool' }
                 ],
                 internalType: 'struct CommonTypes.ExternalCheck[]',
@@ -641,7 +726,7 @@ export const OffChainMarketplacePolygon = [
                     type: 'address'
                   },
                   { internalType: 'bytes4', name: 'selector', type: 'bytes4' },
-                  { internalType: 'uint256', name: 'value', type: 'uint256' },
+                  { internalType: 'bytes', name: 'value', type: 'bytes' },
                   { internalType: 'bool', name: 'required', type: 'bool' }
                 ],
                 internalType: 'struct CommonTypes.ExternalCheck[]',
@@ -787,7 +872,7 @@ export const OffChainMarketplacePolygon = [
                     type: 'address'
                   },
                   { internalType: 'bytes4', name: 'selector', type: 'bytes4' },
-                  { internalType: 'uint256', name: 'value', type: 'uint256' },
+                  { internalType: 'bytes', name: 'value', type: 'bytes' },
                   { internalType: 'bool', name: 'required', type: 'bool' }
                 ],
                 internalType: 'struct CommonTypes.ExternalCheck[]',
