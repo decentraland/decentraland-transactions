@@ -82,7 +82,8 @@ export type DataToSign = {
   message: {
     nonce: number
     from: string
-    functionSignature: FunctionSignature
+    functionSignature?: FunctionSignature
+    functionData?: FunctionSignature
   }
 }
 
@@ -101,4 +102,10 @@ export const META_TRANSACTION_TYPE: MetaTransactionType[] = [
   { name: 'nonce', type: 'uint256' },
   { name: 'from', type: 'address' },
   { name: 'functionSignature', type: 'bytes' }
+]
+
+export const OFFCHAIN_META_TRANSACTION_TYPE: MetaTransactionType[] = [
+  { name: 'nonce', type: 'uint256' },
+  { name: 'from', type: 'address' },
+  { name: 'functionData', type: 'bytes' }
 ]
