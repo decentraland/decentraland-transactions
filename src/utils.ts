@@ -2,6 +2,7 @@ import { Provider, EIPProvider } from './types'
 
 const GET_NONCE_FUNCTION_SELECTOR = '2d0335ab'
 const EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR = '0c53c51c'
+const OFFCHAIN_EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR = 'd8ed1acc'
 const ZERO_ADDRESS = hexZeroPad('0x')
 let rpcId = 0
 
@@ -54,6 +55,33 @@ export function getExecuteMetaTransactionData(
     to32Bytes(signatureLength),
     method.padEnd(64 * signaturePadding, '0')
   ].join('')
+}
+
+export function getOffchainExecuteMetaTransactionData(
+  account: string,
+  fullSignature: string,
+  functionSignature: string
+): string {
+  const functionData = functionSignature.replace('0x', '')
+  const signature = fullSignature.replace('0x', '')
+  // Calculate offsets
+  const firstOffset = 96 // 0x60 (4 + 32 + 32 + 32)
+  const secondOffset = firstOffset + 32 + functionData.length / 2
+  const signaturePadding = Math.ceil(signature.length / 64)
+
+  const txData = [
+    '0x',
+    OFFCHAIN_EXECUTE_META_TRANSACTION_FUNCTION_SELECTOR,
+    to32Bytes(account), // address parameter
+    to32Bytes('60'), // offset to functionData
+    to32Bytes(secondOffset.toString(16)), // offset to signature
+    to32Bytes((functionData.length / 2).toString(16)), // length of functionData
+    functionData, // functionData without padding since it has to match its length
+    to32Bytes((signature.length / 2).toString(16)), // length of signature
+    signature.padEnd(64 * signaturePadding, '0') // padded signature
+  ]
+
+  return txData.join('')
 }
 
 export function normalizeVersion(version: string) {

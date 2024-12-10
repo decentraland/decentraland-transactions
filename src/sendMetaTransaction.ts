@@ -4,8 +4,10 @@ import {
   getSignature,
   getExecuteMetaTransactionData,
   getSalt,
-  isContract
+  isContract,
+  getOffchainExecuteMetaTransactionData
 } from './utils'
+import { offChainMarketplace } from './contracts/offChainMarketplace'
 import { getConfiguration } from './configuration'
 import {
   Provider,
@@ -14,7 +16,8 @@ import {
   ContractData,
   DomainData,
   DOMAIN_TYPE,
-  META_TRANSACTION_TYPE
+  META_TRANSACTION_TYPE,
+  OFFCHAIN_META_TRANSACTION_TYPE
 } from './types'
 import { ErrorCode, MetaTransactionError } from './errors'
 
@@ -55,6 +58,11 @@ export async function sendMetaTransaction(
       )
     }
 
+    const isOffchainContract = Object.values(offChainMarketplace).some(
+      contract =>
+        contract.address.toLowerCase() === contractData.address.toLowerCase()
+    )
+
     const nonce = await getNonce(
       metaTransactionProvider,
       account,
@@ -67,7 +75,8 @@ export async function sendMetaTransaction(
       account,
       nonce,
       functionSignature,
-      domainData
+      domainData,
+      isOffchainContract
     )
     const signature = await getSignature(
       provider,
@@ -75,11 +84,11 @@ export async function sendMetaTransaction(
       JSON.stringify(dataToSign)
     )
 
-    const txData = getExecuteMetaTransactionData(
-      account,
-      signature,
-      functionSignature
-    )
+    const getMetaTransactionData = isOffchainContract
+      ? getOffchainExecuteMetaTransactionData
+      : getExecuteMetaTransactionData
+
+    const txData = getMetaTransactionData(account, signature, functionSignature)
 
     const response: Response = await fetch(
       `${configuration.serverURL}/transactions`,
@@ -135,19 +144,24 @@ function getDataToSign(
   account: string,
   nonce: string,
   functionSignature: string,
-  domainData: DomainData
+  domainData: DomainData,
+  isOffchainContract = false
 ): DataToSign {
   return {
     types: {
       EIP712Domain: DOMAIN_TYPE,
-      MetaTransaction: META_TRANSACTION_TYPE
+      MetaTransaction: isOffchainContract
+        ? OFFCHAIN_META_TRANSACTION_TYPE
+        : META_TRANSACTION_TYPE
     },
     domain: domainData,
     primaryType: 'MetaTransaction',
     message: {
       nonce: parseInt(nonce, 16),
       from: account,
-      functionSignature: functionSignature
+      ...(isOffchainContract
+        ? { functionData: functionSignature }
+        : { functionSignature })
     }
   }
 }
