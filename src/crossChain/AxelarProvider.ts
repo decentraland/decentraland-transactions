@@ -336,10 +336,10 @@ export class AxelarProvider implements CrossChainProvider {
         ]),
 
         payload: {
-          tokenAddress: NATIVE_TOKEN, // TODO: do we need this to be set as the native? it's working like this
+          tokenAddress: NATIVE_TOKEN,
           inputPos: 0
         },
-        estimatedGas: '300000' // TODO: where do we get this value from?
+        estimatedGas: '300000'
       },
       // Transfer remaining MANA to buyer
       {
@@ -417,10 +417,7 @@ export class AxelarProvider implements CrossChainProvider {
 
       calls = this.getTradesContractCalls({
         destinationChainMANA,
-        destinationChainMarketplace: getContract(
-          ContractName.CollectionStore,
-          toChain
-        ).address,
+        destinationChainMarketplace,
         toAmount,
         fromAddress,
         onChainTrade,
