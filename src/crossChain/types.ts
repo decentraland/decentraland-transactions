@@ -1,4 +1,3 @@
-import { ethers } from 'ethers'
 import { ChainId, OnChainTrade, Order, Trade } from '@dcl/schemas'
 import {
   ChainData as SquidChainData,
@@ -6,6 +5,7 @@ import {
   RouteResponse as SquidRouteResponse,
   StatusResponse as SquidStatusResponse
 } from '@0xsquid/sdk/dist/types'
+import { Squid } from '@0xsquid/sdk'
 import { Provider } from 'decentraland-connect'
 
 export type CrossChainData = {
@@ -61,41 +61,38 @@ export const CROSS_CHAIN_SUPPORTED_CHAINS = [
   ChainId.FANTOM_MAINNET
 ]
 
-export type ChainData = SquidChainData // for now, it's the same as the one provided by Squid, we can abstract it later
-export type Token = SquidToken // same as the comment above
-export type RouteResponse = SquidRouteResponse // same as the comment above
-export type Route = RouteResponse // same as the comment above
-export type StatusResponse = SquidStatusResponse
-
 export interface CrossChainProvider {
+  squid: Squid
+  initialized: boolean
   init(): Promise<void>
   isLibInitialized(): boolean
   getFromAmount(fromAmountParams: FromAmountParams): Promise<string>
-  getSupportedTokens(): Token[]
-  getSupportedChains(): ChainData[]
+  getSupportedTokens(): SquidToken[]
+  getSupportedChains(): SquidChainData[]
+  executeRoute(route: RouteResponse, provider: Provider): Promise<any>
   buyNFT(
     provider: Provider,
     buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<string>
-  mintNFT(
-    provider: Provider,
-    ChainCallData: MintNFTCrossChainData
-  ): Promise<string>
-  getBuyNFTRoute(
-    buyNFTCrossChainData: BuyNFTCrossChainData
-  ): Promise<RouteResponse>
   getRegisterNameRoute(
     getRegisterNameCrossChainData: RegisterNameCrossChainData
   ): Promise<RouteResponse>
+  getBuyNFTRoute(
+    buyNFTCrossChainData: BuyNFTCrossChainData
+  ): Promise<RouteResponse>
+  mintNFT(
+    provider: Provider,
+    mintNFTCrossChainData: MintNFTCrossChainData
+  ): Promise<string>
   getMintNFTRoute(
     buyNFTCrossChainData: MintNFTCrossChainData
   ): Promise<RouteResponse>
-  executeRoute(
-    route: RouteResponse,
-    provider: Provider
-  ): Promise<ethers.providers.TransactionReceipt>
   getStatus(
     routeRequestId: string,
-    originChainHash: string
-  ): Promise<StatusResponse>
+    originChainTxHash: string
+  ): Promise<SquidStatusResponse>
 }
+
+export type RouteResponse = SquidRouteResponse
+export type Token = SquidToken
+export type ChainData = SquidChainData

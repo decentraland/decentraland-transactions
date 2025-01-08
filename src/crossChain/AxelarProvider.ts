@@ -28,6 +28,7 @@ const INTEGRATOR_ID = 'decentraland-sdk'
 export class AxelarProvider implements CrossChainProvider {
   public squid: Squid
   public initialized = false
+
   constructor(squidURL: string) {
     this.squid = new Squid({
       baseUrl: squidURL,
@@ -35,6 +36,42 @@ export class AxelarProvider implements CrossChainProvider {
     })
     // tslint:disable-next-line
     this.squid.init()
+  }
+
+  // @ts-ignore ethers type mismatch between v5 and v6
+  private _createInterface(abi: any) {
+    try {
+      // Try v6 syntax first since decentraland-connect uses v6
+      // @ts-ignore ethers v6 typing
+      return ethers.Interface.from(abi)
+    } catch (e) {
+      try {
+        // Fall back to v5 syntax
+        // @ts-ignore ethers v5 typing
+        return new ethers.utils.Interface(abi)
+      } catch (e2) {
+        console.error('Failed to create interface:', e2)
+        throw e2
+      }
+    }
+  }
+
+  // @ts-ignore ethers type mismatch between v5 and v6
+  private _createWeb3Provider(provider: Provider) {
+    try {
+      // Try v6 syntax
+      // @ts-ignore ethers v6 typing
+      return new ethers.BrowserProvider(provider)
+    } catch (e) {
+      try {
+        // Fall back to v5 syntax
+        // @ts-ignore ethers v5 typing
+        return new ethers.providers.Web3Provider(provider)
+      } catch (e2) {
+        console.error('Failed to create Web3Provider:', e2)
+        throw e2
+      }
+    }
   }
 
   static getTxLink(txHash: string) {
@@ -64,24 +101,21 @@ export class AxelarProvider implements CrossChainProvider {
     return this.squid.chains
   }
 
-  async executeRoute(
-    route: RouteResponse,
-    provider: Provider
-  ): Promise<ethers.providers.TransactionReceipt> {
-    const signer = new ethers.providers.Web3Provider(provider).getSigner()
+  async executeRoute(route: RouteResponse, provider: Provider): Promise<any> {
+    // Use any to support both v5 and v6 receipt types
+    const web3Provider = this._createWeb3Provider(provider)
+    const signer = await web3Provider.getSigner()
     if (!this.squid.initialized) {
       await this.init()
     }
 
-    // @ts-ignore
-    // tslint:disable-next-line
-    let txResponse: ethers.providers.TransactionResponse | null = (await this.squid.executeRoute(
-      {
-        route: route.route,
-        signer
-      }
-    )) as ethers.providers.TransactionResponse
+    // @ts-ignore squid types mismatch
+    let txResponse = await this.squid.executeRoute({
+      route: route.route,
+      signer
+    })
 
+    // @ts-ignore transaction response type mismatch
     return txResponse.wait()
   }
 
@@ -111,14 +145,14 @@ export class AxelarProvider implements CrossChainProvider {
       name
     } = getRegisterNameCrossChainData
 
-    const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
+    const ERC20ContractInterface = this._createInterface(ERC20)
     const destinationChainMANA = getContract(ContractName.MANAToken, toChain)
       .address
     const controllerContract = getContract(
       ContractName.DCLControllerV2,
       toChain
     )
-    const ControllerV2Interface = new ethers.utils.Interface(DCLControllerV2)
+    const ControllerV2Interface = this._createInterface(DCLControllerV2)
 
     return this.squid.getRoute({
       fromAddress,
@@ -220,7 +254,7 @@ export class AxelarProvider implements CrossChainProvider {
     ERC721ContractInterface: ethers.utils.Interface
     squidMulticallContract: string | undefined
   }): ChainCall[] {
-    const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
+    const ERC20ContractInterface = this._createInterface(ERC20)
     return [
       // Approve MANA to be spent by Decentraland contract
       {
@@ -383,7 +417,7 @@ export class AxelarProvider implements CrossChainProvider {
     } = buyNFTCrossChainData
 
     const collectionAddress = contractAddress
-    const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
+    const ERC20ContractInterface = this._createInterface(ERC20)
     const marketplaceContractABI =
       toChain === ChainId.MATIC_MAINNET
         ? tradeId
@@ -393,10 +427,8 @@ export class AxelarProvider implements CrossChainProvider {
         ? OffChainMarketplaceEthereum
         : Marketplace
 
-    const marketplaceInterface = new ethers.utils.Interface(
-      marketplaceContractABI
-    )
-    const ERC721ContractInterface = new ethers.utils.Interface(ERC721)
+    const marketplaceInterface = this._createInterface(marketplaceContractABI)
+    const ERC721ContractInterface = this._createInterface(ERC721)
 
     const destinationChainMANA = getContract(ContractName.MANAToken, toChain)
       .address
@@ -574,8 +606,8 @@ export class AxelarProvider implements CrossChainProvider {
       fetchTradeData
     } = buyNFTCrossChainData
 
-    const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
-    const collectionStoreInterface = new ethers.utils.Interface(CollectionStore)
+    const ERC20ContractInterface = this._createInterface(ERC20)
+    const collectionStoreInterface = this._createInterface(CollectionStore)
 
     const destinationChainMANA = getContract(ContractName.MANAToken, toChain)
       .address
@@ -589,9 +621,7 @@ export class AxelarProvider implements CrossChainProvider {
         ? OffChainMarketplaceEthereum
         : Marketplace
 
-    const marketplaceInterface = new ethers.utils.Interface(
-      marketplaceContractABI
-    )
+    const marketplaceInterface = this._createInterface(marketplaceContractABI)
 
     const destinationChainCollectionStoreAddress = getContract(
       ContractName.CollectionStore,
