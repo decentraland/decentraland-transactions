@@ -38,42 +38,6 @@ export class AxelarProvider implements CrossChainProvider {
     this.squid.init()
   }
 
-  // @ts-ignore ethers type mismatch between v5 and v6
-  private _createInterface(abi: any) {
-    try {
-      // Try v6 syntax first since decentraland-connect uses v6
-      // @ts-ignore ethers v6 typing
-      return ethers.Interface.from(abi)
-    } catch (e) {
-      try {
-        // Fall back to v5 syntax
-        // @ts-ignore ethers v5 typing
-        return new ethers.utils.Interface(abi)
-      } catch (e2) {
-        console.error('Failed to create interface:', e2)
-        throw e2
-      }
-    }
-  }
-
-  // @ts-ignore ethers type mismatch between v5 and v6
-  private _createWeb3Provider(provider: Provider) {
-    try {
-      // Try v6 syntax
-      // @ts-ignore ethers v6 typing
-      return new ethers.BrowserProvider(provider)
-    } catch (e) {
-      try {
-        // Fall back to v5 syntax
-        // @ts-ignore ethers v5 typing
-        return new ethers.providers.Web3Provider(provider)
-      } catch (e2) {
-        console.error('Failed to create Web3Provider:', e2)
-        throw e2
-      }
-    }
-  }
-
   static getTxLink(txHash: string) {
     return `https://axelarscan.io/gmp/${txHash}`
   }
@@ -372,10 +336,10 @@ export class AxelarProvider implements CrossChainProvider {
         ]),
 
         payload: {
-          tokenAddress: NATIVE_TOKEN, // ex `0x`
+          tokenAddress: NATIVE_TOKEN, // TODO: do we need this to be set as the native? it's working like this
           inputPos: 0
         },
-        estimatedGas: '300000'
+        estimatedGas: '300000' // TODO: where do we get this value from?
       },
       // Transfer remaining MANA to buyer
       {
@@ -390,7 +354,7 @@ export class AxelarProvider implements CrossChainProvider {
         payload: {
           tokenAddress: destinationChainMANA,
           // This will replace the parameter at index 1 in the encoded Function,
-          //  with FULL_TOKEN_BALANCE (instead of "0")
+          // with FULL_TOKEN_BALANCE (instead of "0")
           inputPos: 1
         },
         estimatedGas: '50000'
@@ -453,7 +417,10 @@ export class AxelarProvider implements CrossChainProvider {
 
       calls = this.getTradesContractCalls({
         destinationChainMANA,
-        destinationChainMarketplace,
+        destinationChainMarketplace: getContract(
+          ContractName.CollectionStore,
+          toChain
+        ).address,
         toAmount,
         fromAddress,
         onChainTrade,
@@ -495,90 +462,6 @@ export class AxelarProvider implements CrossChainProvider {
     })
   }
 
-  // MINT CALLS
-
-  getMintItemCalls({
-    destinationChainMANA,
-    destinationChainCollectionStoreAddress,
-    toAmount,
-    fromAddress,
-    collectionAddress,
-    itemId,
-    price,
-    ERC20ContractInterface,
-    collectionStoreInterface
-  }: {
-    destinationChainMANA: string
-    destinationChainCollectionStoreAddress: string
-    toAmount: string
-    fromAddress: string
-    collectionAddress: string
-    itemId: string
-    price: string
-    ERC20ContractInterface: ethers.utils.Interface
-    collectionStoreInterface: ethers.utils.Interface
-  }): ChainCall[] {
-    return [
-      // ===================================
-      // Approve MANA to be spent by Decentraland contract
-      // ===================================
-      {
-        chainType: ChainType.EVM,
-        callType: SquidCallType.DEFAULT,
-        target: destinationChainMANA,
-        value: '0',
-        callData: ERC20ContractInterface.encodeFunctionData('approve', [
-          destinationChainCollectionStoreAddress,
-          toAmount
-        ]),
-        payload: {
-          tokenAddress: NATIVE_TOKEN,
-          inputPos: 0
-        },
-        estimatedGas: '50000'
-      },
-      // ===================================
-      // BUY ITEM
-      // ===================================
-      {
-        chainType: ChainType.EVM,
-        callType: SquidCallType.DEFAULT,
-        target: destinationChainCollectionStoreAddress,
-        value: '0', // @TODO: WHY 0?
-        callData: collectionStoreInterface.encodeFunctionData(
-          'buy((address,uint256[],uint256[],address[])[])',
-          [[[collectionAddress, [itemId], [price], [fromAddress]]]]
-        ),
-        payload: {
-          tokenAddress: NATIVE_TOKEN, // TODO: do we need this to be set as the native? it's working like this
-          inputPos: 0
-        },
-        estimatedGas: '300000' // TODO: where do we get this value from?
-      },
-      // ===================================
-      // Transfer remaining MANA to buyer
-      // ===================================
-      {
-        chainType: ChainType.EVM,
-        callType: SquidCallType.FULL_TOKEN_BALANCE,
-        target: destinationChainMANA,
-        value: '0',
-        callData: ERC20ContractInterface.encodeFunctionData('transfer', [
-          fromAddress,
-          '0'
-        ]),
-        payload: {
-          tokenAddress: destinationChainMANA,
-          // This will replace the parameter at index 1 in the encoded Function,
-          // with FULL_TOKEN_BALANCE (instead of "0")
-          inputPos: 1
-        },
-        estimatedGas: '50000'
-      }
-    ]
-  }
-
-  // MINT
   async mintNFT(
     provider: Provider,
     mintNFTCrossChainData: MintNFTCrossChainData
@@ -685,5 +568,122 @@ export class AxelarProvider implements CrossChainProvider {
       integratorId: INTEGRATOR_ID,
       requestId: routeRequestId
     })
+  }
+
+  getMintItemCalls({
+    destinationChainMANA,
+    destinationChainCollectionStoreAddress,
+    toAmount,
+    fromAddress,
+    collectionAddress,
+    itemId,
+    price,
+    ERC20ContractInterface,
+    collectionStoreInterface
+  }: {
+    destinationChainMANA: string
+    destinationChainCollectionStoreAddress: string
+    toAmount: string
+    fromAddress: string
+    collectionAddress: string
+    itemId: string
+    price: string
+    ERC20ContractInterface: ethers.utils.Interface
+    collectionStoreInterface: ethers.utils.Interface
+  }): ChainCall[] {
+    return [
+      // ===================================
+      // Approve MANA to be spent by Decentraland contract
+      // ===================================
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.DEFAULT,
+        target: destinationChainMANA,
+        value: '0',
+        callData: ERC20ContractInterface.encodeFunctionData('approve', [
+          destinationChainCollectionStoreAddress,
+          toAmount
+        ]),
+        payload: {
+          tokenAddress: NATIVE_TOKEN,
+          inputPos: 0
+        },
+        estimatedGas: '50000'
+      },
+      // ===================================
+      // BUY ITEM
+      // ===================================
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.DEFAULT,
+        target: destinationChainCollectionStoreAddress,
+        value: '0', // @TODO: WHY 0?
+        callData: collectionStoreInterface.encodeFunctionData(
+          'buy((address,uint256[],uint256[],address[])[])',
+          [[[collectionAddress, [itemId], [price], [fromAddress]]]]
+        ),
+        payload: {
+          tokenAddress: NATIVE_TOKEN, // TODO: do we need this to be set as the native? it's working like this
+          inputPos: 0
+        },
+        estimatedGas: '300000' // TODO: where do we get this value from?
+      },
+      // ===================================
+      // Transfer remaining MANA to buyer
+      // ===================================
+      {
+        chainType: ChainType.EVM,
+        callType: SquidCallType.FULL_TOKEN_BALANCE,
+        target: destinationChainMANA,
+        value: '0',
+        callData: ERC20ContractInterface.encodeFunctionData('transfer', [
+          fromAddress,
+          '0'
+        ]),
+        payload: {
+          tokenAddress: destinationChainMANA,
+          // This will replace the parameter at index 1 in the encoded Function,
+          // with FULL_TOKEN_BALANCE (instead of "0")
+          inputPos: 1
+        },
+        estimatedGas: '50000'
+      }
+    ]
+  }
+
+  // @ts-ignore ethers type mismatch between v5 and v6
+  private _createInterface(abi: any) {
+    try {
+      // Try v6 syntax first since decentraland-connect uses v6
+      // @ts-ignore ethers v6 typing
+      return ethers.Interface.from(abi)
+    } catch (e) {
+      try {
+        // Fall back to v5 syntax
+        // @ts-ignore ethers v5 typing
+        return new ethers.utils.Interface(abi)
+      } catch (e2) {
+        console.error('Failed to create interface:', e2)
+        throw e2
+      }
+    }
+  }
+
+  // @ts-ignore ethers type mismatch between v5 and v6
+  private _createWeb3Provider(provider: Provider) {
+    try {
+      // Try v6 syntax
+      // @ts-ignore ethers v6 typing
+      return new ethers.BrowserProvider(provider)
+    } catch (e) {
+      try {
+        // Fall back to v5 syntax
+        // @ts-ignore ethers v5 typing
+        return new ethers.providers.Web3Provider(provider)
+      } catch (e2) {
+        console.error('Failed to create Web3Provider:', e2)
+        throw e2
+      }
+    }
   }
 }
