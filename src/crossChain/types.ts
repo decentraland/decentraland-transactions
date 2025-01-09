@@ -93,6 +93,8 @@ export interface CrossChainProvider {
   ): Promise<SquidStatusResponse>
 }
 
-export type RouteResponse = SquidRouteResponse
-export type Token = SquidToken
 export type ChainData = SquidChainData
+export type Token = SquidToken
+export type RouteResponse = SquidRouteResponse
+export type Route = RouteResponse
+export type StatusResponse = SquidStatusResponse
