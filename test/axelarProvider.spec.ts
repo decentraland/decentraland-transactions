@@ -1,10 +1,14 @@
 import { expect } from 'chai'
+import * as chai from 'chai'
+import * as chaiAsPromised from 'chai-as-promised'
 import { ethers } from 'ethers'
 import * as sinon from 'sinon'
 import { AxelarProvider } from '../src/crossChain/AxelarProvider'
 import { ERC20 } from '../src/abis/ERC20'
 import { Provider } from 'decentraland-connect'
 import { TransactionResponses } from '@0xsquid/sdk/dist/types'
+
+chai.use(chaiAsPromised)
 
 describe('AxelarProvider', () => {
   let provider: AxelarProvider
@@ -130,10 +134,13 @@ describe('AxelarProvider', () => {
     })
   })
 
-  describe('when creating a Web3Provider', () => {
+  describe('when creating a signer', () => {
     describe('and using ethers v6', () => {
+      const mockSigner = { mockSigner: true }
       const mockEthers = {
-        BrowserProvider: sinon.stub().returns({ mockProvider: true })
+        BrowserProvider: sinon.stub().returns({
+          getSigner: sinon.stub().resolves(mockSigner)
+        })
       }
 
       beforeEach(() => {
@@ -141,19 +148,22 @@ describe('AxelarProvider', () => {
         ethers = mockEthers
       })
 
-      it('should create the provider using v6 syntax', () => {
-        const result = (provider as any)._createWeb3Provider(mockProvider)
-        expect(result).to.deep.equal({ mockProvider: true })
+      it('should create the signer using v6 syntax', async () => {
+        const result = await (provider as any)._createSigner(mockProvider)
+        expect(result).to.deep.equal(mockSigner)
         expect(mockEthers.BrowserProvider.called).to.be.true
       })
     })
 
     describe('and using ethers v5', () => {
       describe('and v6 syntax fails', () => {
+        const mockSigner = { mockSigner: true }
         const mockEthers = {
           BrowserProvider: sinon.stub().throws(new Error('v6 not supported')),
           providers: {
-            Web3Provider: sinon.stub().returns({ mockProvider: true })
+            Web3Provider: sinon.stub().returns({
+              getSigner: sinon.stub().resolves(mockSigner)
+            })
           }
         }
 
@@ -162,9 +172,9 @@ describe('AxelarProvider', () => {
           ethers = mockEthers
         })
 
-        it('should fall back to v5 syntax', () => {
-          const result = (provider as any)._createWeb3Provider(mockProvider)
-          expect(result).to.deep.equal({ mockProvider: true })
+        it('should fall back to v5 syntax', async () => {
+          const result = await (provider as any)._createSigner(mockProvider)
+          expect(result).to.deep.equal(mockSigner)
           expect(mockEthers.providers.Web3Provider.called).to.be.true
         })
       })
@@ -182,10 +192,10 @@ describe('AxelarProvider', () => {
           ethers = mockEthers
         })
 
-        it('should throw an error', () => {
-          expect(() =>
-            (provider as any)._createWeb3Provider(mockProvider)
-          ).to.throw()
+        it('should throw an error', async () => {
+          await expect(
+            (provider as any)._createSigner(mockProvider)
+          ).to.be.rejectedWith(Error)
         })
       })
     })
@@ -194,7 +204,6 @@ describe('AxelarProvider', () => {
   describe('when executing a route', () => {
     let mockTxResponse: TransactionResponses
     let mockSigner: any
-    let mockWeb3Provider: any
     let mockRoute: any
 
     beforeEach(() => {
@@ -230,10 +239,6 @@ describe('AxelarProvider', () => {
       // @ts-ignore - Adding wait method for compatibility
       mockTxResponse.wait = sinon.stub().resolves({ transactionHash: '0x123' })
 
-      mockWeb3Provider = {
-        getSigner: sinon.stub().resolves(mockSigner)
-      }
-
       mockRoute = {
         route: { mockRoute: true }
       }
@@ -242,16 +247,13 @@ describe('AxelarProvider', () => {
     describe('and squid is initialized', () => {
       beforeEach(() => {
         provider.initialized = true
-        sinon
-          .stub(provider as any, '_createWeb3Provider')
-          .returns(mockWeb3Provider)
+        sinon.stub(provider as any, '_createSigner').resolves(mockSigner)
         sinon.stub(provider.squid, 'executeRoute').resolves(mockTxResponse)
       })
 
       it('should execute the route and return the transaction hash', async () => {
         const result = await provider.executeRoute(mockRoute, mockProvider)
         expect(result).to.deep.equal({ transactionHash: '0x123' })
-        expect(mockWeb3Provider.getSigner.called).to.be.true
       })
     })
 
@@ -260,9 +262,7 @@ describe('AxelarProvider', () => {
 
       beforeEach(() => {
         provider.initialized = false
-        sinon
-          .stub(provider as any, '_createWeb3Provider')
-          .returns(mockWeb3Provider)
+        sinon.stub(provider as any, '_createSigner').resolves(mockSigner)
         sinon.stub(provider.squid, 'executeRoute').resolves(mockTxResponse)
         initStub = sinon.stub(provider.squid, 'init')
       })
@@ -277,9 +277,7 @@ describe('AxelarProvider', () => {
     describe('and the transaction fails', () => {
       beforeEach(() => {
         provider.initialized = true
-        sinon
-          .stub(provider as any, '_createWeb3Provider')
-          .returns(mockWeb3Provider)
+        sinon.stub(provider as any, '_createSigner').resolves(mockSigner)
         sinon.stub(provider.squid, 'executeRoute').resolves(mockTxResponse)
         // @ts-ignore - Modifying wait method
         mockTxResponse.wait = sinon

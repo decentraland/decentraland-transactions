@@ -67,8 +67,7 @@ export class AxelarProvider implements CrossChainProvider {
 
   async executeRoute(route: RouteResponse, provider: Provider): Promise<any> {
     // Use any to support both v5 and v6 receipt types
-    const web3Provider = this._createWeb3Provider(provider)
-    const signer = await web3Provider.getSigner()
+    const signer = await this._createSigner(provider)
     if (!this.squid.initialized) {
       await this.init()
     }
@@ -667,18 +666,29 @@ export class AxelarProvider implements CrossChainProvider {
   }
 
   // @ts-ignore ethers type mismatch between v5 and v6
-  private _createWeb3Provider(provider: Provider) {
+  private async _createSigner(provider: Provider) {
+    /*
+     * Note on ethers.js version compatibility:
+     * While BrowserProvider (v6) and Web3Provider (v5) have different APIs,
+     * and their respective Signer classes also differ (e.g., different transaction
+     * formatting, different provider handling), the core signing functionality we use
+     * here (signing transactions for Squid) works the same way in both versions.
+     * The Squid SDK is compatible with both signer versions, so we can safely use
+     * either one without impacting the functionality of this library.
+     */
     try {
-      // Try v6 syntax
+      // Try v6 syntax - BrowserProvider
       // @ts-ignore ethers v6 typing
-      return new ethers.BrowserProvider(provider)
+      const browserProvider = new ethers.BrowserProvider(provider)
+      return browserProvider.getSigner()
     } catch (e) {
       try {
-        // Fall back to v5 syntax
+        // Fall back to v5 syntax - Web3Provider
         // @ts-ignore ethers v5 typing
-        return new ethers.providers.Web3Provider(provider)
+        const web3Provider = new ethers.providers.Web3Provider(provider)
+        return web3Provider.getSigner()
       } catch (e2) {
-        console.error('Failed to create Web3Provider:', e2)
+        console.error('Failed to create signer:', e2)
         throw e2
       }
     }
