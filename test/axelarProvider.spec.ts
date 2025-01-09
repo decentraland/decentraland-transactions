@@ -7,6 +7,7 @@ import { AxelarProvider } from '../src/crossChain/AxelarProvider'
 import { ERC20 } from '../src/abis/ERC20'
 import { Provider } from 'decentraland-connect'
 import { TransactionResponses } from '@0xsquid/sdk/dist/types'
+import { CommonTransactionReceipt } from '../src/crossChain/types'
 
 chai.use(chaiAsPromised)
 
@@ -205,6 +206,7 @@ describe('AxelarProvider', () => {
     let mockTxResponse: TransactionResponses
     let mockSigner: any
     let mockRoute: any
+    let mockReceipt: CommonTransactionReceipt
 
     beforeEach(() => {
       mockSigner = { mockSigner: true }
@@ -236,8 +238,19 @@ describe('AxelarProvider', () => {
         networkId: 1
       } as unknown) as TransactionResponses
 
+      mockReceipt = {
+        transactionHash: '0x123',
+        blockNumber: 1,
+        blockHash: '0x123',
+        status: 1,
+        from: '0x123',
+        to: '0x456',
+        contractAddress: null,
+        logs: []
+      }
+
       // @ts-ignore - Adding wait method for compatibility
-      mockTxResponse.wait = sinon.stub().resolves({ transactionHash: '0x123' })
+      mockTxResponse.wait = sinon.stub().resolves(mockReceipt)
 
       mockRoute = {
         route: { mockRoute: true }
@@ -251,9 +264,9 @@ describe('AxelarProvider', () => {
         sinon.stub(provider.squid, 'executeRoute').resolves(mockTxResponse)
       })
 
-      it('should execute the route and return the transaction hash', async () => {
+      it('should execute the route and return the transaction receipt', async () => {
         const result = await provider.executeRoute(mockRoute, mockProvider)
-        expect(result).to.deep.equal({ transactionHash: '0x123' })
+        expect(result).to.deep.equal(mockReceipt)
       })
     })
 
@@ -269,7 +282,7 @@ describe('AxelarProvider', () => {
 
       it('should initialize squid before executing the route', async () => {
         const result = await provider.executeRoute(mockRoute, mockProvider)
-        expect(result).to.deep.equal({ transactionHash: '0x123' })
+        expect(result).to.deep.equal(mockReceipt)
         sinon.assert.calledOnce(initStub)
       })
     })

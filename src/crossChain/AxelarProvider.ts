@@ -25,6 +25,22 @@ import {
 
 const INTEGRATOR_ID = 'decentraland-sdk'
 
+// Define a common receipt type that works for both v5 and v6
+type CommonTransactionReceipt = {
+  transactionHash: string
+  blockNumber: number
+  blockHash: string
+  status?: number | null
+  from: string
+  to: string | null
+  contractAddress: string | null
+  logs: Array<{
+    address: string
+    topics: Array<string>
+    data: string
+  }>
+}
+
 export class AxelarProvider implements CrossChainProvider {
   public squid: Squid
   public initialized = false
@@ -65,8 +81,10 @@ export class AxelarProvider implements CrossChainProvider {
     return this.squid.chains
   }
 
-  async executeRoute(route: RouteResponse, provider: Provider): Promise<any> {
-    // Use any to support both v5 and v6 receipt types
+  async executeRoute(
+    route: RouteResponse,
+    provider: Provider
+  ): Promise<CommonTransactionReceipt> {
     const signer = await this._createSigner(provider)
     if (!this.squid.initialized) {
       await this.init()

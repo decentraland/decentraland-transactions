@@ -8,6 +8,22 @@ import {
 } from '@0xsquid/sdk/dist/types'
 import { Provider } from 'decentraland-connect'
 
+// Common receipt type that works for both ethers v5 and v6
+export type CommonTransactionReceipt = {
+  transactionHash: string
+  blockNumber: number
+  blockHash: string
+  status?: number | null
+  from: string
+  to: string | null
+  contractAddress: string | null
+  logs: Array<{
+    address: string
+    topics: Array<string>
+    data: string
+  }>
+}
+
 export type CrossChainData = {
   fromAddress: string
   fromAmount: string
@@ -69,7 +85,7 @@ export interface CrossChainProvider {
   getFromAmount(fromAmountParams: FromAmountParams): Promise<string>
   getSupportedTokens(): SquidToken[]
   getSupportedChains(): SquidChainData[]
-  executeRoute(route: RouteResponse, provider: Provider): Promise<any>
+  executeRoute(route: RouteResponse, provider: Provider): Promise<CommonTransactionReceipt>
   buyNFT(
     provider: Provider,
     buyNFTCrossChainData: BuyNFTCrossChainData
