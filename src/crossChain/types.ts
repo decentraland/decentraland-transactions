@@ -1,3 +1,4 @@
+import type { Squid } from '@0xsquid/sdk'
 import { ChainId, OnChainTrade, Order, Trade } from '@dcl/schemas'
 import {
   ChainData as SquidChainData,
@@ -5,7 +6,6 @@ import {
   RouteResponse as SquidRouteResponse,
   StatusResponse as SquidStatusResponse
 } from '@0xsquid/sdk/dist/types'
-import { Squid } from '@0xsquid/sdk'
 import { Provider } from 'decentraland-connect'
 
 export type CrossChainData = {
