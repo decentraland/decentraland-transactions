@@ -334,7 +334,7 @@ export class AxelarProvider implements CrossChainProvider {
         target: destinationChainMarketplace,
         value: '0',
         callData: marketplaceInterface.encodeFunctionData('accept', [
-          onChainTrade
+          [onChainTrade]
         ]),
 
         payload: {
