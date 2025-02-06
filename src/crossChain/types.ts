@@ -1,4 +1,4 @@
-import type { Squid } from '@0xsquid/sdk'
+import { ethers } from 'ethers'
 import { ChainId, OnChainTrade, Order, Trade } from '@dcl/schemas'
 import {
   ChainData as SquidChainData,
@@ -7,22 +7,6 @@ import {
   StatusResponse as SquidStatusResponse
 } from '@0xsquid/sdk/dist/types'
 import { Provider } from 'decentraland-connect'
-
-// Common receipt type that works for both ethers v5 and v6
-export type CommonTransactionReceipt = {
-  transactionHash: string
-  blockNumber: number
-  blockHash: string
-  status?: number | null
-  from: string
-  to: string | null
-  contractAddress: string | null
-  logs: Array<{
-    address: string
-    topics: Array<string>
-    data: string
-  }>
-}
 
 export type CrossChainData = {
   fromAddress: string
@@ -77,40 +61,41 @@ export const CROSS_CHAIN_SUPPORTED_CHAINS = [
   ChainId.FANTOM_MAINNET
 ]
 
+export type ChainData = SquidChainData // for now, it's the same as the one provided by Squid, we can abstract it later
+export type Token = SquidToken // same as the comment above
+export type RouteResponse = SquidRouteResponse // same as the comment above
+export type Route = RouteResponse // same as the comment above
+export type StatusResponse = SquidStatusResponse
+
 export interface CrossChainProvider {
-  squid: Squid
-  initialized: boolean
   init(): Promise<void>
   isLibInitialized(): boolean
   getFromAmount(fromAmountParams: FromAmountParams): Promise<string>
-  getSupportedTokens(): SquidToken[]
-  getSupportedChains(): SquidChainData[]
-  executeRoute(route: RouteResponse, provider: Provider): Promise<CommonTransactionReceipt>
+  getSupportedTokens(): Token[]
+  getSupportedChains(): ChainData[]
   buyNFT(
     provider: Provider,
     buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<string>
-  getRegisterNameRoute(
-    getRegisterNameCrossChainData: RegisterNameCrossChainData
-  ): Promise<RouteResponse>
+  mintNFT(
+    provider: Provider,
+    ChainCallData: MintNFTCrossChainData
+  ): Promise<string>
   getBuyNFTRoute(
     buyNFTCrossChainData: BuyNFTCrossChainData
   ): Promise<RouteResponse>
-  mintNFT(
-    provider: Provider,
-    mintNFTCrossChainData: MintNFTCrossChainData
-  ): Promise<string>
+  getRegisterNameRoute(
+    getRegisterNameCrossChainData: RegisterNameCrossChainData
+  ): Promise<RouteResponse>
   getMintNFTRoute(
     buyNFTCrossChainData: MintNFTCrossChainData
   ): Promise<RouteResponse>
+  executeRoute(
+    route: RouteResponse,
+    provider: Provider
+  ): Promise<ethers.providers.TransactionReceipt>
   getStatus(
     routeRequestId: string,
-    originChainTxHash: string
-  ): Promise<SquidStatusResponse>
+    originChainHash: string
+  ): Promise<StatusResponse>
 }
-
-export type ChainData = SquidChainData
-export type Token = SquidToken
-export type RouteResponse = SquidRouteResponse
-export type Route = RouteResponse
-export type StatusResponse = SquidStatusResponse

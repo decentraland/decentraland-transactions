@@ -7,10 +7,6 @@
 
 Send meta transactions
 
-## Requirements
-
-This package supports ethers versions 5.7.2 and above, including version 6. It will automatically detect and use the appropriate interface creation syntax for your ethers version.
-
 # Table of contents
 
 - [API](#api)
@@ -181,7 +177,6 @@ type DomainData = {
 Example using [decentraland-connect](https://github.com/decentraland/decentraland-connect) and [ethers](https://github.com/ethers-io/ethers.js) to get the providers
 
 ```typescript
-import { ethers } from 'ethers'
 import { connection, ProviderType } from 'decentraland-connect'
 import {
   sendMetaTransaction,
@@ -194,22 +189,9 @@ async function transferMana() {
   try {
     const { provider } = await connection.connect(ProviderType.INJECTED)
 
-    // For ethers v6:
     const txHash = await sendMetaTransaction(
       // Connected wallet provider
-      new ethers.BrowserProvider(window.ethereum),
-      // L2 matic provider
-      new ethers.JsonRpcProvider('https://rpc-mumbai.matic.today'),
-      // Function signature
-      '0xa9059cbb000000000000000000000000a8d82b0bf686eee78eb5ec882cac98fdd1335ef50000000000000000000000000000000000000000000000000000000000000001',
-      // Mana contract for MATIC_MUMBAI
-      getContract(ContractName.MANAToken, ChainId.MATIC_MUMBAI)
-    )
-
-    // For ethers v5:
-    const txHashV5 = await sendMetaTransaction(
-      // Connected wallet provider
-      new ethers.providers.Web3Provider(window.ethereum),
+      provider,
       // L2 matic provider
       new ethers.providers.JsonRpcProvider('https://rpc-mumbai.matic.today'),
       // Function signature
