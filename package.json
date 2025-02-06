@@ -55,8 +55,7 @@
     "tslib": "^2.6.2"
   },
   "peerDependencies": {
-    "@dcl/schemas": ">=1.1.1",
-    "ethers": ">=5.7.2 <7.0.0"
+    "@dcl/schemas": ">=1.1.1"
   },
   "prettier": {
     "printWidth": 80,
