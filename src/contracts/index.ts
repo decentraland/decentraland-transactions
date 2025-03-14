@@ -25,6 +25,7 @@ import { dclRegistrar } from './dclRegistrar'
 import { dclController } from './dclController'
 import { dclControllerV2 } from './dclControllerV2'
 import { offChainMarketplace } from './offChainMarketplace'
+import { creditsManager } from './creditsManager'
 
 const contracts: Record<
   ContractName,
@@ -53,7 +54,8 @@ const contracts: Record<
   [ContractName.DCLRegistrar]: dclRegistrar,
   [ContractName.DCLController]: dclController,
   [ContractName.DCLControllerV2]: dclControllerV2,
-  [ContractName.OffChainMarketplace]: offChainMarketplace
+  [ContractName.OffChainMarketplace]: offChainMarketplace,
+  [ContractName.CreditsManager]: creditsManager
 }
 
 export function getContract(
