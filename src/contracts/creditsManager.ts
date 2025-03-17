@@ -5,7 +5,7 @@ export const creditsManager = {
   [ChainId.MATIC_AMOY]: {
     version: '1.0.0',
     abi: abis.CreditsManager,
-    address: '0xb40a9a1afde767025626e9b0c17e028b6305d8b0',
+    address: '0x1985fa82b531cb4e20f103787eba99de67b5c25c',
     name: 'CreditsManagerPolygon',
     chainId: ChainId.MATIC_AMOY
   },

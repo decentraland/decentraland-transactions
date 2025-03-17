@@ -618,6 +618,12 @@ export const CreditsManager = [
     inputs: [
       {
         indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
+      {
+        indexed: true,
         internalType: 'bytes32',
         name: '_creditId',
         type: 'bytes32'
@@ -630,6 +636,12 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
       {
         indexed: true,
         internalType: 'bytes32',
@@ -662,6 +674,12 @@ export const CreditsManager = [
     constant: false,
     inputs: [
       {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
+      {
         indexed: false,
         internalType: 'uint256',
         name: '_manaTransferred',
@@ -681,6 +699,12 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
       {
         indexed: true,
         internalType: 'address',
@@ -704,6 +728,12 @@ export const CreditsManager = [
     inputs: [
       {
         indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
+      {
+        indexed: true,
         internalType: 'bytes32',
         name: '_hashedExternalCallSignature',
         type: 'bytes32'
@@ -716,6 +746,12 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
       {
         indexed: true,
         internalType: 'address',
@@ -740,6 +776,12 @@ export const CreditsManager = [
       {
         indexed: true,
         internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
+      {
+        indexed: true,
+        internalType: 'address',
         name: '_token',
         type: 'address'
       },
@@ -758,6 +800,12 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
       {
         indexed: false,
         internalType: 'uint256',
@@ -813,6 +861,12 @@ export const CreditsManager = [
     constant: false,
     inputs: [
       {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
+      {
         indexed: false,
         internalType: 'bool',
         name: '_primarySalesAllowed',
@@ -826,7 +880,12 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
-      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      {
+        indexed: true,
+        internalType: 'bytes32',
+        name: 'role',
+        type: 'bytes32'
+      },
       {
         indexed: true,
         internalType: 'bytes32',
@@ -847,7 +906,12 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
-      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      {
+        indexed: true,
+        internalType: 'bytes32',
+        name: 'role',
+        type: 'bytes32'
+      },
       {
         indexed: true,
         internalType: 'address',
@@ -868,7 +932,12 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
-      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      {
+        indexed: true,
+        internalType: 'bytes32',
+        name: 'role',
+        type: 'bytes32'
+      },
       {
         indexed: true,
         internalType: 'address',
@@ -889,6 +958,12 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
       {
         indexed: false,
         internalType: 'bool',
@@ -917,7 +992,18 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
-      { indexed: true, internalType: 'address', name: '_user', type: 'address' }
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_user',
+        type: 'address'
+      }
     ],
     name: 'UserAllowed',
     payable: false,
@@ -926,7 +1012,18 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
-      { indexed: true, internalType: 'address', name: '_user', type: 'address' }
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address'
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_user',
+        type: 'address'
+      }
     ],
     name: 'UserDenied',
     payable: false,
@@ -1087,7 +1184,11 @@ export const CreditsManager = [
     inputs: [],
     name: 'collectionFactory',
     outputs: [
-      { internalType: 'contract ICollectionFactory', name: '', type: 'address' }
+      {
+        internalType: 'contract ICollectionFactory',
+        name: '',
+        type: 'address'
+      }
     ],
     payable: false,
     stateMutability: 'view',
@@ -1098,7 +1199,11 @@ export const CreditsManager = [
     inputs: [],
     name: 'collectionFactoryV3',
     outputs: [
-      { internalType: 'contract ICollectionFactory', name: '', type: 'address' }
+      {
+        internalType: 'contract ICollectionFactory',
+        name: '',
+        type: 'address'
+      }
     ],
     payable: false,
     stateMutability: 'view',
@@ -1176,7 +1281,12 @@ export const CreditsManager = [
   {
     constant: false,
     inputs: [
-      { indexed: false, internalType: 'bytes32', name: 'role', type: 'bytes32' }
+      {
+        indexed: false,
+        internalType: 'bytes32',
+        name: 'role',
+        type: 'bytes32'
+      }
     ],
     name: 'getRoleAdmin',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
@@ -1582,7 +1692,12 @@ export const CreditsManager = [
         name: '_amount',
         type: 'uint256'
       },
-      { indexed: false, internalType: 'address', name: '_to', type: 'address' }
+      {
+        indexed: false,
+        internalType: 'address',
+        name: '_to',
+        type: 'address'
+      }
     ],
     name: 'withdrawERC20',
     outputs: [],
@@ -1605,7 +1720,12 @@ export const CreditsManager = [
         name: '_tokenId',
         type: 'uint256'
       },
-      { indexed: false, internalType: 'address', name: '_to', type: 'address' }
+      {
+        indexed: false,
+        internalType: 'address',
+        name: '_to',
+        type: 'address'
+      }
     ],
     name: 'withdrawERC721',
     outputs: [],
