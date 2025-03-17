@@ -1030,101 +1030,79 @@ export const CreditsManager = [
     type: 'event'
   },
   {
-    constant: false,
     inputs: [],
     name: 'ASSET_TYPE_COLLECTION_ITEM',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'ASSET_TYPE_ERC20',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'ASSET_TYPE_ERC721',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'ASSET_TYPE_USD_PEGGED_MANA',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'DEFAULT_ADMIN_ROLE',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'DENIER_ROLE',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'EXTERNAL_CALL_REVOKER_ROLE',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'EXTERNAL_CALL_SIGNER_ROLE',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'PAUSER_ROLE',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'REVOKER_ROLE',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'SIGNER_ROLE',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-    payable: false,
     stateMutability: 'view',
     type: 'function'
   },
@@ -1168,7 +1146,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       { indexed: false, internalType: 'address', name: '', type: 'address' },
       { indexed: false, internalType: 'bytes4', name: '', type: 'bytes4' }
@@ -1180,7 +1157,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'collectionFactory',
     outputs: [
@@ -1195,7 +1171,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'collectionFactoryV3',
     outputs: [
@@ -1210,7 +1185,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'collectionStore',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
@@ -1235,7 +1209,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       {
         indexed: false,
@@ -1258,12 +1231,10 @@ export const CreditsManager = [
     ],
     name: 'executeMetaTransaction',
     outputs: [{ internalType: 'bytes', name: '', type: 'bytes' }],
-    payable: false,
     stateMutability: 'payable',
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       {
         indexed: false,
@@ -1279,7 +1250,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       {
         indexed: false,
@@ -1317,7 +1287,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       {
         indexed: false,
@@ -1339,7 +1308,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'hourOfLastManaCredit',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -1348,7 +1316,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       { indexed: false, internalType: 'address', name: '', type: 'address' }
     ],
@@ -1359,7 +1326,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       { indexed: false, internalType: 'bytes32', name: '', type: 'bytes32' }
     ],
@@ -1370,7 +1336,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'legacyMarketplace',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
@@ -1379,7 +1344,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'mana',
     outputs: [{ internalType: 'contract IERC20', name: '', type: 'address' }],
@@ -1388,7 +1352,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'manaCreditedThisHour',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -1397,7 +1360,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'marketplace',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
@@ -1406,7 +1368,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'maxManaCreditedPerHour',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -1415,7 +1376,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       { indexed: false, internalType: 'address', name: '', type: 'address' },
       { indexed: false, internalType: 'address', name: '', type: 'address' },
@@ -1438,7 +1398,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'paused',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
@@ -1447,7 +1406,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'primarySalesAllowed',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
@@ -1532,7 +1490,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [],
     name: 'secondarySalesAllowed',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
@@ -1541,7 +1498,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       { indexed: false, internalType: 'bytes32', name: '', type: 'bytes32' }
     ],
@@ -1552,7 +1508,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       {
         indexed: false,
@@ -1667,7 +1622,6 @@ export const CreditsManager = [
     type: 'function'
   },
   {
-    constant: false,
     inputs: [
       { indexed: false, internalType: 'bytes32', name: '', type: 'bytes32' }
     ],
