@@ -26,6 +26,7 @@ import { DCLControllerV2 } from './DCLControllerV2'
 import { OffChainMarketplaceEthereum } from './OffChainMarketplaceEthereum'
 import { Network } from '@dcl/schemas'
 import { OffChainMarketplacePolygon } from './OffChainMarketplacePolygon'
+import { CreditsManager } from './CreditsManager'
 
 export const abis = {
   [ContractName.Bid]: Bid,
@@ -54,5 +55,6 @@ export const abis = {
   [ContractName.OffChainMarketplace]: {
     [Network.ETHEREUM]: OffChainMarketplaceEthereum,
     [Network.MATIC]: OffChainMarketplacePolygon
-  }
+  },
+  [ContractName.CreditsManager]: CreditsManager
 }
