@@ -7,7 +7,6 @@ import {
   isContract,
   getOffchainExecuteMetaTransactionData
 } from './utils'
-import { offChainMarketplace } from './contracts/offChainMarketplace'
 import { getConfiguration } from './configuration'
 import {
   Provider,
@@ -58,9 +57,13 @@ export async function sendMetaTransaction(
       )
     }
 
-    const isOffchainContract = Object.values(offChainMarketplace).some(
-      contract =>
-        contract.address.toLowerCase() === contractData.address.toLowerCase()
+    const hasFunctionDataInput = contractData.abi.some(
+      (el: {
+        name?: string
+        inputs?: { name?: string; type: string; indexed?: boolean }[]
+      }) =>
+        el.name === 'executeMetaTransaction' &&
+        el.inputs?.some(input => input.name === '_functionData')
     )
 
     const nonce = await getNonce(
@@ -76,7 +79,7 @@ export async function sendMetaTransaction(
       nonce,
       functionSignature,
       domainData,
-      isOffchainContract
+      hasFunctionDataInput
     )
     const signature = await getSignature(
       provider,
@@ -84,7 +87,7 @@ export async function sendMetaTransaction(
       JSON.stringify(dataToSign)
     )
 
-    const getMetaTransactionData = isOffchainContract
+    const getMetaTransactionData = hasFunctionDataInput
       ? getOffchainExecuteMetaTransactionData
       : getExecuteMetaTransactionData
 
@@ -145,12 +148,12 @@ function getDataToSign(
   nonce: string,
   functionSignature: string,
   domainData: DomainData,
-  isOffchainContract = false
+  hasFunctionDataInput = false
 ): DataToSign {
   return {
     types: {
       EIP712Domain: DOMAIN_TYPE,
-      MetaTransaction: isOffchainContract
+      MetaTransaction: hasFunctionDataInput
         ? OFFCHAIN_META_TRANSACTION_TYPE
         : META_TRANSACTION_TYPE
     },
@@ -159,7 +162,7 @@ function getDataToSign(
     message: {
       nonce: parseInt(nonce, 16),
       from: account,
-      ...(isOffchainContract
+      ...(hasFunctionDataInput
         ? { functionData: functionSignature }
         : { functionSignature })
     }
