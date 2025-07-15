@@ -21,6 +21,10 @@ Send meta transactions
     - [DomainData](#DomainData)
 - [Example](#example)
 - [Development](#development)
+- [Scripts](#scripts)
+  - [convert-abi](#convert-abi)
+  - [extract-function-data](#extract-function-data)
+  - [extract-tenderly-data](#extract-tenderly-data)
 - [Copyright](#copyright)
 
 ### API
@@ -216,6 +220,85 @@ npm i
 npm run test
 npm run build
 ```
+
+# Scripts
+
+This package includes several utility scripts to help with development and debugging:
+
+## convert-abi
+
+Converts TypeScript ABI files to JSON format for easier use with other tools.
+
+**Usage:**
+
+```bash
+npm run convert-abi <input-file> [output-file]
+npm run convert-abi --all <input-directory> [output-directory]
+```
+
+**Examples:**
+
+```bash
+# Convert a single ABI file
+npm run convert-abi src/abis/ERC20.ts
+
+# Convert a single ABI file with custom output
+npm run convert-abi src/abis/ERC20.ts src/abis/ERC20.json
+
+# Convert all ABI files in a directory
+npm run convert-abi --all src/abis/
+
+# Convert all ABI files to a different output directory
+npm run convert-abi --all src/abis/ output/abis/
+```
+
+## extract-function-data
+
+Extracts and decodes function data from meta-transaction data. This is useful for debugging and understanding what function calls are being made.
+
+**Usage:**
+
+```bash
+npm run extract-function-data <transaction_data> [abi_file_path]
+```
+
+**Arguments:**
+
+- `transaction_data`: The hex transaction data from `getOffchainExecuteMetaTransactionData`
+- `abi_file_path` (optional): Path to a JSON file containing the contract ABI for decoding
+
+**Examples:**
+
+```bash
+# Extract function data without decoding
+npm run extract-function-data 0xd8ed1acc0000000000000000000000001234567890abcdef...
+
+# Extract and decode function data with ABI
+npm run extract-function-data 0xd8ed1acc0000000000000000000000001234567890abcdef... ./contract-abi.json
+```
+
+## extract-tenderly-data
+
+Extracts function data from meta-transaction data and formats it for Tenderly transaction simulation.
+
+**Usage:**
+
+```bash
+npm run extract-tenderly-data <transaction_data>
+```
+
+**Arguments:**
+
+- `transaction_data`: The hex transaction data from `getOffchainExecuteMetaTransactionData`
+
+**Examples:**
+
+```bash
+# Extract data for Tenderly simulation
+npm run extract-tenderly-data 0xd8ed1acc0000000000000000000000001234567890abcdef...
+```
+
+The script outputs JSON data with `data` and `from` fields that can be used in Tenderly's transaction simulation interface.
 
 # Copyright
 
