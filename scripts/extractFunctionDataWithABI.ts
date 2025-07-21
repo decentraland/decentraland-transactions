@@ -112,37 +112,7 @@ function main(): void {
     console.log(`First Offset: ${result.firstOffset}`)
     console.log(`Second Offset: ${result.secondOffset}`)
 
-    // Try to decode the function data if ABI is provided
-    if (abiFilePath) {
-      console.log('\n=== Function Decoding ===')
-      try {
-        const abi = loadABIFromFile(abiFilePath)
-        const decoded = decodeFunctionData(result.functionData, abi)
-
-        if (decoded) {
-          console.log(`Function Name: ${decoded.functionName}`)
-          console.log(`Function Signature: ${decoded.functionSignature}`)
-          console.log('')
-          console.log('Parameters:')
-          console.log(
-            JSON.stringify(
-              convertBigNumbersToValues(decoded.parameters),
-              null,
-              2
-            )
-          )
-        } else {
-          console.log('Could not decode function data with provided ABI')
-          console.log(
-            'Function Selector:',
-            result.functionData.substring(0, 10)
-          )
-          console.log('Raw Parameters:', result.functionData.substring(10))
-        }
-      } catch (error) {
-        console.error('Error loading or using ABI:', (error as Error).message)
-      }
-    } else {
+    if (!abiFilePath) {
       console.log('\n=== Function Data Analysis (No ABI) ===')
       if (result.functionData.length >= 10) {
         const functionSelector = result.functionData.substring(0, 10)
@@ -153,6 +123,30 @@ function main(): void {
           'npm run extract-function-data <transaction_data> <abi_file_path>'
         )
       }
+      return
+    }
+
+    // Try to decode the function data if ABI is provided
+    console.log('\n=== Function Decoding ===')
+    try {
+      const abi = loadABIFromFile(abiFilePath)
+      const decoded = decodeFunctionData(result.functionData, abi)
+
+      if (decoded) {
+        console.log(`Function Name: ${decoded.functionName}`)
+        console.log(`Function Signature: ${decoded.functionSignature}`)
+        console.log('')
+        console.log('Parameters:')
+        console.log(
+          JSON.stringify(convertBigNumbersToValues(decoded.parameters), null, 2)
+        )
+      } else {
+        console.log('Could not decode function data with provided ABI')
+        console.log('Function Selector:', result.functionData.substring(0, 10))
+        console.log('Raw Parameters:', result.functionData.substring(10))
+      }
+    } catch (error) {
+      console.error('Error loading or using ABI:', (error as Error).message)
     }
   } catch (error) {
     console.error('Error:', (error as Error).message)

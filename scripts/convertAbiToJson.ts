@@ -25,6 +25,22 @@ interface AbiItem {
 
 type Abi = AbiItem[]
 
+const getAbi = (module: any) => {
+  if (module.default) {
+    return module.default as Abi
+  }
+
+  const exports = Object.keys(module)
+  for (const exportName of exports) {
+    const exported = module[exportName]
+    if (exported?.[0]?.type) {
+      return exported
+    }
+  }
+
+  throw new Error('No valid ABI found in the TypeScript file')
+}
+
 /**
  * Converts a TypeScript ABI file to JSON format
  * @param inputPath - Path to the TypeScript ABI file
@@ -61,34 +77,7 @@ async function convertAbiToJson(
     const module = require(absoluteInputPath)
 
     // Find the exported ABI (it should be the default export or a named export)
-    let abi: Abi | undefined
-
-    if (module.default) {
-      abi = module.default
-    } else {
-      // Look for the first exported array that looks like an ABI
-      const exports = Object.keys(module)
-      for (const exportName of exports) {
-        const exported = module[exportName]
-        if (Array.isArray(exported) && exported.length > 0) {
-          // Check if it looks like an ABI by examining the first item
-          const firstItem = exported[0]
-          if (
-            firstItem &&
-            typeof firstItem === 'object' &&
-            'type' in firstItem
-          ) {
-            abi = exported
-            console.log(`Found ABI export: ${exportName}`)
-            break
-          }
-        }
-      }
-    }
-
-    if (!abi) {
-      throw new Error('No valid ABI found in the TypeScript file')
-    }
+    const abi = getAbi(module)
 
     // Validate that it's actually an ABI
     if (!Array.isArray(abi)) {
