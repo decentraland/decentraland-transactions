@@ -24,7 +24,10 @@
     "build": "npm run build:esm && npm run build:cjs",
     "lint": "tslint --project tsconfig.json -e '*.json' -c tslint.json 'src/**/*.ts{,x}'",
     "test": "node --experimental-modules --es-module-specifier-resolution=node node_modules/.bin/nyc node_modules/mocha/bin/_mocha",
-    "test:watch": "npm test -- --watch"
+    "test:watch": "npm test -- --watch",
+    "convert-abi": "ts-node scripts/convertAbiToJson.ts",
+    "extract-function-data": "ts-node scripts/extractFunctionDataWithABI.ts",
+    "extract-tenderly-data": "ts-node scripts/extractFunctionDataForTenderly.ts"
   },
   "devDependencies": {
     "@dcl/schemas": "^13.12.0",
