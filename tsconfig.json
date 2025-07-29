@@ -20,5 +20,5 @@
     "skipLibCheck": true,
     "importHelpers": true,
   },
-  "exclude": ["node_modules", "dist", "esm", "cjs", "test"]
+  "exclude": ["node_modules", "dist", "esm", "cjs", "test", "scripts"]
 }

@@ -6,5 +6,4 @@
     "outDir": "esm",
     "target": "esnext"
   },
-  "exclude": ["node_modules", "dist", "esm", "cjs", "test"]
 }
