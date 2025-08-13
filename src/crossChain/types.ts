@@ -79,7 +79,7 @@ export interface CrossChainProvider {
   ): Promise<string>
   mintNFT(
     provider: Provider,
-    ChainCallData: MintNFTCrossChainData
+    mintNFTCrossChainData: MintNFTCrossChainData
   ): Promise<string>
   getBuyNFTRoute(
     buyNFTCrossChainData: BuyNFTCrossChainData
@@ -88,7 +88,7 @@ export interface CrossChainProvider {
     getRegisterNameCrossChainData: RegisterNameCrossChainData
   ): Promise<RouteResponse>
   getMintNFTRoute(
-    buyNFTCrossChainData: MintNFTCrossChainData
+    mintNFTCrossChainData: MintNFTCrossChainData
   ): Promise<RouteResponse>
   executeRoute(
     route: RouteResponse,
@@ -98,4 +98,56 @@ export interface CrossChainProvider {
     routeRequestId: string,
     originChainHash: string
   ): Promise<StatusResponse>
+  // ===== NEW CORAL + CREDITS METHODS =====
+  getRegisterNameWithCreditsRoute(
+    registerNameWithCreditsData: RegisterNameWithCreditsData
+  ): Promise<CreditsManagerRouteResponse>
+  // ❌ REMOVED: registerNameWithCredits - We now call CreditsManager.useCredits() directly
+}
+
+export interface RegisterNameWithCreditsData {
+  fromAddress: string
+  fromAmount: string
+  fromChain: ChainId
+  fromToken: string
+  toChain: ChainId
+  toAmount: string // registration price
+  enableExpress?: boolean
+  name: string
+  credits: CreditsManagerCredit[]
+  creditsSignatures: string[]
+  externalCallSignature: string
+  maxUncreditedValue: string
+  maxCreditedValue: string
+}
+
+// Internal Credit type for CreditsManager contract
+export interface CreditsManagerCredit {
+  value: string
+  expiresAt: string
+  salt: string
+}
+
+export interface ExternalCall {
+  target: string
+  selector: string
+  data: string
+  expiresAt: string
+  salt: string
+}
+
+export interface CreditsManagerRouteResponse {
+  route: RouteResponse
+  creditsManagerFlow: {
+    creditsManagerAddress: string
+    useCreditsArgs: {
+      credits: CreditsManagerCredit[]
+      creditsSignatures: string[]
+      externalCall: ExternalCall
+      customExternalCallSignature: string
+      maxUncreditedValue: string
+      maxCreditedValue: string
+    }
+  }
+  ethereumGasCostMANA?: string // Gas cost in MANA wei for UI display
 }
