@@ -5,7 +5,7 @@ export const creditsManager = {
   [ChainId.MATIC_AMOY]: {
     version: '1.0.0',
     abi: abis.CreditsManager,
-    address: '0xa1691afad71b9a92d329f1a95c39d3077d8f2f5f',
+    address: '0x037566bc90f85e76587e1b07f9184585f09c1420',
     name: 'Decentraland Credits',
     chainId: ChainId.MATIC_AMOY
   },
