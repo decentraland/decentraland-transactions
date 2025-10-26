@@ -12,7 +12,7 @@ export const creditsManager = {
   [ChainId.MATIC_MAINNET]: {
     version: '1.0.0',
     abi: abis.CreditsManager,
-    address: '0x3fd3056ee72a2a85e9392fab3a450e7736536081',
+    address: '0x8b3a40ca1b6f5cafc99d112a4d02e897d1fd8cc5',
     name: 'Decentraland Credits',
     chainId: ChainId.MATIC_MAINNET
   }
