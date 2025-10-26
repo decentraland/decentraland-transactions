@@ -25,6 +25,7 @@ import { dclRegistrar } from './dclRegistrar'
 import { dclController } from './dclController'
 import { dclControllerV2 } from './dclControllerV2'
 import { offChainMarketplace } from './offChainMarketplace'
+import { offChainMarketplaceV2 } from './offChainMarketplaceV2'
 import { creditsManager } from './creditsManager'
 
 const contracts: Record<
@@ -55,6 +56,7 @@ const contracts: Record<
   [ContractName.DCLController]: dclController,
   [ContractName.DCLControllerV2]: dclControllerV2,
   [ContractName.OffChainMarketplace]: offChainMarketplace,
+  [ContractName.OffChainMarketplaceV2]: offChainMarketplaceV2,
   [ContractName.CreditsManager]: creditsManager
 }
 

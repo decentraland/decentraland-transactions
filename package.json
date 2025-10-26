@@ -30,7 +30,7 @@
     "extract-tenderly-data": "ts-node scripts/extractFunctionDataForTenderly.ts"
   },
   "devDependencies": {
-    "@dcl/schemas": "^13.12.0",
+    "@dcl/schemas": "^19.4.1",
     "@microsoft/api-documenter": "^7.12.7",
     "@microsoft/api-extractor": "^7.13.2",
     "@types/chai": "^4.2.14",
