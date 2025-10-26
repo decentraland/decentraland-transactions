@@ -65,6 +65,7 @@ export enum ContractName {
   DCLController = 'DCLController',
   DCLControllerV2 = 'DCLControllerV2',
   OffChainMarketplace = 'OffChainMarketplace',
+  OffChainMarketplaceV2 = 'OffChainMarketplaceV2',
   CreditsManager = 'CreditsManager'
 }
 
