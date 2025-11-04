@@ -21,7 +21,7 @@
     "postbuild": "node scripts/postbuild.js",
     "build:esm": "tsc --project tsconfig.esm.json",
     "build:cjs": "tsc --project tsconfig.cjs.json",
-    "build": "npm run build:esm && npm run build:cjs",
+    "build": "npm run typechain && npm run build:esm && npm run build:cjs",
     "lint": "tslint --project tsconfig.json -e '*.json' -c tslint.json 'src/**/*.ts{,x}'",
     "test": "node --experimental-modules --es-module-specifier-resolution=node node_modules/.bin/nyc node_modules/mocha/bin/_mocha",
     "typechain": "typechain --target ethers-v5 --out-dir src/typechain-contracts src/abis/*.json",
