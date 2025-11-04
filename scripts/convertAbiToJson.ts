@@ -122,7 +122,10 @@ async function convertAllAbisToJson(
     // Find all TypeScript files in the directory
     const files = fs.readdirSync(absoluteInputDir)
     const tsFiles = files.filter(
-      file => file.endsWith('.ts') && !file.endsWith('.d.ts')
+      file =>
+        file.endsWith('.ts') &&
+        !file.endsWith('.d.ts') &&
+        file !== 'index.ts'
     )
 
     console.log(`Found ${tsFiles.length} TypeScript files to convert...`)

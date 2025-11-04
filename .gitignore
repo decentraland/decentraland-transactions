@@ -7,3 +7,4 @@ cjs
 coverage
 TODO.md
 *.tgz
+src/typechain-contracts
