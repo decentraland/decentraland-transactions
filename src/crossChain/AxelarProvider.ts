@@ -401,10 +401,8 @@ export class AxelarProvider implements CrossChainProvider {
     const destinationChainMANA = getContract(ContractName.MANAToken, toChain)
       .address
 
-    const destinationChainMarketplace = getContract(
-      tradeId
-        ? ContractName.OffChainMarketplace
-        : toChain === ChainId.MATIC_MAINNET
+    let destinationChainMarketplace = getContract(
+      toChain === ChainId.MATIC_MAINNET
         ? ContractName.MarketplaceV2
         : ContractName.Marketplace,
       toChain
@@ -417,7 +415,10 @@ export class AxelarProvider implements CrossChainProvider {
     let calls: ChainCall[] = []
 
     if (tradeId && fetchTradeData) {
-      const { onChainTrade } = await fetchTradeData()
+      const { onChainTrade, marketplaceAddress } = await fetchTradeData()
+
+      // Override the destination chain marketplace with the marketplace address from the trade data
+      destinationChainMarketplace = marketplaceAddress
 
       calls = this.getTradesContractCalls({
         destinationChainMANA,
@@ -593,22 +594,20 @@ export class AxelarProvider implements CrossChainProvider {
       marketplaceContractABI
     )
 
-    const destinationChainCollectionStoreAddress = getContract(
-      ContractName.CollectionStore,
-      toChain
-    ).address
+    let destinationAddress = getContract(ContractName.CollectionStore, toChain)
+      .address
 
     let calls: ChainCall[] = []
 
     if (tradeId && fetchTradeData) {
-      const { onChainTrade } = await fetchTradeData()
+      const { onChainTrade, marketplaceAddress } = await fetchTradeData()
+
+      // Override the destination chain address with the marketplace address from the trade data
+      destinationAddress = marketplaceAddress
 
       calls = this.getTradesContractCalls({
         destinationChainMANA,
-        destinationChainMarketplace: getContract(
-          ContractName.CollectionStore,
-          toChain
-        ).address,
+        destinationChainMarketplace: marketplaceAddress,
         toAmount,
         fromAddress,
         onChainTrade,
@@ -618,7 +617,7 @@ export class AxelarProvider implements CrossChainProvider {
     } else {
       calls = this.getMintItemCalls({
         destinationChainMANA,
-        destinationChainCollectionStoreAddress,
+        destinationChainCollectionStoreAddress: destinationAddress,
         toAmount,
         fromAddress,
         collectionAddress,
@@ -636,7 +635,7 @@ export class AxelarProvider implements CrossChainProvider {
       fromChain: fromChain.toString(),
       toToken: destinationChainMANA,
       toChain: toChain.toString(),
-      toAddress: fromAddress,
+      toAddress: destinationAddress,
       enableBoost: enableExpress, // TODO: check if we need this
       postHook: {
         provider: 'Decentraland',

@@ -40,6 +40,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "dcl-tslint-config-standard": "^3.0.0",
+    "decentraland-connect": "^10.0.0",
     "ethers": "^5.6.8",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
@@ -54,7 +55,6 @@
   "dependencies": {
     "@0xsquid/sdk": "2.8.25",
     "@0xsquid/squid-types": "0.1.78",
-    "decentraland-connect": "^9.0.0",
     "tslib": "^2.6.2"
   },
   "peerDependencies": {
