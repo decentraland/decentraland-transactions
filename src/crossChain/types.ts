@@ -21,7 +21,10 @@ export type CrossChainData = {
 
 export type BuyNFTCrossChainData = CrossChainData & {
   order: Order
-  fetchTradeData?: () => Promise<{ onChainTrade: OnChainTrade }>
+  fetchTradeData?: () => Promise<{
+    onChainTrade: OnChainTrade
+    marketplaceAddress: string
+  }>
 }
 
 export type AcceptTradeData = CrossChainData & {
@@ -40,7 +43,10 @@ export type MintNFTCrossChainData = CrossChainData & {
     price: string
     tradeId?: string
   }
-  fetchTradeData?: () => Promise<{ onChainTrade: OnChainTrade }>
+  fetchTradeData?: () => Promise<{
+    onChainTrade: OnChainTrade
+    marketplaceAddress: string
+  }>
 }
 
 export type FromAmountParams = {
