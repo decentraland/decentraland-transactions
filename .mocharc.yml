@@ -1,9 +1,0 @@
-require:
-  - './test/setup.js'
-recursive: true
-reporter:
-  - 'spec'
-watch-files:
-  - 'dist/**/*.js'
-  - 'test/**/*.ts'
-spec: 'test/**/*.ts'
