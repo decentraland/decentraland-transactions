@@ -1,6 +1,4 @@
 import { ChainId } from '@dcl/schemas'
-import { expect } from 'chai'
-import { fake } from 'sinon'
 import { ErrorCode, MetaTransactionError, sendMetaTransaction } from '../src'
 import { getConfiguration } from '../src/configuration'
 
@@ -10,7 +8,7 @@ async function getError<T extends Error>(
   try {
     await promise
   } catch (error) {
-    return error
+    return error as T
   }
   return null
 }
@@ -18,11 +16,12 @@ async function getError<T extends Error>(
 describe('#Errors', () => {
   describe('Invalid address', () => {
     it('should throw if address is empty', async () => {
+      const mockRequest = jest.fn()
       const fakeProvider = {
-        request: fake()
+        request: mockRequest
       }
       const fakeMetaTransactionProvider = {
-        request: fake()
+        request: mockRequest
       }
       const promise = sendMetaTransaction(
         fakeProvider,
@@ -37,17 +36,19 @@ describe('#Errors', () => {
         }
       )
       const error = await getError<MetaTransactionError>(promise)
-      expect(error).to.be.instanceOf(MetaTransactionError)
-      expect(error.code).to.be.equal(ErrorCode.INVALID_ADDRESS)
+      expect(error).toBeInstanceOf(MetaTransactionError)
+      expect(error?.code).toBe(ErrorCode.INVALID_ADDRESS)
     })
 
     describe('Contract account', () => {
       it('should throw if bytecode is non-zero', async () => {
+        const mockRequest = jest.fn().mockResolvedValue('0x1') // returns non-zero bytecode
         const fakeProvider = {
-          request: fake.returns('0x1') // returns non-zero bytecode
+          request: mockRequest
         }
+        const mockMetaRequest = jest.fn()
         const fakeMetaTransactionProvider = {
-          request: fake()
+          request: mockMetaRequest
         }
         const promise = sendMetaTransaction(
           fakeProvider,
@@ -62,18 +63,22 @@ describe('#Errors', () => {
           }
         )
         const error = await getError<MetaTransactionError>(promise)
-        expect(error).to.be.instanceOf(MetaTransactionError)
-        expect(error.code).to.be.equal(ErrorCode.CONTRACT_ACCOUNT)
+        expect(error).toBeInstanceOf(MetaTransactionError)
+        expect(error?.code).toBe(ErrorCode.CONTRACT_ACCOUNT)
       })
     })
 
     describe('User denied', () => {
       it('should throw if user rejects transaction', async () => {
+        const mockRequest = jest
+          .fn()
+          .mockRejectedValue(new Error('User denied message signature'))
         const fakeProvider = {
-          request: fake.throws(new Error('User denied message signature'))
+          request: mockRequest
         }
+        const mockMetaRequest = jest.fn()
         const fakeMetaTransactionProvider = {
-          request: fake()
+          request: mockMetaRequest
         }
         const promise = sendMetaTransaction(
           fakeProvider,
@@ -88,8 +93,8 @@ describe('#Errors', () => {
           }
         )
         const error = await getError<MetaTransactionError>(promise)
-        expect(error).to.be.instanceOf(MetaTransactionError)
-        expect(error.code).to.be.equal(ErrorCode.USER_DENIED)
+        expect(error).toBeInstanceOf(MetaTransactionError)
+        expect(error?.code).toBe(ErrorCode.USER_DENIED)
       })
     })
 
@@ -97,7 +102,7 @@ describe('#Errors', () => {
       let fullFakeProvider: { request: ({ method }: { method: string }) => any }
 
       beforeEach(() => {
-        ;(global as any).fetch = async (url: string) => {
+        ;(global as any).fetch = jest.fn(async (url: string) => {
           if (url === getConfiguration().serverURL + '/transactions') {
             return {
               ok: true,
@@ -109,7 +114,8 @@ describe('#Errors', () => {
               })
             }
           }
-        }
+          return undefined
+        })
 
         fullFakeProvider = {
           request: ({ method }) => {
@@ -123,7 +129,7 @@ describe('#Errors', () => {
               case 'eth_signTypedData_v4':
                 return '0x81281be80000000000000000000000005c8bf33e673dc712ba62c5459e59dd9a15d458ff000000000000000000000000000000000000000000000000000000000000000b0000000000000000000000000000000000000000000000008ac7230489e80000000000000000000000000000000000000000000000000000000000000026adcc'
               default:
-                return fake()
+                return jest.fn()
             }
           }
         }
@@ -144,8 +150,8 @@ describe('#Errors', () => {
         )
         const error = await getError<MetaTransactionError>(promise)
 
-        expect(error).to.be.instanceOf(MetaTransactionError)
-        expect(error.code).to.be.equal(ErrorCode.SALE_PRICE_TOO_LOW)
+        expect(error).toBeInstanceOf(MetaTransactionError)
+        expect(error?.code).toBe(ErrorCode.SALE_PRICE_TOO_LOW)
       })
     })
   })
