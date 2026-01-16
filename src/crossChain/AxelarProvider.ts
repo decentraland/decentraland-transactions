@@ -119,6 +119,7 @@ export class AxelarProvider implements CrossChainProvider {
       toChain
     )
     const ControllerV2Interface = new ethers.utils.Interface(DCLControllerV2)
+    const isEthereumMainnet = toChain === ChainId.ETHEREUM_MAINNET
 
     return this.squid.getRoute({
       fromAddress,
@@ -136,6 +137,29 @@ export class AxelarProvider implements CrossChainProvider {
           'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
         chainType: ChainType.EVM,
         calls: [
+          // ===================================
+          // Reset MANA allowance to 0 (required by Ethereum MANA token's anti-race condition)
+          // Only needed for Ethereum mainnet, Polygon MANA doesn't have this restriction
+          // ===================================
+          ...(isEthereumMainnet
+            ? [
+                {
+                  chainType: ChainType.EVM,
+                  callType: SquidCallType.DEFAULT,
+                  target: destinationChainMANA,
+                  value: '0',
+                  callData: ERC20ContractInterface.encodeFunctionData(
+                    'approve',
+                    [controllerContract.address, '0']
+                  ),
+                  payload: {
+                    tokenAddress: NATIVE_TOKEN,
+                    inputPos: 0
+                  },
+                  estimatedGas: '50000'
+                } as ChainCall
+              ]
+            : []),
           // ===================================
           // Approve MANA to be spent by Decentraland contract
           // ===================================
@@ -207,7 +231,8 @@ export class AxelarProvider implements CrossChainProvider {
     price,
     marketplaceInterface,
     ERC721ContractInterface,
-    squidMulticallContract
+    squidMulticallContract,
+    toChain
   }: {
     destinationChainMANA: string
     destinationChainMarketplace: string
@@ -219,9 +244,32 @@ export class AxelarProvider implements CrossChainProvider {
     marketplaceInterface: ethers.utils.Interface
     ERC721ContractInterface: ethers.utils.Interface
     squidMulticallContract: string | undefined
+    toChain: ChainId
   }): ChainCall[] {
     const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
+    const isEthereumMainnet = toChain === ChainId.ETHEREUM_MAINNET
     return [
+      // Reset MANA allowance to 0 (required by Ethereum MANA token's anti-race condition)
+      // Only needed for Ethereum mainnet, Polygon MANA doesn't have this restriction
+      ...(isEthereumMainnet
+        ? [
+            {
+              chainType: ChainType.EVM,
+              callType: SquidCallType.DEFAULT,
+              target: destinationChainMANA,
+              value: '0',
+              callData: ERC20ContractInterface.encodeFunctionData('approve', [
+                destinationChainMarketplace,
+                '0'
+              ]),
+              payload: {
+                tokenAddress: NATIVE_TOKEN,
+                inputPos: 0
+              },
+              estimatedGas: '50000'
+            } as ChainCall
+          ]
+        : []),
       // Approve MANA to be spent by Decentraland contract
       {
         chainType: ChainType.EVM,
@@ -300,7 +348,8 @@ export class AxelarProvider implements CrossChainProvider {
     fromAddress,
     onChainTrade,
     ERC20ContractInterface,
-    marketplaceInterface
+    marketplaceInterface,
+    toChain
   }: {
     destinationChainMANA: string
     destinationChainMarketplace: string
@@ -309,8 +358,31 @@ export class AxelarProvider implements CrossChainProvider {
     onChainTrade: OnChainTrade
     ERC20ContractInterface: ethers.utils.Interface
     marketplaceInterface: ethers.utils.Interface
+    toChain: ChainId
   }): ChainCall[] {
+    const isEthereumMainnet = toChain === ChainId.ETHEREUM_MAINNET
     return [
+      // Reset MANA allowance to 0 (required by Ethereum MANA token's anti-race condition)
+      // Only needed for Ethereum mainnet, Polygon MANA doesn't have this restriction
+      ...(isEthereumMainnet
+        ? [
+            {
+              chainType: ChainType.EVM,
+              callType: SquidCallType.DEFAULT,
+              target: destinationChainMANA,
+              value: '0',
+              callData: ERC20ContractInterface.encodeFunctionData('approve', [
+                destinationChainMarketplace,
+                '0'
+              ]),
+              payload: {
+                tokenAddress: NATIVE_TOKEN,
+                inputPos: 0
+              },
+              estimatedGas: '50000'
+            } as ChainCall
+          ]
+        : []),
       // Approve MANA to be spent by Decentraland contract
       {
         chainType: ChainType.EVM,
@@ -427,7 +499,8 @@ export class AxelarProvider implements CrossChainProvider {
         fromAddress,
         onChainTrade,
         ERC20ContractInterface,
-        marketplaceInterface
+        marketplaceInterface,
+        toChain
       })
     } else {
       calls = this.getExecuteOrderCalls({
@@ -440,7 +513,8 @@ export class AxelarProvider implements CrossChainProvider {
         price,
         marketplaceInterface,
         ERC721ContractInterface,
-        squidMulticallContract
+        squidMulticallContract,
+        toChain
       })
     }
 
@@ -475,7 +549,8 @@ export class AxelarProvider implements CrossChainProvider {
     itemId,
     price,
     ERC20ContractInterface,
-    collectionStoreInterface
+    collectionStoreInterface,
+    toChain
   }: {
     destinationChainMANA: string
     destinationChainCollectionStoreAddress: string
@@ -486,8 +561,33 @@ export class AxelarProvider implements CrossChainProvider {
     price: string
     ERC20ContractInterface: ethers.utils.Interface
     collectionStoreInterface: ethers.utils.Interface
+    toChain: ChainId
   }): ChainCall[] {
+    const isEthereumMainnet = toChain === ChainId.ETHEREUM_MAINNET
     return [
+      // ===================================
+      // Reset MANA allowance to 0 (required by Ethereum MANA token's anti-race condition)
+      // Only needed for Ethereum mainnet, Polygon MANA doesn't have this restriction
+      // ===================================
+      ...(isEthereumMainnet
+        ? [
+            {
+              chainType: ChainType.EVM,
+              callType: SquidCallType.DEFAULT,
+              target: destinationChainMANA,
+              value: '0',
+              callData: ERC20ContractInterface.encodeFunctionData('approve', [
+                destinationChainCollectionStoreAddress,
+                '0'
+              ]),
+              payload: {
+                tokenAddress: NATIVE_TOKEN,
+                inputPos: 0
+              },
+              estimatedGas: '50000'
+            } as ChainCall
+          ]
+        : []),
       // ===================================
       // Approve MANA to be spent by Decentraland contract
       // ===================================
@@ -612,7 +712,8 @@ export class AxelarProvider implements CrossChainProvider {
         fromAddress,
         onChainTrade,
         ERC20ContractInterface,
-        marketplaceInterface
+        marketplaceInterface,
+        toChain
       })
     } else {
       calls = this.getMintItemCalls({
@@ -624,7 +725,8 @@ export class AxelarProvider implements CrossChainProvider {
         itemId,
         price,
         ERC20ContractInterface,
-        collectionStoreInterface
+        collectionStoreInterface,
+        toChain
       })
     }
 
