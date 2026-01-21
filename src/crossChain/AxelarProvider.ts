@@ -197,22 +197,22 @@ export class AxelarProvider implements CrossChainProvider {
           // ===================================
           ...(isEthereumMainnet
             ? [
-                {
-                  chainType: ChainType.EVM,
-                  callType: SquidCallType.DEFAULT,
-                  target: destinationChainMANA,
-                  value: '0',
-                  callData: ERC20ContractInterface.encodeFunctionData(
-                    'approve',
-                    [controllerContract.address, '0']
-                  ),
-                  payload: {
-                    tokenAddress: NATIVE_TOKEN,
-                    inputPos: 0
-                  },
-                  estimatedGas: '50000'
-                } as ChainCall
-              ]
+              {
+                chainType: ChainType.EVM,
+                callType: SquidCallType.DEFAULT,
+                target: destinationChainMANA,
+                value: '0',
+                callData: ERC20ContractInterface.encodeFunctionData(
+                  'approve',
+                  [controllerContract.address, '0']
+                ),
+                payload: {
+                  tokenAddress: NATIVE_TOKEN,
+                  inputPos: 0
+                },
+                estimatedGas: '50000'
+              } as ChainCall
+            ]
             : []),
           // ===================================
           // Approve MANA to be spent by Decentraland contract
@@ -307,22 +307,22 @@ export class AxelarProvider implements CrossChainProvider {
       // Only needed for Ethereum mainnet, Polygon MANA doesn't have this restriction
       ...(isEthereumMainnet
         ? [
-            {
-              chainType: ChainType.EVM,
-              callType: SquidCallType.DEFAULT,
-              target: destinationChainMANA,
-              value: '0',
-              callData: ERC20ContractInterface.encodeFunctionData('approve', [
-                destinationChainMarketplace,
-                '0'
-              ]),
-              payload: {
-                tokenAddress: NATIVE_TOKEN,
-                inputPos: 0
-              },
-              estimatedGas: '50000'
-            } as ChainCall
-          ]
+          {
+            chainType: ChainType.EVM,
+            callType: SquidCallType.DEFAULT,
+            target: destinationChainMANA,
+            value: '0',
+            callData: ERC20ContractInterface.encodeFunctionData('approve', [
+              destinationChainMarketplace,
+              '0'
+            ]),
+            payload: {
+              tokenAddress: NATIVE_TOKEN,
+              inputPos: 0
+            },
+            estimatedGas: '50000'
+          } as ChainCall
+        ]
         : []),
       // Approve MANA to be spent by Decentraland contract
       {
@@ -420,22 +420,22 @@ export class AxelarProvider implements CrossChainProvider {
       // Only needed for Ethereum mainnet, Polygon MANA doesn't have this restriction
       ...(isEthereumMainnet
         ? [
-            {
-              chainType: ChainType.EVM,
-              callType: SquidCallType.DEFAULT,
-              target: destinationChainMANA,
-              value: '0',
-              callData: ERC20ContractInterface.encodeFunctionData('approve', [
-                destinationChainMarketplace,
-                '0'
-              ]),
-              payload: {
-                tokenAddress: NATIVE_TOKEN,
-                inputPos: 0
-              },
-              estimatedGas: '50000'
-            } as ChainCall
-          ]
+          {
+            chainType: ChainType.EVM,
+            callType: SquidCallType.DEFAULT,
+            target: destinationChainMANA,
+            value: '0',
+            callData: ERC20ContractInterface.encodeFunctionData('approve', [
+              destinationChainMarketplace,
+              '0'
+            ]),
+            payload: {
+              tokenAddress: NATIVE_TOKEN,
+              inputPos: 0
+            },
+            estimatedGas: '50000'
+          } as ChainCall
+        ]
         : []),
       // Approve MANA to be spent by Decentraland contract
       {
@@ -516,8 +516,8 @@ export class AxelarProvider implements CrossChainProvider {
           ? OffChainMarketplacePolygon
           : MarketplaceV2
         : tradeId
-        ? OffChainMarketplaceEthereum
-        : Marketplace
+          ? OffChainMarketplaceEthereum
+          : Marketplace
 
     const marketplaceInterface = new ethers.utils.Interface(
       marketplaceContractABI
@@ -629,22 +629,22 @@ export class AxelarProvider implements CrossChainProvider {
       // ===================================
       ...(isEthereumMainnet
         ? [
-            {
-              chainType: ChainType.EVM,
-              callType: SquidCallType.DEFAULT,
-              target: destinationChainMANA,
-              value: '0',
-              callData: ERC20ContractInterface.encodeFunctionData('approve', [
-                destinationChainCollectionStoreAddress,
-                '0'
-              ]),
-              payload: {
-                tokenAddress: NATIVE_TOKEN,
-                inputPos: 0
-              },
-              estimatedGas: '50000'
-            } as ChainCall
-          ]
+          {
+            chainType: ChainType.EVM,
+            callType: SquidCallType.DEFAULT,
+            target: destinationChainMANA,
+            value: '0',
+            callData: ERC20ContractInterface.encodeFunctionData('approve', [
+              destinationChainCollectionStoreAddress,
+              '0'
+            ]),
+            payload: {
+              tokenAddress: NATIVE_TOKEN,
+              inputPos: 0
+            },
+            estimatedGas: '50000'
+          } as ChainCall
+        ]
         : []),
       // ===================================
       // Approve MANA to be spent by Decentraland contract
@@ -745,8 +745,8 @@ export class AxelarProvider implements CrossChainProvider {
           ? OffChainMarketplacePolygon
           : MarketplaceV2
         : tradeId
-        ? OffChainMarketplaceEthereum
-        : Marketplace
+          ? OffChainMarketplaceEthereum
+          : Marketplace
 
     const marketplaceInterface = new ethers.utils.Interface(
       marketplaceContractABI
