@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { Squid } from '@0xsquid/sdk'
-import { SquidCallType, ChainType, ChainCall } from '@0xsquid/sdk/dist/types'
+import { SquidCallType, ChainType, ChainCall, Hook } from '@0xsquid/sdk/dist/types'
 import { Provider } from 'decentraland-connect'
 import { ChainId, OnChainTrade } from '@dcl/schemas'
 import { OffChainMarketplacePolygon } from '../abis/OffChainMarketplacePolygon'
@@ -24,6 +24,12 @@ import {
 } from './types'
 
 const INTEGRATOR_ID = 'decentraland-sdk'
+
+// MANA token on Ethereum mainnet - has legacy approve restriction (must reset to 0 first)
+const ETHEREUM_MANA_TOKEN = '0x0f5d2fb29fb7d3cfee444a200298f468908cc942'
+
+// Uniswap SwapRouter02 on Ethereum mainnet - used by Squid for swaps
+const UNISWAP_SWAP_ROUTER_02 = '0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45'
 
 export class AxelarProvider implements CrossChainProvider {
   public squid: Squid
@@ -62,6 +68,50 @@ export class AxelarProvider implements CrossChainProvider {
 
   getSupportedChains() {
     return this.squid.chains
+  }
+
+  /**
+   * Creates a preHook to reset MANA allowance to 0 on Ethereum mainnet.
+   * This is needed because the legacy MANA token on Ethereum has an anti-race condition
+   * that prevents changing allowance from non-zero to non-zero directly.
+   * The preHook resets the allowance to Uniswap SwapRouter02 (used by Squid for swaps).
+   */
+  private getEthereumManaPreHook(fromToken: string, fromChain: ChainId): Hook | undefined {
+    const isEthereumMana =
+      fromChain === ChainId.ETHEREUM_MAINNET &&
+      fromToken.toLowerCase() === ETHEREUM_MANA_TOKEN.toLowerCase()
+
+    if (!isEthereumMana) {
+      return undefined
+    }
+
+    const ERC20ContractInterface = new ethers.utils.Interface(ERC20)
+
+    return {
+      chainType: ChainType.EVM,
+      fundAmount: '0',
+      fundToken: fromToken,
+      provider: 'Decentraland',
+      description: 'Reset MANA allowance for Ethereum legacy token',
+      logoURI: 'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico',
+      calls: [
+        {
+          chainType: ChainType.EVM,
+          callType: SquidCallType.DEFAULT,
+          target: ETHEREUM_MANA_TOKEN,
+          value: '0',
+          callData: ERC20ContractInterface.encodeFunctionData('approve', [
+            UNISWAP_SWAP_ROUTER_02,
+            '0'
+          ]),
+          payload: {
+            tokenAddress: NATIVE_TOKEN,
+            inputPos: 0
+          },
+          estimatedGas: '50000'
+        }
+      ]
+    }
   }
 
   async executeRoute(
@@ -121,6 +171,9 @@ export class AxelarProvider implements CrossChainProvider {
     const ControllerV2Interface = new ethers.utils.Interface(DCLControllerV2)
     const isEthereumMainnet = toChain === ChainId.ETHEREUM_MAINNET
 
+    // Add preHook to reset MANA allowance if sending MANA from Ethereum
+    const preHook = this.getEthereumManaPreHook(fromToken, fromChain)
+
     return this.squid.getRoute({
       fromAddress,
       fromAmount,
@@ -130,6 +183,7 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: controllerContract.address,
       enableBoost: enableExpress,
+      ...(preHook && { preHook }),
       postHook: {
         provider: 'Decentraland',
         description: `Buy ${name}`,
@@ -518,6 +572,9 @@ export class AxelarProvider implements CrossChainProvider {
       })
     }
 
+    // Add preHook to reset MANA allowance if sending MANA from Ethereum
+    const preHook = this.getEthereumManaPreHook(fromToken, fromChain)
+
     return this.squid.getRoute({
       fromAddress,
       fromAmount,
@@ -527,6 +584,7 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: destinationChainMarketplace,
       enableBoost: enableExpress,
+      ...(preHook && { preHook }),
       postHook: {
         provider: 'Decentraland',
         description: `Buy NFT ${collectionAddress}-${tokenId}`,
@@ -730,6 +788,9 @@ export class AxelarProvider implements CrossChainProvider {
       })
     }
 
+    // Add preHook to reset MANA allowance if sending MANA from Ethereum
+    const preHook = this.getEthereumManaPreHook(fromToken, fromChain)
+
     return this.squid.getRoute({
       fromAddress,
       fromAmount,
@@ -739,6 +800,7 @@ export class AxelarProvider implements CrossChainProvider {
       toChain: toChain.toString(),
       toAddress: destinationAddress,
       enableBoost: enableExpress, // TODO: check if we need this
+      ...(preHook && { preHook }),
       postHook: {
         provider: 'Decentraland',
         description: `Buy Item ${collectionAddress}-${itemId}`,
