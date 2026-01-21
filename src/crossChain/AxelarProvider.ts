@@ -1,6 +1,11 @@
 import { ethers } from 'ethers'
 import { Squid } from '@0xsquid/sdk'
-import { SquidCallType, ChainType, ChainCall, Hook } from '@0xsquid/sdk/dist/types'
+import {
+  SquidCallType,
+  ChainType,
+  ChainCall,
+  Hook
+} from '@0xsquid/sdk/dist/types'
 import { Provider } from 'decentraland-connect'
 import { ChainId, OnChainTrade } from '@dcl/schemas'
 import { OffChainMarketplacePolygon } from '../abis/OffChainMarketplacePolygon'
@@ -76,7 +81,10 @@ export class AxelarProvider implements CrossChainProvider {
    * that prevents changing allowance from non-zero to non-zero directly.
    * The preHook resets the allowance to Uniswap SwapRouter02 (used by Squid for swaps).
    */
-  private getEthereumManaPreHook(fromToken: string, fromChain: ChainId): Hook | undefined {
+  private getEthereumManaPreHook(
+    fromToken: string,
+    fromChain: ChainId
+  ): Hook | undefined {
     const isEthereumMana =
       fromChain === ChainId.ETHEREUM_MAINNET &&
       fromToken.toLowerCase() === ETHEREUM_MANA_TOKEN.toLowerCase()
@@ -93,7 +101,8 @@ export class AxelarProvider implements CrossChainProvider {
       fundToken: fromToken,
       provider: 'Decentraland',
       description: 'Reset MANA allowance for Ethereum legacy token',
-      logoURI: 'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico',
+      logoURI:
+        'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico',
       calls: [
         {
           chainType: ChainType.EVM,
