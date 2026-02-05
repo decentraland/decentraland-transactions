@@ -3,6 +3,7 @@
   "version": "0.0.0-development",
   "main": "cjs/index.js",
   "module": "esm/index.js",
+  "sideEffects": false,
   "exports": {
     ".": {
       "import": "./esm/index.js",
@@ -47,12 +48,19 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@0xsquid/sdk": "2.8.25",
-    "@0xsquid/squid-types": "0.1.78",
     "tslib": "^2.6.2"
   },
   "peerDependencies": {
-    "@dcl/schemas": ">=1.1.1"
+    "@0xsquid/sdk": "2.8.25",
+    "@0xsquid/squid-types": "0.1.78"
+  },
+  "peerDependenciesMeta": {
+    "@0xsquid/sdk": {
+      "optional": true
+    },
+    "@0xsquid/squid-types": {
+      "optional": true
+    }
   },
   "prettier": {
     "printWidth": 80,
