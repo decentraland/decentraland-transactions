@@ -480,9 +480,7 @@ export class AxelarProvider implements CrossChainProvider {
       toChain
     ).address
 
-    const squidMulticallContract = this.squid.chains.find(
-      c => c.chainId === toChain.toString()
-    )?.squidContracts.squidMulticall
+    const squidMulticallContract = '0xad6cea45f98444a922a2b4fe96b8c90f0862d2f4'
 
     let calls: ChainCall[] = []
 
