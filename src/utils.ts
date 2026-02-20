@@ -132,8 +132,15 @@ export function getCode(provider: Provider, account: string) {
   ])
 }
 
+// EIP-7702 delegation designator: EOAs that delegate code execution still have
+// a private key and can sign. Their bytecode is 0xef01 + 20-byte target address.
+const EIP_7702_DELEGATION_PREFIX = '0xef01'
+
 export async function isContract(provider: Provider, account: string) {
   const bytecode = await getCode(provider, account)
+  if (bytecode.toLowerCase().startsWith(EIP_7702_DELEGATION_PREFIX)) {
+    return false
+  }
   return !isZeroAddress(bytecode)
 }
 
