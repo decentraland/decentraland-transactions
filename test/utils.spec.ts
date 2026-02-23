@@ -98,6 +98,18 @@ describe('#Utils', () => {
       const result = await isContract(fakeProvider, '0xcafebabe')
       expect(result).toBe(true)
     })
+    it('should return false for an EIP-7702 delegated EOA', async () => {
+      const mockRequest = jest
+        .fn()
+        .mockResolvedValue(
+          '0xef0100000069d8726b7135bbb9cd4c9f8e66b381d00000'
+        )
+      const fakeProvider = {
+        request: mockRequest
+      }
+      const result = await isContract(fakeProvider, '0xcafebabe')
+      expect(result).toBe(false)
+    })
   })
 
   describe('hexZeroPad', () => {
