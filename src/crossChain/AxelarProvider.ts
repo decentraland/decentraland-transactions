@@ -100,68 +100,6 @@ export class AxelarProvider implements CrossChainProvider {
     return tx.transactionHash
   }
 
-  // Quotes a Squid route iteratively until route.estimate.toAmountMin is at
-  // least the destination price plus a safety margin. Squid's RouteRequest
-  // does not accept a target output amount, so we adjust fromAmount and
-  // re-quote when the minimum delivered (toAmountMin) is below what the
-  // destination contract will pull. Throws InsufficientLiquidityError if the
-  // required fromAmount exceeds MAX_FROM_AMOUNT_INCREASE_BPS over the input,
-  // protecting users from accepting routes with excessive slippage.
-  async getSafeRoute(
-    routeRequest: Parameters<Squid['getRoute']>[0],
-    destinationPrice: string
-  ): Promise<RouteResponse> {
-    const initialFromAmount = ethers.BigNumber.from(routeRequest.fromAmount)
-    const requiredMin = ethers.BigNumber.from(destinationPrice)
-      .mul(10000 + SAFETY_MARGIN_BPS)
-      .div(10000)
-    const maxFromAmount = initialFromAmount
-      .mul(10000 + MAX_FROM_AMOUNT_INCREASE_BPS)
-      .div(10000)
-
-    let fromAmount = initialFromAmount
-    let lastToAmountMin = ethers.BigNumber.from(0)
-
-    for (let i = 0; i <= MAX_QUOTE_ITERATIONS; i++) {
-      const route = await this.squid.getRoute({
-        ...routeRequest,
-        fromAmount: fromAmount.toString()
-      })
-      const toAmountMin = ethers.BigNumber.from(
-        route.route.estimate.toAmountMin
-      )
-      lastToAmountMin = toAmountMin
-
-      if (toAmountMin.gte(requiredMin)) {
-        return route
-      }
-
-      if (i === MAX_QUOTE_ITERATIONS) break
-
-      // Bump fromAmount proportionally to the shortfall. Squid does not expose
-      // an exact inverse for toAmountMin → fromAmount, so we scale linearly:
-      // newFromAmount = fromAmount × (requiredMin / toAmountMin). For typical
-      // trade sizes this converges in 1–2 iterations.
-      const bumpedFromAmount = fromAmount.mul(requiredMin).div(toAmountMin)
-
-      if (bumpedFromAmount.gt(maxFromAmount)) {
-        throw new InsufficientLiquidityError(
-          toAmountMin.toString(),
-          requiredMin.toString(),
-          maxFromAmount.toString()
-        )
-      }
-
-      fromAmount = bumpedFromAmount
-    }
-
-    throw new InsufficientLiquidityError(
-      lastToAmountMin.toString(),
-      requiredMin.toString(),
-      maxFromAmount.toString()
-    )
-  }
-
   async getRegisterNameRoute(
     getRegisterNameCrossChainData: RegisterNameCrossChainData
   ): Promise<RouteResponse> {
@@ -200,7 +138,7 @@ export class AxelarProvider implements CrossChainProvider {
         toChain: toChain.toString(),
         toAddress: controllerContract.address,
         enableBoost: enableExpress,
-        ...(slippage !== undefined && { slippage }),
+        ...(slippage !== undefined ? { slippage } : {}),
         postHook: {
           provider: 'Decentraland',
           description: `Buy ${name}`,
@@ -600,7 +538,7 @@ export class AxelarProvider implements CrossChainProvider {
         toChain: toChain.toString(),
         toAddress: destinationChainMarketplace,
         enableBoost: enableExpress,
-        ...(slippage !== undefined && { slippage }),
+        ...(slippage !== undefined ? { slippage } : {}),
         postHook: {
           provider: 'Decentraland',
           description: `Buy NFT ${collectionAddress}-${tokenId}`,
@@ -817,7 +755,7 @@ export class AxelarProvider implements CrossChainProvider {
         toChain: toChain.toString(),
         toAddress: destinationAddress,
         enableBoost: enableExpress, // TODO: check if we need this
-        ...(slippage !== undefined && { slippage }),
+        ...(slippage !== undefined ? { slippage } : {}),
         postHook: {
           provider: 'Decentraland',
           description: `Buy Item ${collectionAddress}-${itemId}`,
@@ -837,5 +775,76 @@ export class AxelarProvider implements CrossChainProvider {
       integratorId: INTEGRATOR_ID,
       requestId: routeRequestId
     })
+  }
+
+  // Quotes a Squid route iteratively until route.estimate.toAmountMin is at
+  // least the destination price plus a safety margin. Squid's RouteRequest
+  // does not accept a target output amount, so we adjust fromAmount and
+  // re-quote when the minimum delivered (toAmountMin) is below what the
+  // destination contract will pull. Throws InsufficientLiquidityError if the
+  // required fromAmount exceeds MAX_FROM_AMOUNT_INCREASE_BPS over the input,
+  // protecting users from accepting routes with excessive slippage.
+  //
+  // Marked private: callers should use the named route methods
+  // (getBuyNFTRoute, getMintNFTRoute, getRegisterNameRoute) which encapsulate
+  // the destination price and post-hook construction. Tests that need direct
+  // access cast through `as any`.
+  private async getSafeRoute(
+    routeRequest: Parameters<Squid['getRoute']>[0],
+    destinationPrice: string
+  ): Promise<RouteResponse> {
+    const initialFromAmount = ethers.BigNumber.from(routeRequest.fromAmount)
+    const requiredMin = ethers.BigNumber.from(destinationPrice)
+      .mul(10000 + SAFETY_MARGIN_BPS)
+      .div(10000)
+    const maxFromAmount = initialFromAmount
+      .mul(10000 + MAX_FROM_AMOUNT_INCREASE_BPS)
+      .div(10000)
+
+    let fromAmount = initialFromAmount
+    let lastToAmountMin = ethers.BigNumber.from(0)
+
+    for (let i = 0; i < MAX_QUOTE_ITERATIONS; i++) {
+      const route = await this.squid.getRoute({
+        ...routeRequest,
+        fromAmount: fromAmount.toString()
+      })
+      const toAmountMin = ethers.BigNumber.from(
+        route.route.estimate.toAmountMin
+      )
+      lastToAmountMin = toAmountMin
+
+      if (toAmountMin.gte(requiredMin)) {
+        return route
+      }
+
+      // A degenerate Squid response with zero minimum delivery indicates a
+      // broken route; bumping fromAmount cannot recover from this and dividing
+      // by zero would crash. Surface as InsufficientLiquidity so the consumer
+      // can block the purchase.
+      if (toAmountMin.isZero()) break
+
+      // Bump fromAmount proportionally to the shortfall. Squid does not expose
+      // an exact inverse for toAmountMin → fromAmount, so we scale linearly:
+      // newFromAmount = fromAmount × (requiredMin / toAmountMin). For typical
+      // trade sizes this converges in 1–2 iterations.
+      const bumpedFromAmount = fromAmount.mul(requiredMin).div(toAmountMin)
+
+      if (bumpedFromAmount.gt(maxFromAmount)) {
+        throw new InsufficientLiquidityError(
+          toAmountMin.toString(),
+          requiredMin.toString(),
+          maxFromAmount.toString()
+        )
+      }
+
+      fromAmount = bumpedFromAmount
+    }
+
+    throw new InsufficientLiquidityError(
+      lastToAmountMin.toString(),
+      requiredMin.toString(),
+      maxFromAmount.toString()
+    )
   }
 }

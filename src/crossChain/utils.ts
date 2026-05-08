@@ -19,8 +19,9 @@ export const SAFETY_MARGIN_BPS = 50
 // InsufficientLiquidityError and block the buy button.
 export const MAX_FROM_AMOUNT_INCREASE_BPS = 500
 
-// Hard ceiling on re-quote attempts. Convergence is typically 0–2 iterations
-// since toAmountMin scales near-linearly with fromAmount for normal trade sizes.
+// Hard ceiling on re-quote attempts (calls to squid.getRoute). Convergence is
+// typically 0–2 calls since toAmountMin scales near-linearly with fromAmount
+// for normal trade sizes.
 export const MAX_QUOTE_ITERATIONS = 4
 
 export class InsufficientLiquidityError extends Error {
@@ -28,11 +29,7 @@ export class InsufficientLiquidityError extends Error {
   public readonly requiredMin: string
   public readonly maxFromAmount: string
 
-  constructor(
-    toAmountMin: string,
-    requiredMin: string,
-    maxFromAmount: string
-  ) {
+  constructor(toAmountMin: string, requiredMin: string, maxFromAmount: string) {
     super(
       `Cross-chain route cannot guarantee delivery of ${requiredMin} (got ${toAmountMin} as toAmountMin) within ${maxFromAmount} max fromAmount`
     )
@@ -40,5 +37,9 @@ export class InsufficientLiquidityError extends Error {
     this.toAmountMin = toAmountMin
     this.requiredMin = requiredMin
     this.maxFromAmount = maxFromAmount
+
+    // Restore the prototype chain explicitly so `instanceof` works when
+    // TypeScript compiles to ES5 (subclassing Error otherwise loses it).
+    Object.setPrototypeOf(this, InsufficientLiquidityError.prototype)
   }
 }
