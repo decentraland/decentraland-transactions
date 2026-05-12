@@ -13,7 +13,13 @@ import { Marketplace } from '../abis/Marketplace'
 import { CollectionStore } from '../abis/CollectionStore'
 import { getContract } from '../contracts'
 import { ContractName } from '../types'
-import { NATIVE_TOKEN } from './utils'
+import {
+  NATIVE_TOKEN,
+  SAFETY_MARGIN_BPS,
+  MAX_FROM_AMOUNT_INCREASE_BPS,
+  MAX_QUOTE_ITERATIONS,
+  InsufficientLiquidityError
+} from './utils'
 import {
   BuyNFTCrossChainData,
   FromAmountParams,
@@ -108,6 +114,7 @@ export class AxelarProvider implements CrossChainProvider {
       toChain,
       toAmount, // the registration price
       enableExpress = true,
+      slippage,
       name
     } = getRegisterNameCrossChainData
 
@@ -121,104 +128,108 @@ export class AxelarProvider implements CrossChainProvider {
     const ControllerV2Interface = new ethers.utils.Interface(DCLControllerV2)
     const isEthereumMainnet = toChain === ChainId.ETHEREUM_MAINNET
 
-    return this.squid.getRoute({
-      fromAddress,
-      fromAmount,
-      fromToken,
-      fromChain: fromChain.toString(),
-      toToken: destinationChainMANA,
-      toChain: toChain.toString(),
-      toAddress: controllerContract.address,
-      enableBoost: enableExpress,
-      postHook: {
-        provider: 'Decentraland',
-        description: `Buy ${name}`,
-        logoURI:
-          'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
-        chainType: ChainType.EVM,
-        calls: [
-          // ===================================
-          // Reset MANA allowance to 0 (required by Ethereum MANA token's anti-race condition)
-          // Only needed for Ethereum mainnet, Polygon MANA doesn't have this restriction
-          // ===================================
-          ...(isEthereumMainnet
-            ? [
-                {
-                  chainType: ChainType.EVM,
-                  callType: SquidCallType.DEFAULT,
-                  target: destinationChainMANA,
-                  value: '0',
-                  callData: ERC20ContractInterface.encodeFunctionData(
-                    'approve',
-                    [controllerContract.address, '0']
-                  ),
-                  payload: {
-                    tokenAddress: NATIVE_TOKEN,
-                    inputPos: 0
-                  },
-                  estimatedGas: '50000'
-                } as ChainCall
-              ]
-            : []),
-          // ===================================
-          // Approve MANA to be spent by Decentraland contract
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.DEFAULT,
-            target: destinationChainMANA,
-            value: '0',
-            callData: ERC20ContractInterface.encodeFunctionData('approve', [
-              controllerContract.address,
-              toAmount
-            ]),
-            payload: {
-              tokenAddress: NATIVE_TOKEN,
-              inputPos: 0
+    return this.getSafeRoute(
+      {
+        fromAddress,
+        fromAmount,
+        fromToken,
+        fromChain: fromChain.toString(),
+        toToken: destinationChainMANA,
+        toChain: toChain.toString(),
+        toAddress: controllerContract.address,
+        enableBoost: enableExpress,
+        ...(slippage !== undefined ? { slippage } : {}),
+        postHook: {
+          provider: 'Decentraland',
+          description: `Buy ${name}`,
+          logoURI:
+            'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
+          chainType: ChainType.EVM,
+          calls: [
+            // ===================================
+            // Reset MANA allowance to 0 (required by Ethereum MANA token's anti-race condition)
+            // Only needed for Ethereum mainnet, Polygon MANA doesn't have this restriction
+            // ===================================
+            ...(isEthereumMainnet
+              ? [
+                  {
+                    chainType: ChainType.EVM,
+                    callType: SquidCallType.DEFAULT,
+                    target: destinationChainMANA,
+                    value: '0',
+                    callData: ERC20ContractInterface.encodeFunctionData(
+                      'approve',
+                      [controllerContract.address, '0']
+                    ),
+                    payload: {
+                      tokenAddress: NATIVE_TOKEN,
+                      inputPos: 0
+                    },
+                    estimatedGas: '50000'
+                  } as ChainCall
+                ]
+              : []),
+            // ===================================
+            // Approve MANA to be spent by Decentraland contract
+            // ===================================
+            {
+              chainType: ChainType.EVM,
+              callType: SquidCallType.DEFAULT,
+              target: destinationChainMANA,
+              value: '0',
+              callData: ERC20ContractInterface.encodeFunctionData('approve', [
+                controllerContract.address,
+                toAmount
+              ]),
+              payload: {
+                tokenAddress: NATIVE_TOKEN,
+                inputPos: 0
+              },
+              estimatedGas: '50000'
             },
-            estimatedGas: '50000'
-          },
-          // ===================================
-          // Register name using the Controller V2 contract
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.DEFAULT,
-            target: controllerContract.address,
-            value: '0',
-            callData: ControllerV2Interface.encodeFunctionData('register', [
-              name,
-              fromAddress
-            ]),
-            payload: {
-              tokenAddress: NATIVE_TOKEN,
-              inputPos: 0
+            // ===================================
+            // Register name using the Controller V2 contract
+            // ===================================
+            {
+              chainType: ChainType.EVM,
+              callType: SquidCallType.DEFAULT,
+              target: controllerContract.address,
+              value: '0',
+              callData: ControllerV2Interface.encodeFunctionData('register', [
+                name,
+                fromAddress
+              ]),
+              payload: {
+                tokenAddress: NATIVE_TOKEN,
+                inputPos: 0
+              },
+              estimatedGas: '50000'
             },
-            estimatedGas: '50000'
-          },
-          // ===================================
-          // Transfer remaining MANA to registerer
-          // ===================================
-          {
-            chainType: ChainType.EVM,
-            callType: SquidCallType.FULL_TOKEN_BALANCE,
-            target: destinationChainMANA,
-            value: '0',
-            callData: ERC20ContractInterface.encodeFunctionData('transfer', [
-              fromAddress,
-              '0'
-            ]),
-            payload: {
-              tokenAddress: destinationChainMANA,
-              // This will replace the parameter at index 1 in the encoded Function,
-              //  with FULL_TOKEN_BALANCE (instead of "0")
-              inputPos: 1
-            },
-            estimatedGas: '50000'
-          }
-        ]
-      }
-    })
+            // ===================================
+            // Transfer remaining MANA to registerer
+            // ===================================
+            {
+              chainType: ChainType.EVM,
+              callType: SquidCallType.FULL_TOKEN_BALANCE,
+              target: destinationChainMANA,
+              value: '0',
+              callData: ERC20ContractInterface.encodeFunctionData('transfer', [
+                fromAddress,
+                '0'
+              ]),
+              payload: {
+                tokenAddress: destinationChainMANA,
+                // This will replace the parameter at index 1 in the encoded Function,
+                //  with FULL_TOKEN_BALANCE (instead of "0")
+                inputPos: 1
+              },
+              estimatedGas: '50000'
+            }
+          ]
+        }
+      },
+      toAmount
+    )
   }
 
   getExecuteOrderCalls({
@@ -450,6 +461,7 @@ export class AxelarProvider implements CrossChainProvider {
       toChain,
       toAmount, // the item price
       enableExpress = true, // TODO: check if we need this
+      slippage,
       order: { contractAddress, tokenId, price, tradeId },
       fetchTradeData
     } = buyNFTCrossChainData
@@ -516,24 +528,28 @@ export class AxelarProvider implements CrossChainProvider {
       })
     }
 
-    return this.squid.getRoute({
-      fromAddress,
-      fromAmount,
-      fromToken,
-      fromChain: fromChain.toString(),
-      toToken: destinationChainMANA,
-      toChain: toChain.toString(),
-      toAddress: destinationChainMarketplace,
-      enableBoost: enableExpress,
-      postHook: {
-        provider: 'Decentraland',
-        description: `Buy NFT ${collectionAddress}-${tokenId}`,
-        logoURI:
-          'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
-        chainType: ChainType.EVM,
-        calls
-      }
-    })
+    return this.getSafeRoute(
+      {
+        fromAddress,
+        fromAmount,
+        fromToken,
+        fromChain: fromChain.toString(),
+        toToken: destinationChainMANA,
+        toChain: toChain.toString(),
+        toAddress: destinationChainMarketplace,
+        enableBoost: enableExpress,
+        ...(slippage !== undefined ? { slippage } : {}),
+        postHook: {
+          provider: 'Decentraland',
+          description: `Buy NFT ${collectionAddress}-${tokenId}`,
+          logoURI:
+            'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
+          chainType: ChainType.EVM,
+          calls
+        }
+      },
+      toAmount
+    )
   }
 
   // MINT CALLS
@@ -669,6 +685,7 @@ export class AxelarProvider implements CrossChainProvider {
       toChain,
       toAmount, // the item price
       enableExpress = true,
+      slippage,
       item: { collectionAddress, price, itemId, tradeId },
       fetchTradeData
     } = buyNFTCrossChainData
@@ -728,24 +745,28 @@ export class AxelarProvider implements CrossChainProvider {
       })
     }
 
-    return this.squid.getRoute({
-      fromAddress,
-      fromAmount,
-      fromToken,
-      fromChain: fromChain.toString(),
-      toToken: destinationChainMANA,
-      toChain: toChain.toString(),
-      toAddress: destinationAddress,
-      enableBoost: enableExpress, // TODO: check if we need this
-      postHook: {
-        provider: 'Decentraland',
-        description: `Buy Item ${collectionAddress}-${itemId}`,
-        logoURI:
-          'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
-        chainType: ChainType.EVM,
-        calls
-      }
-    })
+    return this.getSafeRoute(
+      {
+        fromAddress,
+        fromAmount,
+        fromToken,
+        fromChain: fromChain.toString(),
+        toToken: destinationChainMANA,
+        toChain: toChain.toString(),
+        toAddress: destinationAddress,
+        enableBoost: enableExpress, // TODO: check if we need this
+        ...(slippage !== undefined ? { slippage } : {}),
+        postHook: {
+          provider: 'Decentraland',
+          description: `Buy Item ${collectionAddress}-${itemId}`,
+          logoURI:
+            'https://cdn.decentraland.org/@dcl/marketplace-site/6.41.1/favicon.ico', // use logo from a mkt previous version
+          chainType: ChainType.EVM,
+          calls
+        }
+      },
+      toAmount
+    )
   }
 
   async getStatus(routeRequestId: string, originChainTxHash: string) {
@@ -754,5 +775,76 @@ export class AxelarProvider implements CrossChainProvider {
       integratorId: INTEGRATOR_ID,
       requestId: routeRequestId
     })
+  }
+
+  // Quotes a Squid route iteratively until route.estimate.toAmountMin is at
+  // least the destination price plus a safety margin. Squid's RouteRequest
+  // does not accept a target output amount, so we adjust fromAmount and
+  // re-quote when the minimum delivered (toAmountMin) is below what the
+  // destination contract will pull. Throws InsufficientLiquidityError if the
+  // required fromAmount exceeds MAX_FROM_AMOUNT_INCREASE_BPS over the input,
+  // protecting users from accepting routes with excessive slippage.
+  //
+  // Marked private: callers should use the named route methods
+  // (getBuyNFTRoute, getMintNFTRoute, getRegisterNameRoute) which encapsulate
+  // the destination price and post-hook construction. Tests that need direct
+  // access cast through `as any`.
+  private async getSafeRoute(
+    routeRequest: Parameters<Squid['getRoute']>[0],
+    destinationPrice: string
+  ): Promise<RouteResponse> {
+    const initialFromAmount = ethers.BigNumber.from(routeRequest.fromAmount)
+    const requiredMin = ethers.BigNumber.from(destinationPrice)
+      .mul(10000 + SAFETY_MARGIN_BPS)
+      .div(10000)
+    const maxFromAmount = initialFromAmount
+      .mul(10000 + MAX_FROM_AMOUNT_INCREASE_BPS)
+      .div(10000)
+
+    let fromAmount = initialFromAmount
+    let lastToAmountMin = ethers.BigNumber.from(0)
+
+    for (let i = 0; i < MAX_QUOTE_ITERATIONS; i++) {
+      const route = await this.squid.getRoute({
+        ...routeRequest,
+        fromAmount: fromAmount.toString()
+      })
+      const toAmountMin = ethers.BigNumber.from(
+        route.route.estimate.toAmountMin
+      )
+      lastToAmountMin = toAmountMin
+
+      if (toAmountMin.gte(requiredMin)) {
+        return route
+      }
+
+      // A degenerate Squid response with zero minimum delivery indicates a
+      // broken route; bumping fromAmount cannot recover from this and dividing
+      // by zero would crash. Surface as InsufficientLiquidity so the consumer
+      // can block the purchase.
+      if (toAmountMin.isZero()) break
+
+      // Bump fromAmount proportionally to the shortfall. Squid does not expose
+      // an exact inverse for toAmountMin → fromAmount, so we scale linearly:
+      // newFromAmount = fromAmount × (requiredMin / toAmountMin). For typical
+      // trade sizes this converges in 1–2 iterations.
+      const bumpedFromAmount = fromAmount.mul(requiredMin).div(toAmountMin)
+
+      if (bumpedFromAmount.gt(maxFromAmount)) {
+        throw new InsufficientLiquidityError(
+          toAmountMin.toString(),
+          requiredMin.toString(),
+          maxFromAmount.toString()
+        )
+      }
+
+      fromAmount = bumpedFromAmount
+    }
+
+    throw new InsufficientLiquidityError(
+      lastToAmountMin.toString(),
+      requiredMin.toString(),
+      maxFromAmount.toString()
+    )
   }
 }
