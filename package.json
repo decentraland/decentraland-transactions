@@ -32,6 +32,8 @@
     "extract-tenderly-data": "ts-node scripts/extractFunctionDataForTenderly.ts"
   },
   "devDependencies": {
+    "@0xsquid/sdk": "2.8.25",
+    "@0xsquid/squid-types": "0.1.78",
     "@dcl/schemas": "^19.4.1",
     "@jest/types": "^29.6.3",
     "@types/jest": "^29.5.12",
