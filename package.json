@@ -71,6 +71,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/decentraland/decentraland-transactions.git"
+    "url": "git+https://github.com/decentraland/decentraland-transactions.git"
   }
 }
