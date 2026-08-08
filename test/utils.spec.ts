@@ -4,7 +4,9 @@ import {
   hexZeroPad,
   isContract,
   isZeroAddress,
-  normalizeVersion
+  normalizeSignatureVersion,
+  normalizeVersion,
+  getOffchainExecuteMetaTransactionData
 } from '../src/utils'
 
 describe('#Utils', () => {
@@ -142,6 +144,45 @@ describe('#Utils', () => {
       expect(isZeroAddress('0x0000000000000000000000000000000000000001')).toBe(
         false
       )
+    })
+  })
+
+  describe('normalizeSignatureVersion', () => {
+    const r = 'a'.repeat(64)
+    const s = '1'.repeat(64)
+
+    it('should lift a Ledger v=00 to 1b, leaving r and s untouched', () => {
+      expect(normalizeSignatureVersion(`${r}${s}00`)).toBe(`${r}${s}1b`)
+    })
+    it('should lift a Ledger v=01 to 1c', () => {
+      expect(normalizeSignatureVersion(`${r}${s}01`)).toBe(`${r}${s}1c`)
+    })
+    it('should leave an already-canonical signature alone', () => {
+      expect(normalizeSignatureVersion(`${r}${s}1b`)).toBe(`${r}${s}1b`)
+      expect(normalizeSignatureVersion(`${r}${s}1c`)).toBe(`${r}${s}1c`)
+    })
+    it('should pass a non-65-byte (contract/EIP-1271) signature through untouched', () => {
+      // Its last byte is not a recovery id; rewriting it would corrupt the signature.
+      const blob = 'ab'.repeat(100)
+      expect(normalizeSignatureVersion(blob)).toBe(blob)
+    })
+  })
+
+  describe('getOffchainExecuteMetaTransactionData', () => {
+    it('should normalize a Ledger recovery id into the encoded calldata', () => {
+      // Regression: the CreditsManager recovers with OpenZeppelin ECDSA, which reverts with
+      // ECDSAInvalidSignature() on any v outside {27,28}. A Ledger returns 0/1, so every purchase
+      // through that contract failed gas estimation and was never submitted.
+      const account = `0x${'11'.repeat(20)}`
+      const r = 'a'.repeat(64)
+      const s = '1'.repeat(64)
+      const txData = getOffchainExecuteMetaTransactionData(
+        account,
+        `0x${r}${s}00`,
+        `0x${'cd'.repeat(4)}`
+      )
+      expect(txData).toContain(`${r}${s}1b`)
+      expect(txData).not.toContain(`${r}${s}00`)
     })
   })
 
