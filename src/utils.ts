@@ -63,7 +63,7 @@ export function getOffchainExecuteMetaTransactionData(
   functionSignature: string
 ): string {
   const functionData = functionSignature.replace('0x', '')
-  const signature = fullSignature.replace('0x', '')
+  const signature = normalizeSignatureVersion(fullSignature.replace('0x', ''))
   // Calculate offsets
   const firstOffset = 96 // 0x60 (4 + 32 + 32 + 32)
   const secondOffset = firstOffset + 32 + functionData.length / 2
@@ -82,6 +82,33 @@ export function getOffchainExecuteMetaTransactionData(
   ]
 
   return txData.join('')
+}
+
+/**
+ * Normalize the recovery id of a 65-byte `r || s || v` signature, leaving anything else untouched.
+ *
+ * `getExecuteMetaTransactionData` has always run the v byte through `normalizeVersion` — it splits the
+ * signature into r/s/v to pass them as separate arguments, so it had to. The OFFCHAIN variant passes the
+ * signature as a single `bytes` blob and so never split it, which meant it also never normalized it.
+ *
+ * That gap is not cosmetic. The offchain variant is what the CreditsManager uses
+ * (`executeMetaTransaction(address,bytes,bytes)`), and it recovers the signer with OpenZeppelin's ECDSA,
+ * which rejects any v outside {27,28} with `ECDSAInvalidSignature()`. A Ledger returns 0 or 1 — the exact
+ * case issue #26 was opened for — so every Ledger purchase through that contract reverted at gas
+ * estimation and was never submitted, after the buyer had already signed.
+ *
+ * Only a canonical 65-byte signature is touched. A contract (EIP-1271) signature is an opaque blob of any
+ * length whose last byte means nothing, so rewriting it would corrupt it; those pass through unchanged.
+ */
+export function normalizeSignatureVersion(signature: string): string {
+  const SIGNATURE_HEX_LENGTH = 130 // 65 bytes: r(32) + s(32) + v(1)
+  if (signature.length !== SIGNATURE_HEX_LENGTH) {
+    return signature
+  }
+  const rs = signature.slice(0, 128)
+  const v = normalizeVersion(signature.slice(128))
+  // normalizeVersion returns a bare hex number ('1b'), and 27/28 are always two digits.
+  return rs + v.padStart(2, '0')
 }
 
 export function normalizeVersion(version: string) {
