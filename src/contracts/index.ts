@@ -26,7 +26,10 @@ import { dclController } from './dclController'
 import { dclControllerV2 } from './dclControllerV2'
 import { offChainMarketplace } from './offChainMarketplace'
 import { offChainMarketplaceV2 } from './offChainMarketplaceV2'
+import { offChainMarketplaceV3 } from './offChainMarketplaceV3'
 import { creditsManager } from './creditsManager'
+import { couponManager } from './couponManager'
+import { collectionDiscountCoupon } from './collectionDiscountCoupon'
 
 const contracts: Record<
   ContractName,
@@ -57,7 +60,10 @@ const contracts: Record<
   [ContractName.DCLControllerV2]: dclControllerV2,
   [ContractName.OffChainMarketplace]: offChainMarketplace,
   [ContractName.OffChainMarketplaceV2]: offChainMarketplaceV2,
-  [ContractName.CreditsManager]: creditsManager
+  [ContractName.OffChainMarketplaceV3]: offChainMarketplaceV3,
+  [ContractName.CreditsManager]: creditsManager,
+  [ContractName.CouponManager]: couponManager,
+  [ContractName.CollectionDiscountCoupon]: collectionDiscountCoupon
 }
 
 export function getContract(

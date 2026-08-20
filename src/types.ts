@@ -66,7 +66,10 @@ export enum ContractName {
   DCLControllerV2 = 'DCLControllerV2',
   OffChainMarketplace = 'OffChainMarketplace',
   OffChainMarketplaceV2 = 'OffChainMarketplaceV2',
-  CreditsManager = 'CreditsManager'
+  OffChainMarketplaceV3 = 'OffChainMarketplaceV3',
+  CreditsManager = 'CreditsManager',
+  CouponManager = 'CouponManager',
+  CollectionDiscountCoupon = 'CollectionDiscountCoupon'
 }
 
 export type MetaTxData = {
