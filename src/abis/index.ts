@@ -27,6 +27,10 @@ import { OffChainMarketplaceEthereum } from './OffChainMarketplaceEthereum'
 import { Network } from '@dcl/schemas'
 import { OffChainMarketplacePolygon } from './OffChainMarketplacePolygon'
 import { CreditsManager } from './CreditsManager'
+import { OffChainMarketplaceEthereumV3 } from './OffChainMarketplaceEthereumV3'
+import { OffChainMarketplacePolygonV3 } from './OffChainMarketplacePolygonV3'
+import { CouponManager } from './CouponManager'
+import { CollectionDiscountCoupon } from './CollectionDiscountCoupon'
 
 export const abis = {
   [ContractName.Bid]: Bid,
@@ -56,5 +60,11 @@ export const abis = {
     [Network.ETHEREUM]: OffChainMarketplaceEthereum,
     [Network.MATIC]: OffChainMarketplacePolygon
   },
-  [ContractName.CreditsManager]: CreditsManager
+  [ContractName.OffChainMarketplaceV3]: {
+    [Network.ETHEREUM]: OffChainMarketplaceEthereumV3,
+    [Network.MATIC]: OffChainMarketplacePolygonV3
+  },
+  [ContractName.CreditsManager]: CreditsManager,
+  [ContractName.CouponManager]: CouponManager,
+  [ContractName.CollectionDiscountCoupon]: CollectionDiscountCoupon
 }
