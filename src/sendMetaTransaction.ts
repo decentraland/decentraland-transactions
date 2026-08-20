@@ -20,6 +20,19 @@ import {
 } from './types'
 import { ErrorCode, MetaTransactionError } from './errors'
 
+type RelayResponseBody =
+  | {
+      ok: false
+      message: string
+      code: ErrorCode
+      /**
+       * Set by the relay server when the signature was the right account's but over a nonce the target has
+       * moved past. Optional: older servers do not send it, and then nothing is retried.
+       */
+      reason?: 'stale_meta_transaction_nonce'
+    }
+  | { ok: true; txHash: string }
+
 /**
  * Send a meta transaction using a relay server
  * @param provider Which network you are connected to and therefore where the meta transaction will be signed
@@ -66,57 +79,94 @@ export async function sendMetaTransaction(
         el.inputs?.some(input => input.name === '_functionData')
     )
 
-    const nonce = await getNonce(
-      metaTransactionProvider,
-      account,
-      contractData.address
-    )
     const salt = getSalt(contractData.chainId)
-
     const domainData = getDomainData(salt, contractData)
-    const dataToSign = getDataToSign(
-      account,
-      nonce,
-      functionSignature,
-      domainData,
-      hasFunctionDataInput
-    )
-    const signature = await getSignature(
-      provider,
-      account,
-      JSON.stringify(dataToSign)
-    )
 
     const getMetaTransactionData = hasFunctionDataInput
       ? getOffchainExecuteMetaTransactionData
       : getExecuteMetaTransactionData
 
-    const txData = getMetaTransactionData(account, signature, functionSignature)
+    /**
+     * Read the nonce, sign, relay. One whole attempt, because the nonce is what makes it repeatable.
+     */
+    const attempt = async (): Promise<{
+      body: RelayResponseBody
+      status: number
+    }> => {
+      const nonce = await getNonce(
+        metaTransactionProvider,
+        account,
+        contractData.address
+      )
+      const dataToSign = getDataToSign(
+        account,
+        nonce,
+        functionSignature,
+        domainData,
+        hasFunctionDataInput
+      )
+      const signature = await getSignature(
+        provider,
+        account,
+        JSON.stringify(dataToSign)
+      )
+      const txData = getMetaTransactionData(
+        account,
+        signature,
+        functionSignature
+      )
 
-    const response: Response = await fetch(
-      `${configuration.serverURL}/transactions`,
-      {
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          transactionData: {
-            from: account,
-            params: [contractData.address, txData]
-          }
-        }),
-        method: 'POST'
-      }
-    )
+      const response: Response = await fetch(
+        `${configuration.serverURL}/transactions`,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            transactionData: {
+              from: account,
+              params: [contractData.address, txData]
+            }
+          }),
+          method: 'POST'
+        }
+      )
 
-    const body:
-      | { ok: false; message: string; code: ErrorCode }
-      | { ok: true; txHash: string } = await response.json()
+      return { body: await response.json(), status: response.status }
+    }
+
+    let { body, status } = await attempt()
+
+    /**
+     * Sign again, once, when the relay server says the nonce moved under us.
+     *
+     * The nonce is not part of the payload: this reads it from the target to build the signature, and the
+     * relay server reads it AGAIN to rebuild the digest and recover the signer. Those two reads race
+     * whenever the same account already has a meta-transaction in flight — send two in a row and the second
+     * is built over a nonce the chain has moved past by the time it is checked, so recovery returns an
+     * unrelated address and the request is refused. Measured in production: two occurrences in eight days,
+     * one of them costing a buyer half their basket.
+     *
+     * Retrying is safe with money BECAUSE the server answered. A parsed rejection means the transaction was
+     * provably not relayed, so nothing has been submitted and re-signing cannot double-spend. That is the
+     * whole reason this is keyed on `reason` rather than on any failure: an unreachable server may well have
+     * submitted before the connection died, and retrying THAT would be a second transaction.
+     *
+     * Once, not in a loop — a nonce that keeps moving means something else is submitting for this account,
+     * and racing it is not this function's business. Note this costs a second signature, which on a wallet
+     * that prompts means a second prompt; it happens only on a rejection that would otherwise have failed
+     * outright.
+     */
+    if (body.ok === false && body.reason === 'stale_meta_transaction_nonce') {
+      const retried = await attempt()
+      body = retried.body
+      status = retried.status
+    }
 
     if (body.ok === false) {
       if (body.message && body.code) {
         throw new MetaTransactionError(body.message, body.code)
       }
 
-      throw new Error(`HTTP Error. Status: ${response.status}.`)
+      throw new Error(`HTTP Error. Status: ${status}.`)
     }
 
     return body.txHash
