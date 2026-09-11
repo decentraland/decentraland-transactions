@@ -102,26 +102,45 @@ describe('#getContract', () => {
       })
     })
 
-    describe('and the chain is Ethereum Mainnet, where it is not deployed yet', () => {
-      it('should throw signaling that the chain is not supported', () => {
-        expect(() =>
-          getContract(
-            ContractName.OffChainMarketplaceV3,
-            ChainId.ETHEREUM_MAINNET
-          )
-        ).toThrow(
-          `Could not get a valid contract for ${ContractName.OffChainMarketplaceV3} using chain ${ChainId.ETHEREUM_MAINNET}`
+    describe('and the chain is Ethereum Mainnet', () => {
+      let contract: ContractData
+
+      beforeEach(() => {
+        contract = getContract(
+          ContractName.OffChainMarketplaceV3,
+          ChainId.ETHEREUM_MAINNET
         )
+      })
+
+      it('should return the DecentralandMarketplaceEthereum configuration with the V3 Ethereum abi', () => {
+        expect(contract).toEqual({
+          abi: abis.OffChainMarketplaceV3.ETHEREUM,
+          address: '0x0f11d0d1671519683bd48abf3dbe779e300941cd',
+          name: 'DecentralandMarketplaceEthereum',
+          version: '1.0.0',
+          chainId: ChainId.ETHEREUM_MAINNET
+        })
       })
     })
 
-    describe('and the chain is Matic Mainnet, where it is not deployed yet', () => {
-      it('should throw signaling that the chain is not supported', () => {
-        expect(() =>
-          getContract(ContractName.OffChainMarketplaceV3, ChainId.MATIC_MAINNET)
-        ).toThrow(
-          `Could not get a valid contract for ${ContractName.OffChainMarketplaceV3} using chain ${ChainId.MATIC_MAINNET}`
+    describe('and the chain is Matic Mainnet', () => {
+      let contract: ContractData
+
+      beforeEach(() => {
+        contract = getContract(
+          ContractName.OffChainMarketplaceV3,
+          ChainId.MATIC_MAINNET
         )
+      })
+
+      it('should return the DecentralandMarketplacePolygon configuration with the V3 Polygon abi', () => {
+        expect(contract).toEqual({
+          abi: abis.OffChainMarketplaceV3.MATIC,
+          address: '0xe38ef22abe871513555cba89adfe45ab4f548ada',
+          name: 'DecentralandMarketplacePolygon',
+          version: '1.0.0',
+          chainId: ChainId.MATIC_MAINNET
+        })
       })
     })
   })
@@ -280,12 +299,12 @@ describe('#getContractName', () => {
 
 describe('when getting the coupon contracts', () => {
   describe('and the chain is Matic Mainnet', () => {
-    it('should return the CouponManager wired into the Polygon off-chain marketplace', () => {
+    it('should return the CouponManager wired into the newest Polygon off-chain marketplace', () => {
       expect(
         getContract(ContractName.CouponManager, ChainId.MATIC_MAINNET)
       ).toEqual({
         abi: abis.CouponManager,
-        address: '0x3fd3056ee72a2a85e9392fab3a450e7736536081',
+        address: '0x655fdfa91d69ea49f4ce1a8f7f7e2622c8630813',
         name: 'CouponManager',
         version: '1.0.0',
         chainId: ChainId.MATIC_MAINNET
@@ -317,8 +336,20 @@ describe('when getting the coupon contracts', () => {
     })
   })
 
-  describe('and the chain is Ethereum Mainnet, where collections do not exist', () => {
-    it('should throw signaling that the chain is not supported', () => {
+  describe('and the chain is Ethereum Mainnet', () => {
+    it('should return the CouponManager wired into the Ethereum off-chain marketplace', () => {
+      expect(
+        getContract(ContractName.CouponManager, ChainId.ETHEREUM_MAINNET)
+      ).toEqual({
+        abi: abis.CouponManager,
+        address: '0xf9180eed9fcd5f8b3921c1b8caeb771c10faeb26',
+        name: 'CouponManager',
+        version: '1.0.0',
+        chainId: ChainId.ETHEREUM_MAINNET
+      })
+    })
+
+    it('should throw for the CollectionDiscountCoupon, since collections do not exist there', () => {
       expect(() =>
         getContract(
           ContractName.CollectionDiscountCoupon,

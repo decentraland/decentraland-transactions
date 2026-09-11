@@ -16,12 +16,20 @@ export const couponManager = {
     name: 'CouponManager',
     chainId: ChainId.MATIC_AMOY
   },
-  // The manager wired into the Polygon mainnet off-chain marketplace (OffChainMarketplaceV2). Amoy's is
-  // wired into V3 there instead, so the two chains pair a coupon manager with a different marketplace.
+  // Each entry is the manager wired into that chain's NEWEST off-chain marketplace, since a coupon is
+  // redeemed through the marketplace that holds it. Polygon mainnet moved off 0x3fd3056e…6081 when V3
+  // shipped with its own manager; the superseded one stays recorded in decentraland/contracts.
+  [ChainId.ETHEREUM_MAINNET]: {
+    version: '1.0.0',
+    abi: abis.CouponManager,
+    address: '0xf9180eed9fcd5f8b3921c1b8caeb771c10faeb26',
+    name: 'CouponManager',
+    chainId: ChainId.ETHEREUM_MAINNET
+  },
   [ChainId.MATIC_MAINNET]: {
     version: '1.0.0',
     abi: abis.CouponManager,
-    address: '0x3fd3056ee72a2a85e9392fab3a450e7736536081',
+    address: '0x655fdfa91d69ea49f4ce1a8f7f7e2622c8630813',
     name: 'CouponManager',
     chainId: ChainId.MATIC_MAINNET
   }
