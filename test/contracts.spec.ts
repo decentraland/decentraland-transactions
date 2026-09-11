@@ -277,3 +277,56 @@ describe('#getContractName', () => {
     )
   })
 })
+
+describe('when getting the coupon contracts', () => {
+  describe('and the chain is Matic Mainnet', () => {
+    it('should return the CouponManager wired into the Polygon off-chain marketplace', () => {
+      expect(
+        getContract(ContractName.CouponManager, ChainId.MATIC_MAINNET)
+      ).toEqual({
+        abi: abis.CouponManager,
+        address: '0x3fd3056ee72a2a85e9392fab3a450e7736536081',
+        name: 'CouponManager',
+        version: '1.0.0',
+        chainId: ChainId.MATIC_MAINNET
+      })
+    })
+
+    it('should return the CollectionDiscountCoupon that manager allows', () => {
+      expect(
+        getContract(ContractName.CollectionDiscountCoupon, ChainId.MATIC_MAINNET)
+      ).toEqual({
+        abi: abis.CollectionDiscountCoupon,
+        address: '0xc914507fe297b2dddd1232ac3a8903f1c125e794',
+        name: 'CollectionDiscountCoupon',
+        version: '1.0.0',
+        chainId: ChainId.MATIC_MAINNET
+      })
+    })
+  })
+
+  describe('and the chain is Matic Amoy', () => {
+    it('should keep the testnet CouponManager and CollectionDiscountCoupon', () => {
+      expect(
+        getContract(ContractName.CouponManager, ChainId.MATIC_AMOY).address
+      ).toEqual('0x6c956587d9fe70032781edcdc626310648575382')
+      expect(
+        getContract(ContractName.CollectionDiscountCoupon, ChainId.MATIC_AMOY)
+          .address
+      ).toEqual('0x4ee8f6b87f4917a3bbc7c8bb3a06db8555f83db9')
+    })
+  })
+
+  describe('and the chain is Ethereum Mainnet, where collections do not exist', () => {
+    it('should throw signaling that the chain is not supported', () => {
+      expect(() =>
+        getContract(
+          ContractName.CollectionDiscountCoupon,
+          ChainId.ETHEREUM_MAINNET
+        )
+      ).toThrow(
+        `Could not get a valid contract for ${ContractName.CollectionDiscountCoupon} using chain ${ChainId.ETHEREUM_MAINNET}`
+      )
+    })
+  })
+})
