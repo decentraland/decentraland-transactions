@@ -17,8 +17,9 @@ export const couponManager = {
     chainId: ChainId.MATIC_AMOY
   },
   // Each entry is the manager wired into that chain's NEWEST off-chain marketplace, since a coupon is
-  // redeemed through the marketplace that holds it. Polygon mainnet moved off 0x3fd3056e…6081 when V3
-  // shipped with its own manager; the superseded one stays recorded in decentraland/contracts.
+  // redeemed through the marketplace that holds it. That was already true of the testnets; Polygon
+  // mainnet joins them here, moving off the manager V2 points at. Asking for that one by name is what
+  // ContractName.CouponManagerV2 is for, so nothing becomes unresolvable.
   [ChainId.ETHEREUM_MAINNET]: {
     version: '1.0.0',
     abi: abis.CouponManager,

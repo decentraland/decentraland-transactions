@@ -29,6 +29,7 @@ import { offChainMarketplaceV2 } from './offChainMarketplaceV2'
 import { offChainMarketplaceV3 } from './offChainMarketplaceV3'
 import { creditsManager } from './creditsManager'
 import { couponManager } from './couponManager'
+import { couponManagerV2 } from './couponManagerV2'
 import { collectionDiscountCoupon } from './collectionDiscountCoupon'
 
 const contracts: Record<
@@ -63,6 +64,7 @@ const contracts: Record<
   [ContractName.OffChainMarketplaceV3]: offChainMarketplaceV3,
   [ContractName.CreditsManager]: creditsManager,
   [ContractName.CouponManager]: couponManager,
+  [ContractName.CouponManagerV2]: couponManagerV2,
   [ContractName.CollectionDiscountCoupon]: collectionDiscountCoupon
 }
 

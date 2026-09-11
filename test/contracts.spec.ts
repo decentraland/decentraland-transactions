@@ -287,6 +287,72 @@ describe('#getContractName', () => {
         )
       })
     })
+
+    describe('and it is the Ethereum mainnet off-chain marketplace', () => {
+      let address: string
+
+      beforeEach(() => {
+        address = '0x0f11d0d1671519683bd48abf3dbe779e300941cd'
+      })
+
+      it('should return the OffChainMarketplaceV3 name', () => {
+        expect(getContractName(address)).toBe(
+          ContractName.OffChainMarketplaceV3
+        )
+      })
+    })
+
+    describe('and it is the Polygon mainnet off-chain marketplace', () => {
+      let address: string
+
+      beforeEach(() => {
+        address = '0xe38ef22abe871513555cba89adfe45ab4f548ada'
+      })
+
+      it('should return the OffChainMarketplaceV3 name', () => {
+        expect(getContractName(address)).toBe(
+          ContractName.OffChainMarketplaceV3
+        )
+      })
+    })
+
+    describe('and it is the Ethereum mainnet coupon manager', () => {
+      let address: string
+
+      beforeEach(() => {
+        address = '0xf9180eed9fcd5f8b3921c1b8caeb771c10faeb26'
+      })
+
+      it('should return the CouponManager name', () => {
+        expect(getContractName(address)).toBe(ContractName.CouponManager)
+      })
+    })
+
+    describe('and it is the Polygon mainnet coupon manager', () => {
+      let address: string
+
+      beforeEach(() => {
+        address = '0x655fdfa91d69ea49f4ce1a8f7f7e2622c8630813'
+      })
+
+      it('should return the CouponManager name', () => {
+        expect(getContractName(address)).toBe(ContractName.CouponManager)
+      })
+    })
+  })
+
+  describe('when the address belongs to the coupon manager V2 points at', () => {
+    let address: string
+
+    beforeEach(() => {
+      address = '0x3fd3056ee72a2a85e9392fab3a450e7736536081'
+    })
+
+    // Reversibility is the reason CouponManagerV2 exists: this manager has been live on Polygon mainnet
+    // for months, so it has to stay nameable after CouponManager moved to the one V3 points at.
+    it('should still resolve, under the CouponManagerV2 name', () => {
+      expect(getContractName(address)).toBe(ContractName.CouponManagerV2)
+    })
   })
 
   it('should throw if the address does not correspond to a contract', () => {
@@ -305,6 +371,18 @@ describe('when getting the coupon contracts', () => {
       ).toEqual({
         abi: abis.CouponManager,
         address: '0x655fdfa91d69ea49f4ce1a8f7f7e2622c8630813',
+        name: 'CouponManager',
+        version: '1.0.0',
+        chainId: ChainId.MATIC_MAINNET
+      })
+    })
+
+    it('should keep the manager V2 points at reachable under CouponManagerV2', () => {
+      expect(
+        getContract(ContractName.CouponManagerV2, ChainId.MATIC_MAINNET)
+      ).toEqual({
+        abi: abis.CouponManager,
+        address: '0x3fd3056ee72a2a85e9392fab3a450e7736536081',
         name: 'CouponManager',
         version: '1.0.0',
         chainId: ChainId.MATIC_MAINNET
