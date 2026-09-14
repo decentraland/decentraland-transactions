@@ -2,16 +2,12 @@ import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
 
 /**
- * The coupon manager wired into OffChainMarketplaceV2, kept addressable after {@link couponManager}
- * moved to the one V3 points at.
+ * The coupon manager wired into OffChainMarketplaceV2 (`couponManager()` on that contract).
  *
- * It exists so the registry stays reversible: `getContractName` resolves an address by scanning every
- * entry, so dropping this one would make a manager that has been live on Polygon mainnet for months
- * unnameable — and callers still settling a V2-era coupon need a way to ask for it by name rather than
- * receiving V3's silently.
- *
- * Polygon only. Ethereum's V2 marketplace reports `couponManager()` as the zero address, so it never had
- * one to preserve.
+ * Polygon only. Ethereum's V2 marketplace reports the zero address, so it never had one. Amoy's V2
+ * does have one, but at the same address as the Polygon mainnet V2 marketplace (`0xa40b1d12…`), and
+ * `getContractName` resolves addresses without a chain, so listing it here would make that address
+ * ambiguous; nothing redeems V2 coupons on Amoy.
  */
 export const couponManagerV2 = {
   [ChainId.MATIC_MAINNET]: {

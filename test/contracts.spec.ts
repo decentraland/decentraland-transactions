@@ -1,6 +1,10 @@
 import { ChainId } from '@dcl/schemas'
 import { abis } from '../src/abis'
-import { getContract, getContractName } from '../src/contracts'
+import {
+  getContract,
+  getContractName,
+  getCouponManager
+} from '../src/contracts'
 import { ContractData, ContractName } from '../src/types'
 
 describe('#getContract', () => {
@@ -323,8 +327,8 @@ describe('#getContractName', () => {
         address = '0xf9180eed9fcd5f8b3921c1b8caeb771c10faeb26'
       })
 
-      it('should return the CouponManager name', () => {
-        expect(getContractName(address)).toBe(ContractName.CouponManager)
+      it('should return the CouponManagerV3 name, the only one it is registered under', () => {
+        expect(getContractName(address)).toBe(ContractName.CouponManagerV3)
       })
     })
 
@@ -335,23 +339,23 @@ describe('#getContractName', () => {
         address = '0x655fdfa91d69ea49f4ce1a8f7f7e2622c8630813'
       })
 
-      it('should return the CouponManager name', () => {
-        expect(getContractName(address)).toBe(ContractName.CouponManager)
+      it('should return the CouponManagerV3 name, the only one it is registered under', () => {
+        expect(getContractName(address)).toBe(ContractName.CouponManagerV3)
       })
     })
   })
 
-  describe('when the address belongs to the coupon manager V2 points at', () => {
+  describe('when the address is registered under both the CouponManager alias and a versioned name', () => {
     let address: string
 
     beforeEach(() => {
       address = '0x3fd3056ee72a2a85e9392fab3a450e7736536081'
     })
 
-    // Reversibility is the reason CouponManagerV2 exists: this manager has been live on Polygon mainnet
-    // for months, so it has to stay nameable after CouponManager moved to the one V3 points at.
-    it('should still resolve, under the CouponManagerV2 name', () => {
-      expect(getContractName(address)).toBe(ContractName.CouponManagerV2)
+    // The alias is registered first, so it keeps winning reverse lookup exactly as it did before the
+    // versioned names existed: nothing that resolved this address changes what it resolves to.
+    it('should keep resolving to the alias', () => {
+      expect(getContractName(address)).toBe(ContractName.CouponManager)
     })
   })
 
@@ -364,20 +368,35 @@ describe('#getContractName', () => {
 })
 
 describe('when getting the coupon contracts', () => {
-  describe('and the chain is Matic Mainnet', () => {
-    it('should return the CouponManager wired into the newest Polygon off-chain marketplace', () => {
+  describe('and asking for the CouponManager alias', () => {
+    it('should keep resolving the manager V2 points at on Matic Mainnet, unchanged', () => {
       expect(
-        getContract(ContractName.CouponManager, ChainId.MATIC_MAINNET)
-      ).toEqual({
-        abi: abis.CouponManager,
-        address: '0x655fdfa91d69ea49f4ce1a8f7f7e2622c8630813',
-        name: 'CouponManager',
-        version: '1.0.0',
-        chainId: ChainId.MATIC_MAINNET
-      })
+        getContract(ContractName.CouponManager, ChainId.MATIC_MAINNET).address
+      ).toBe('0x3fd3056ee72a2a85e9392fab3a450e7736536081')
     })
 
-    it('should keep the manager V2 points at reachable under CouponManagerV2', () => {
+    it('should keep resolving the testnet managers, unchanged', () => {
+      expect([
+        getContract(ContractName.CouponManager, ChainId.MATIC_AMOY).address,
+        getContract(ContractName.CouponManager, ChainId.ETHEREUM_SEPOLIA)
+          .address
+      ]).toEqual([
+        '0x6c956587d9fe70032781edcdc626310648575382',
+        '0xed558211ae5ae57a6704423918cb9b8501051af0'
+      ])
+    })
+
+    it('should not grow onto Ethereum Mainnet, where only the versioned name exists', () => {
+      expect(() =>
+        getContract(ContractName.CouponManager, ChainId.ETHEREUM_MAINNET)
+      ).toThrow(
+        `Could not get a valid contract for ${ContractName.CouponManager} using chain ${ChainId.ETHEREUM_MAINNET}`
+      )
+    })
+  })
+
+  describe('and asking for the versioned managers', () => {
+    it('should return the manager wired into V2 on Matic Mainnet', () => {
       expect(
         getContract(ContractName.CouponManagerV2, ChainId.MATIC_MAINNET)
       ).toEqual({
@@ -389,7 +408,72 @@ describe('when getting the coupon contracts', () => {
       })
     })
 
-    it('should return the CollectionDiscountCoupon that manager allows', () => {
+    it('should return the manager wired into V3 on every chain V3 is deployed on', () => {
+      const chains = [
+        ChainId.ETHEREUM_MAINNET,
+        ChainId.MATIC_MAINNET,
+        ChainId.ETHEREUM_SEPOLIA,
+        ChainId.MATIC_AMOY
+      ]
+      expect(
+        chains.map(
+          chainId =>
+            getContract(ContractName.CouponManagerV3, chainId).address
+        )
+      ).toEqual([
+        '0xf9180eed9fcd5f8b3921c1b8caeb771c10faeb26',
+        '0x655fdfa91d69ea49f4ce1a8f7f7e2622c8630813',
+        '0xed558211ae5ae57a6704423918cb9b8501051af0',
+        '0x6c956587d9fe70032781edcdc626310648575382'
+      ])
+    })
+  })
+
+  describe('and resolving the manager from the marketplace a trade targets', () => {
+    let v2: ContractData
+    let v3: ContractData
+
+    beforeEach(() => {
+      v2 = getCouponManager(
+        ContractName.OffChainMarketplaceV2,
+        ChainId.MATIC_MAINNET
+      )
+      v3 = getCouponManager(
+        ContractName.OffChainMarketplaceV3,
+        ChainId.MATIC_MAINNET
+      )
+    })
+
+    // Both versions are live on Polygon mainnet during the rollout, each with its own manager.
+    it('should pair each version with the manager its contract reports', () => {
+      expect([v2.address, v3.address]).toEqual([
+        '0x3fd3056ee72a2a85e9392fab3a450e7736536081',
+        '0x655fdfa91d69ea49f4ce1a8f7f7e2622c8630813'
+      ])
+    })
+
+    it('should throw for V1, which has no manager in this registry', () => {
+      expect(() =>
+        getCouponManager(ContractName.OffChainMarketplace, ChainId.MATIC_MAINNET)
+      ).toThrow(
+        `No coupon manager is paired with ${ContractName.OffChainMarketplace}`
+      )
+    })
+
+    it('should throw for a chain the version is not deployed on', () => {
+      expect(() =>
+        getCouponManager(
+          ContractName.OffChainMarketplaceV2,
+          ChainId.ETHEREUM_MAINNET
+        )
+      ).toThrow(
+        `Could not get a valid contract for ${ContractName.CouponManagerV2} using chain ${ChainId.ETHEREUM_MAINNET}`
+      )
+    })
+  })
+
+  describe('and asking for the CollectionDiscountCoupon', () => {
+    it('should return the Matic Mainnet coupon both managers allow', () => {
       expect(
         getContract(ContractName.CollectionDiscountCoupon, ChainId.MATIC_MAINNET)
       ).toEqual({
@@ -400,34 +484,8 @@ describe('when getting the coupon contracts', () => {
         chainId: ChainId.MATIC_MAINNET
       })
     })
-  })
 
-  describe('and the chain is Matic Amoy', () => {
-    it('should keep the testnet CouponManager and CollectionDiscountCoupon', () => {
-      expect(
-        getContract(ContractName.CouponManager, ChainId.MATIC_AMOY).address
-      ).toEqual('0x6c956587d9fe70032781edcdc626310648575382')
-      expect(
-        getContract(ContractName.CollectionDiscountCoupon, ChainId.MATIC_AMOY)
-          .address
-      ).toEqual('0x4ee8f6b87f4917a3bbc7c8bb3a06db8555f83db9')
-    })
-  })
-
-  describe('and the chain is Ethereum Mainnet', () => {
-    it('should return the CouponManager wired into the Ethereum off-chain marketplace', () => {
-      expect(
-        getContract(ContractName.CouponManager, ChainId.ETHEREUM_MAINNET)
-      ).toEqual({
-        abi: abis.CouponManager,
-        address: '0xf9180eed9fcd5f8b3921c1b8caeb771c10faeb26',
-        name: 'CouponManager',
-        version: '1.0.0',
-        chainId: ChainId.ETHEREUM_MAINNET
-      })
-    })
-
-    it('should throw for the CollectionDiscountCoupon, since collections do not exist there', () => {
+    it('should throw on Ethereum Mainnet, where collections do not exist', () => {
       expect(() =>
         getContract(
           ContractName.CollectionDiscountCoupon,
