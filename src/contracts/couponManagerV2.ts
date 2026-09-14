@@ -3,11 +3,8 @@ import { abis } from '../abis'
 
 /**
  * The coupon manager wired into OffChainMarketplaceV2 (`couponManager()` on that contract).
- *
- * Polygon only. Ethereum's V2 marketplace reports the zero address, so it never had one. Amoy's V2
- * does have one, but at the same address as the Polygon mainnet V2 marketplace (`0xa40b1d12…`), and
- * `getContractName` resolves addresses without a chain, so listing it here would make that address
- * ambiguous; nothing redeems V2 coupons on Amoy.
+ * Polygon only: Ethereum's V2 marketplace reports the zero address. The Amoy address is also the
+ * Polygon mainnet V2 marketplace's, so `getContractName` keeps resolving it to the marketplace.
  */
 export const couponManagerV2 = {
   [ChainId.MATIC_MAINNET]: {
@@ -16,5 +13,12 @@ export const couponManagerV2 = {
     address: '0x3fd3056ee72a2a85e9392fab3a450e7736536081',
     name: 'CouponManager',
     chainId: ChainId.MATIC_MAINNET
+  },
+  [ChainId.MATIC_AMOY]: {
+    version: '1.0.0',
+    abi: abis.CouponManager,
+    address: '0xa40b1d129b8906888720686f3a01921ddf37716f',
+    name: 'CouponManager',
+    chainId: ChainId.MATIC_AMOY
   }
 }

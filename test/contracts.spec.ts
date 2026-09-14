@@ -345,6 +345,19 @@ describe('#getContractName', () => {
     })
   })
 
+  describe('when the address is both the Polygon mainnet V2 marketplace and the Amoy V2 coupon manager', () => {
+    let address: string
+
+    beforeEach(() => {
+      address = '0xa40b1d129b8906888720686f3a01921ddf37716f'
+    })
+
+    // Marketplaces are registered before managers, so the result is what it was before the Amoy entry existed.
+    it('should keep resolving to the V2 marketplace', () => {
+      expect(getContractName(address)).toBe(ContractName.OffChainMarketplaceV2)
+    })
+  })
+
   describe('when the address is registered under both the CouponManager alias and a versioned name', () => {
     let address: string
 
@@ -408,6 +421,12 @@ describe('when getting the coupon contracts', () => {
       })
     })
 
+    it('should return the manager wired into V2 on Amoy, which shares its address with the Polygon mainnet V2 marketplace', () => {
+      expect(
+        getContract(ContractName.CouponManagerV2, ChainId.MATIC_AMOY).address
+      ).toBe('0xa40b1d129b8906888720686f3a01921ddf37716f')
+    })
+
     it('should return the manager wired into V3 on every chain V3 is deployed on', () => {
       const chains = [
         ChainId.ETHEREUM_MAINNET,
@@ -417,8 +436,7 @@ describe('when getting the coupon contracts', () => {
       ]
       expect(
         chains.map(
-          chainId =>
-            getContract(ContractName.CouponManagerV3, chainId).address
+          chainId => getContract(ContractName.CouponManagerV3, chainId).address
         )
       ).toEqual([
         '0xf9180eed9fcd5f8b3921c1b8caeb771c10faeb26',
@@ -432,6 +450,7 @@ describe('when getting the coupon contracts', () => {
   describe('and resolving the manager from the marketplace a trade targets', () => {
     let v2: ContractData
     let v3: ContractData
+    let v2Amoy: ContractData
 
     beforeEach(() => {
       v2 = getCouponManager(
@@ -441,6 +460,10 @@ describe('when getting the coupon contracts', () => {
       v3 = getCouponManager(
         ContractName.OffChainMarketplaceV3,
         ChainId.MATIC_MAINNET
+      )
+      v2Amoy = getCouponManager(
+        ContractName.OffChainMarketplaceV2,
+        ChainId.MATIC_AMOY
       )
     })
 
@@ -452,9 +475,16 @@ describe('when getting the coupon contracts', () => {
       ])
     })
 
+    it('should pair V2 on Amoy with the manager its testnet deployment reports', () => {
+      expect(v2Amoy.address).toBe('0xa40b1d129b8906888720686f3a01921ddf37716f')
+    })
+
     it('should throw for V1, which has no manager in this registry', () => {
       expect(() =>
-        getCouponManager(ContractName.OffChainMarketplace, ChainId.MATIC_MAINNET)
+        getCouponManager(
+          ContractName.OffChainMarketplace,
+          ChainId.MATIC_MAINNET
+        )
       ).toThrow(
         `No coupon manager is paired with ${ContractName.OffChainMarketplace}`
       )
@@ -475,7 +505,10 @@ describe('when getting the coupon contracts', () => {
   describe('and asking for the CollectionDiscountCoupon', () => {
     it('should return the Matic Mainnet coupon both managers allow', () => {
       expect(
-        getContract(ContractName.CollectionDiscountCoupon, ChainId.MATIC_MAINNET)
+        getContract(
+          ContractName.CollectionDiscountCoupon,
+          ChainId.MATIC_MAINNET
+        )
       ).toEqual({
         abi: abis.CollectionDiscountCoupon,
         address: '0xc914507fe297b2dddd1232ac3a8903f1c125e794',

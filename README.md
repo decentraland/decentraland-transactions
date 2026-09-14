@@ -12,6 +12,7 @@ Send meta transactions
 - [API](#api)
   - [sendMetaTransaction](#sendMetaTransaction)
   - [getContract](#getContract)
+  - [getCouponManager](#getCouponManager)
   - [Types](#types)
     - [Configuration](#Configuration)
     - [Provider](#Provider)
@@ -29,7 +30,7 @@ Send meta transactions
 
 ### API
 
-The API consists of one function at the moment, which is all you need to send meta transactions. You might also choose to import [pre-loaded contract configurations](#contracts) or some [types](#types).
+The API consists of `sendMetaTransaction`, which is all you need to send meta transactions, plus helpers to look up the [pre-loaded contract configurations](#getContract) it takes. You might also choose to import some [types](#types).
 
 ## sendMetaTransaction
 
@@ -93,6 +94,32 @@ function getContract(contractName: ContractName, chainId: ChainId): ContractData
 ```typescript
 getContract(ContractName.MANAToken, ChainId.ROPSTEN)
 ```
+
+## getCouponManager
+
+Returns the [ContractData](#ContractData) of the coupon manager an off-chain marketplace version trusts. Each marketplace version is wired to its own manager (`couponManager()` on the contract) and a coupon is only redeemable on the marketplace wired to the manager that signed it, so the manager follows the marketplace a trade targets, not the chain. While two versions are live on a chain, both managers are.
+
+**Definition**
+
+```typescript
+function getCouponManager(
+  marketplace: ContractName,
+  chainId: ChainId
+): ContractData
+```
+
+**Usage**
+
+```typescript
+getCouponManager(ContractName.OffChainMarketplaceV3, ChainId.MATIC_MAINNET)
+
+// Or from the contract a trade targets
+getCouponManager(getContractName(trade.contract), trade.chainId)
+```
+
+Throws for a version without a coupon manager (`OffChainMarketplace`, the first one) and for a chain the version is not deployed on. The managers are also addressable directly as `ContractName.CouponManagerV2` and `ContractName.CouponManagerV3`.
+
+`ContractName.CouponManager` is deprecated. It resolves the manager of V2 on Polygon mainnet but the one of V3 on the testnets, so do not pick a manager by chain alone while V2 and V3 overlap.
 
 ## Types
 
