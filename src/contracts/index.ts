@@ -89,7 +89,10 @@ export function getContract(
 }
 
 /** Each off-chain marketplace version and the coupon manager it trusts (`couponManager()`). */
-const COUPON_MANAGER_BY_MARKETPLACE: Partial<Record<ContractName, ContractName>> = {
+const COUPON_MANAGER_BY_MARKETPLACE: Partial<Record<
+  ContractName,
+  ContractName
+>> = {
   [ContractName.OffChainMarketplaceV2]: ContractName.CouponManagerV2,
   [ContractName.OffChainMarketplaceV3]: ContractName.CouponManagerV3
 }
