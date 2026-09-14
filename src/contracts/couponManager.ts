@@ -1,6 +1,13 @@
 import { ChainId } from '@dcl/schemas'
 import { abis } from '../abis'
 
+/**
+ * @deprecated Ambiguous: this name means the manager wired into OffChainMarketplaceV2 on Polygon
+ * mainnet, but the one wired into OffChainMarketplaceV3 on the testnets. A coupon is only redeemable on
+ * the marketplace whose manager signed it, so resolve the manager from the marketplace with
+ * `getCouponManager(marketplace, chainId)`, or name the version: CouponManagerV2 / CouponManagerV3.
+ * Kept as it is so existing callers keep resolving what they resolve today.
+ */
 export const couponManager = {
   [ChainId.ETHEREUM_SEPOLIA]: {
     version: '1.0.0',
@@ -16,8 +23,6 @@ export const couponManager = {
     name: 'CouponManager',
     chainId: ChainId.MATIC_AMOY
   },
-  // The manager wired into the Polygon mainnet off-chain marketplace (OffChainMarketplaceV2). Amoy's is
-  // wired into V3 there instead, so the two chains pair a coupon manager with a different marketplace.
   [ChainId.MATIC_MAINNET]: {
     version: '1.0.0',
     abi: abis.CouponManager,

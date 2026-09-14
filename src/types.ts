@@ -69,6 +69,8 @@ export enum ContractName {
   OffChainMarketplaceV3 = 'OffChainMarketplaceV3',
   CreditsManager = 'CreditsManager',
   CouponManager = 'CouponManager',
+  CouponManagerV2 = 'CouponManagerV2',
+  CouponManagerV3 = 'CouponManagerV3',
   CollectionDiscountCoupon = 'CollectionDiscountCoupon'
 }
 

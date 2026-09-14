@@ -29,6 +29,8 @@ import { offChainMarketplaceV2 } from './offChainMarketplaceV2'
 import { offChainMarketplaceV3 } from './offChainMarketplaceV3'
 import { creditsManager } from './creditsManager'
 import { couponManager } from './couponManager'
+import { couponManagerV2 } from './couponManagerV2'
+import { couponManagerV3 } from './couponManagerV3'
 import { collectionDiscountCoupon } from './collectionDiscountCoupon'
 
 const contracts: Record<
@@ -63,6 +65,8 @@ const contracts: Record<
   [ContractName.OffChainMarketplaceV3]: offChainMarketplaceV3,
   [ContractName.CreditsManager]: creditsManager,
   [ContractName.CouponManager]: couponManager,
+  [ContractName.CouponManagerV2]: couponManagerV2,
+  [ContractName.CouponManagerV3]: couponManagerV3,
   [ContractName.CollectionDiscountCoupon]: collectionDiscountCoupon
 }
 
@@ -82,6 +86,38 @@ export function getContract(
   }
 
   return contract[chainId]!
+}
+
+/** Each off-chain marketplace version and the coupon manager it trusts (`couponManager()`). */
+const COUPON_MANAGER_BY_MARKETPLACE: Partial<Record<
+  ContractName,
+  ContractName
+>> = {
+  [ContractName.OffChainMarketplaceV2]: ContractName.CouponManagerV2,
+  [ContractName.OffChainMarketplaceV3]: ContractName.CouponManagerV3
+}
+
+/**
+ * The coupon manager a marketplace redeems coupons through.
+ *
+ * A coupon is signed against one manager's EIP-712 domain and is only redeemable on the marketplace
+ * wired to that manager, so the manager is a property of the marketplace, not of the chain: while two
+ * versions are live on a chain, each has its own. Resolve it from the marketplace the trade targets.
+ *
+ * @param marketplace - The off-chain marketplace version, e.g. `getContractName(trade.contract)`.
+ * @param chainId - The chain the trade settles on.
+ * @throws When the version has no coupon manager at all (V1) or none on that chain, which also
+ * covers a deployed marketplace without one (V2 on Ethereum reports the zero address).
+ */
+export function getCouponManager(
+  marketplace: ContractName,
+  chainId: ChainId
+): ContractData {
+  const managerName = COUPON_MANAGER_BY_MARKETPLACE[marketplace]
+  if (!managerName) {
+    throw new Error(`No coupon manager is paired with ${marketplace}`)
+  }
+  return getContract(managerName, chainId)
 }
 
 export function getContractName(address: string): ContractName {
