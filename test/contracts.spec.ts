@@ -490,7 +490,8 @@ describe('when getting the coupon contracts', () => {
       )
     })
 
-    it('should throw for a chain the version is not deployed on', () => {
+    // V2 is deployed on both Ethereum chains but reports the zero address as its manager.
+    it('should throw for V2 on Ethereum Mainnet, where the marketplace exists without a manager', () => {
       expect(() =>
         getCouponManager(
           ContractName.OffChainMarketplaceV2,
@@ -498,6 +499,17 @@ describe('when getting the coupon contracts', () => {
         )
       ).toThrow(
         `Could not get a valid contract for ${ContractName.CouponManagerV2} using chain ${ChainId.ETHEREUM_MAINNET}`
+      )
+    })
+
+    it('should throw for V2 on Ethereum Sepolia, where the marketplace exists without a manager', () => {
+      expect(() =>
+        getCouponManager(
+          ContractName.OffChainMarketplaceV2,
+          ChainId.ETHEREUM_SEPOLIA
+        )
+      ).toThrow(
+        `Could not get a valid contract for ${ContractName.CouponManagerV2} using chain ${ChainId.ETHEREUM_SEPOLIA}`
       )
     })
   })

@@ -106,7 +106,8 @@ const COUPON_MANAGER_BY_MARKETPLACE: Partial<Record<
  *
  * @param marketplace - The off-chain marketplace version, e.g. `getContractName(trade.contract)`.
  * @param chainId - The chain the trade settles on.
- * @throws When the version has no coupon manager (V1) or it is not deployed on the chain.
+ * @throws When the version has no coupon manager at all (V1) or none on that chain, which also
+ * covers a deployed marketplace without one (V2 on Ethereum reports the zero address).
  */
 export function getCouponManager(
   marketplace: ContractName,

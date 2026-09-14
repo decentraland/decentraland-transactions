@@ -117,7 +117,7 @@ getCouponManager(ContractName.OffChainMarketplaceV3, ChainId.MATIC_MAINNET)
 getCouponManager(getContractName(trade.contract), trade.chainId)
 ```
 
-Throws for a version without a coupon manager (`OffChainMarketplace`, the first one) and for a chain the version is not deployed on. The managers are also addressable directly as `ContractName.CouponManagerV2` and `ContractName.CouponManagerV3`.
+Throws for a version without a coupon manager (`OffChainMarketplace`, the first one) and when the version has no manager on that chain, whether because the marketplace is not deployed there or because it was deployed without one: V2 exists on Ethereum but its `couponManager()` is the zero address, so `getCouponManager(OffChainMarketplaceV2, ETHEREUM_MAINNET)` throws. The managers are also addressable directly as `ContractName.CouponManagerV2` and `ContractName.CouponManagerV3`.
 
 `ContractName.CouponManager` is deprecated. It resolves the manager of V2 on Polygon mainnet but the one of V3 on the testnets, so do not pick a manager by chain alone while V2 and V3 overlap.
 
